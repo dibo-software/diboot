@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2099, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -59,7 +59,7 @@ public class LogAspect {
     @Autowired
     private IamAsyncWorker iamAsyncWorker;
 
-    private static int maxLength = 1000;
+    private static final int maxLength = 1000;
 
     /**
      * 注解切面
@@ -153,7 +153,7 @@ public class LogAspect {
         Method method = signature.getMethod();
         Log logAnno = AnnotationUtils.getAnnotation(method, Log.class);
         // 保存requestBody数据
-        if(logAnno.saveRequestData()){
+        if(logAnno != null && logAnno.saveRequestData()){
             Object[] bodyParams = joinPoint.getArgs();
             if(V.notEmpty(bodyParams)){
                 for(Object arg : bodyParams){

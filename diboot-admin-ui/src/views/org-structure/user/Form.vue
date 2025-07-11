@@ -141,7 +141,7 @@ const rules: FormRules = {
 </script>
 
 <template>
-  <el-dialog v-model="visible" :title="title" :width="800">
+  <el-dialog v-model="visible" :title="title" :width="800" draggable>
     <el-form
       ref="formRef"
       v-loading="loading"

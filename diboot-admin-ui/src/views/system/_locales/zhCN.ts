@@ -132,7 +132,7 @@ const zhCN = {
     placeholder: {
       title: '消息模板名称，如：‘催办提醒’',
       code: '模板唯一编码，如：‘CBTX’',
-      appModule: '请选择消息状态',
+      appModule: '请输入业务模块名称',
       content: '发送日期'
     },
     selectableVariables: '可选变量',

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2099, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -75,7 +76,7 @@ public class Encryptor {
 		String seedKey = V.notEmpty(key)? key[0] : getDefaultKey();
 		try{
 			Cipher cipher = getEncryptor(seedKey);
-			byte[] enBytes = cipher.doFinal(input.getBytes());
+			byte[] enBytes = cipher.doFinal(input.getBytes(StandardCharsets.UTF_8));
 			return Base64.getEncoder().encodeToString(enBytes);
 		}
 		catch(Exception e){
@@ -98,8 +99,8 @@ public class Encryptor {
 		String seedKey = V.notEmpty(key)? key[0] : getDefaultKey();
 		try{
 			Cipher cipher = getDecryptor(seedKey);
-			byte[] deBytes = Base64.getDecoder().decode(input.getBytes());
-			return new String(cipher.doFinal(deBytes));
+			byte[] deBytes = Base64.getDecoder().decode(input.getBytes(StandardCharsets.UTF_8));
+			return new String(cipher.doFinal(deBytes), StandardCharsets.UTF_8);
 		}
 		catch(Exception e){
 			log.error("解密出错: {}", input, e);
@@ -115,7 +116,7 @@ public class Encryptor {
 	 */
 	private static Cipher getEncryptor(String key) throws Exception{
 		byte[] keyBytes = getKey(key);
-		Cipher encryptor = getEncryptorMap().get(new String(keyBytes));
+		Cipher encryptor = getEncryptorMap().get(new String(keyBytes, StandardCharsets.UTF_8));
 		if(encryptor == null){
 			SecretKeySpec skeyspec = new SecretKeySpec(keyBytes, KEY_ALGORITHM);
 			encryptor = Cipher.getInstance(CIPHER_ALGORITHM);
@@ -134,7 +135,7 @@ public class Encryptor {
 	 */
 	private static Cipher getDecryptor(String key) throws Exception{
 		byte[] keyBytes = getKey(key);
-		Cipher decryptor = getDecryptorMap().get(new String(keyBytes));
+		Cipher decryptor = getDecryptorMap().get(new String(keyBytes, StandardCharsets.UTF_8));
 		if(decryptor == null){
 			SecretKeySpec skeyspec = new SecretKeySpec(keyBytes, KEY_ALGORITHM);
 			decryptor = Cipher.getInstance(CIPHER_ALGORITHM);
@@ -160,7 +161,7 @@ public class Encryptor {
 		else if(seed.length() > 16){
 			seed = S.cut(seed, 16);
 		}
-		return seed.getBytes();
+		return seed.getBytes(StandardCharsets.UTF_8);
 	}
 
 	/**

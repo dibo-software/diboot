@@ -14,7 +14,7 @@ export interface Client {
   status?: string
   statusLabel?: LabelValue<{ color?: string }>
   // 权限
-  permissions?: string
+  permissions?: string[]
   // 创建人
   createBy?: string
   createByLabel?: string

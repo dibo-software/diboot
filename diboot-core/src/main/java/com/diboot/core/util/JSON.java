@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2099, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -49,7 +49,8 @@ public class JSON {
         }
         objectMapper = ContextHolder.getBean(ObjectMapper.class);
         if(objectMapper == null){
-            throw new InvalidUsageException("未找到 ObjectMapper实例，请检查配置类");
+            log.warn("未找到 ObjectMapper实例，请检查配置类！");
+            return new ObjectMapper();
         }
         return objectMapper;
     }
@@ -189,5 +190,22 @@ public class JSON {
             return null;
         }
         return (LinkedHashMap<K, T>)toJavaObject(jsonStr, LinkedHashMap.class);
+    }
+
+    /**
+     * 转换对象
+     * @param fromValue
+     * @param toValueType
+     * @return
+     * @param <T>
+     */
+    public static <T> T convertValue(Object fromValue, Class<T> toValueType) {
+        try {
+            return getObjectMapper().convertValue(fromValue, toValueType);
+        }
+        catch (Exception e) {
+            log.error("convertValue异常", e);
+            throw new BusinessException("exception.business.JSON.parseArray.message");
+        }
     }
 }

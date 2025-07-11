@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2099, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -17,8 +17,14 @@ package com.diboot.core.util;
 
 import com.diboot.core.vo.ApiUri;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.type.classreading.MetadataReader;
+import org.springframework.core.type.classreading.MetadataReaderFactory;
+import org.springframework.core.type.classreading.SimpleMetadataReaderFactory;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -121,4 +127,36 @@ public class AnnotationUtils extends org.springframework.core.annotation.Annotat
         }
         return methodList;
     }
+
+    /**
+     * 获取指定包路径下带有特定注解的类
+     *
+     * @param packageName    要扫描的包路径
+     * @param annotationClass 目标注解类
+     * @return 返回带有指定注解的类列表
+     */
+    public static List<Class<?>> extractClassesWithAnnotation(String packageName, Class<? extends Annotation> annotationClass) {
+        List<Class<?>> classes = new ArrayList<>();
+        PathMatchingResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
+        MetadataReaderFactory metadataReaderFactory = new SimpleMetadataReaderFactory(resourcePatternResolver);
+        try {
+            String pattern = "classpath*:" + packageName.replace('.', '/') + "/**/*.class";
+            Resource[] resources = resourcePatternResolver.getResources(pattern);
+            for (Resource resource : resources) {
+                if (resource.isReadable()) {
+                    MetadataReader metadataReader = metadataReaderFactory.getMetadataReader(resource);
+                    String className = metadataReader.getClassMetadata().getClassName();
+                    Class<?> clazz = Class.forName(className);
+                    if (clazz.getAnnotation(annotationClass) != null) {
+                        classes.add(clazz);
+                    }
+                }
+            }
+        }
+        catch (IOException | ClassNotFoundException e) {
+            log.error("Error scanning classes with annotation {}", annotationClass.getName(), e);
+        }
+        return classes;
+    }
+
 }

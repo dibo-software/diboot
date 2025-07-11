@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2099, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -48,6 +48,14 @@ public class EncryptorTest {
         Assert.assertTrue(Encryptor.decrypt(encryptText).equals(text));
 
         String seed = "ABCDEF";
+        encryptText = Encryptor.encrypt(text, seed);
+        System.out.println(encryptText);
+        // 加密后长度
+        Assert.assertTrue(encryptText.length() >= 24);
+        // 解密
+        Assert.assertTrue(Encryptor.decrypt(encryptText, seed).equals(text));
+
+        text = "测试";
         encryptText = Encryptor.encrypt(text, seed);
         System.out.println(encryptText);
         // 加密后长度

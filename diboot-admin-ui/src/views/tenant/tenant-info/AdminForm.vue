@@ -91,7 +91,7 @@ const rules: FormRules = {
 }
 </script>
 <template>
-  <el-dialog v-model="visible" width="60%" :title="$t('tenantInfo.adminForm.title')">
+  <el-dialog v-model="visible" width="60%" :title="$t('tenantInfo.adminForm.title')" draggable>
     <el-form
       ref="formRef"
       v-loading="loading"

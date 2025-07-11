@@ -12,7 +12,7 @@ defineExpose({
 </script>
 
 <template>
-  <el-dialog v-model="visible" :title="$t('title.detail')" width="65vw">
+  <el-dialog v-model="visible" :title="$t('title.detail')" width="65vw" draggable>
     <el-descriptions v-loading="loading" :column="2" class="margin-top" border>
       <el-descriptions-item v-if="model.appModule" :label="$t('fileRecord.appModule')">
         {{ model.appModule }}
@@ -23,7 +23,6 @@ defineExpose({
       <el-descriptions-item :label="$t('fileRecord.fileSize')"> {{ model.fileSizeLabel }} </el-descriptions-item>
       <el-descriptions-item :label="$t('fileRecord.accessUrl')">
         <download
-          link
           :text-max-width="500"
           :url="model.accessUrl ?? ''"
           :title="model.accessUrl ?? ''"

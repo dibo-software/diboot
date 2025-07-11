@@ -7,7 +7,7 @@ import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.Pagination;
 import com.diboot.iam.annotation.BindPermission;
 import com.diboot.iam.annotation.OperationCons;
-import com.diboot.iam.entity.Client;
+import com.diboot.iam.entity.IamClient;
 import com.diboot.iam.entity.IamOperationLog;
 import com.diboot.iam.entity.IamUser;
 import lombok.extern.slf4j.Slf4j;
@@ -51,11 +51,13 @@ public class OperationLogController extends BaseCrudRestController<IamOperationL
                     queryWrapper.lambda().eq(IamOperationLog::getUserType, IamUser.class.getSimpleName());
                     break;
                 case "client":
-                    queryWrapper.lambda().eq(IamOperationLog::getUserType, Client.class.getSimpleName());
+                    queryWrapper.lambda().eq(IamOperationLog::getUserType, IamClient.class.getSimpleName());
                     break;
                 case "exception":
                     queryWrapper.lambda().in(IamOperationLog::getStatusCode, 500, 5000);
                     break;
+                default:
+                    log.warn("未知的 filterType:{}", filterType);
             }
         }
         return super.getEntityListWithPaging(queryWrapper, pagination);

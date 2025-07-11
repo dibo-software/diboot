@@ -106,8 +106,13 @@ const lazyLoad = ({ data }: CascaderNode, resolve: (data: CascaderOption[]) => v
 const DEFAULT_DATE_FORMAT: Record<string, string> = { date: 'YYYY-MM-DD', datetime: 'YYYY-MM-DD HH:mm:ss' }
 const getDateFormtDef = (type: string) => DEFAULT_DATE_FORMAT[type]
 
+const formItemRef = ref()
+
 const { action, httpRequest, fileList, onSuccess, onRemove } = useUploadFile(
-  fileIds => (value.value = fileIds),
+  fileIds => {
+    value.value = fileIds
+    nextTick(formItemRef.value?.validate)
+  },
   () => props.fileList
 )
 
@@ -153,7 +158,7 @@ defineExpose({ getFiles: () => _.cloneDeep(unref(fileList)) })
 
 <template>
   <!-- @ts-nocheck -->
-  <el-form-item :prop="`${formPropPrefix}${config.prop}`" :label="config.label" :rules="rules">
+  <el-form-item ref="formItemRef" :prop="`${formPropPrefix}${config.prop}`" :label="config.label" :rules="rules">
     <el-input
       v-if="config.type === 'input'"
       :model-value="value as string"

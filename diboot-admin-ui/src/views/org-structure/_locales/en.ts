@@ -1,5 +1,11 @@
 import type { Locale } from './zhCN'
 const en: Locale = {
+  group: {
+    name: 'Name',
+    orgId: 'Organize',
+    members: 'Members',
+    description: 'Description'
+  },
   org: {
     name: 'Name',
     code: 'Code',
@@ -16,6 +22,7 @@ const en: Locale = {
   position: {
     name: 'Name',
     code: 'Code',
+    user: 'User',
     gradeName: 'Grade',
     dataPermissionType: 'Data Permission',
     isVirtual: 'Virtual Position',

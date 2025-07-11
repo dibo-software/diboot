@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Client } from './type'
 
-const baseApi = '/client'
+const baseApi = '/iam/client'
 
 const { loadData, loading, model } = useDetail<Client>(baseApi)
 
@@ -32,9 +32,9 @@ defineExpose({ init: loadData })
       </span>
     </el-descriptions-item>
     <el-descriptions-item :label="$t('client.permissions')" :span="2" label-class-name="item-label" label-align="right">
-      <span class="txt-short">
+      <div style="word-wrap: break-word; width: calc(60vw - 130px)">
         {{ model.permissions?.join(',') }}
-      </span>
+      </div>
     </el-descriptions-item>
     <el-descriptions-item :label="$t('baseField.createTime')" label-class-name="item-label" label-align="right">
       <span class="txt-short">

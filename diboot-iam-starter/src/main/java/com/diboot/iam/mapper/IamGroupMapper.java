@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2025, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2099, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,18 +13,20 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.iam.service;
+package com.diboot.iam.mapper;
 
-import com.diboot.core.service.BaseService;
-import com.diboot.iam.entity.Client;
+import com.diboot.core.mapper.BaseCrudMapper;
+import com.diboot.iam.entity.IamGroup;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
- * 客户端相关Service
+ * 用户组Mapper
  *
- * @author wind
- * @version 3.5.1
- * @date 2025/1/9
+ * @version 3.6.1
+ * @date 2025/05/28
  */
-public interface ClientService extends BaseService<Client> {
+@Mapper
+public interface IamGroupMapper extends BaseCrudMapper<IamGroup> {
 
 }
+

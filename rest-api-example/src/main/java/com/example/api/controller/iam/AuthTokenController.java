@@ -14,6 +14,7 @@ import com.diboot.iam.annotation.BindPermission;
 import com.diboot.iam.annotation.Log;
 import com.diboot.iam.auth.AuthServiceFactory;
 import com.diboot.iam.config.Cons;
+import com.diboot.iam.dto.ClientCredential;
 import com.diboot.iam.dto.PwdCredential;
 import com.diboot.iam.entity.*;
 import com.diboot.iam.entity.route.RouteRecord;
@@ -33,6 +34,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.crypto.Cipher;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -124,8 +126,9 @@ public class AuthTokenController extends BaseController {
             // RSA解密
             Cipher cipher = Cipher.getInstance("RSA");
             cipher.init(Cipher.DECRYPT_MODE, priKey);
-            return new String(cipher.doFinal(decode));
+            return new String(cipher.doFinal(decode), StandardCharsets.UTF_8);
         } catch (Exception e) {
+            log.warn("解密数据失败: {} : {}", content, e.getMessage());
             throw new BusinessException(Status.FAIL_OPERATION, "解密数据失败！");
         }
     }
@@ -182,6 +185,17 @@ public class AuthTokenController extends BaseController {
             }
         }
         return JsonResult.OK(data);
+    }
+
+    /**
+     * 客户端登录获取token
+     *
+     * @param credential 登录凭证
+     * @return 响应（troken）
+     */
+    @PostMapping("/client-login")
+    public JsonResult<String> login(@RequestBody ClientCredential credential) {
+        return JsonResult.OK(AuthServiceFactory.getAuthService(ClientCredential.AUTH_TYPE).applyToken(credential));
     }
 
     /**

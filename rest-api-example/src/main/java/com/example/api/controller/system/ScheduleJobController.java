@@ -51,8 +51,8 @@ public class ScheduleJobController extends BaseCrudRestController<ScheduleJob> {
     @Log(operation = OperationCons.LABEL_LIST)
     @BindPermission(name = OperationCons.LABEL_LIST, code = OperationCons.CODE_READ)
     @GetMapping
-    public JsonResult getJobVOListMapping(ScheduleJob entity, Pagination pagination) throws Exception {
-        return super.getViewObjectList(entity, pagination, ScheduleJobVO.class);
+    public JsonResult getJobVOListMapping(ScheduleJob entity) throws Exception {
+        return super.getViewObjectList(entity, null, ScheduleJobVO.class);
     }
 
     /**
@@ -187,7 +187,7 @@ public class ScheduleJobController extends BaseCrudRestController<ScheduleJob> {
     @Log(operation = "删除任务日志")
     @BindPermission(name = "删除任务日志", code = OperationCons.CODE_WRITE)
     @DeleteMapping("/log/{id}")
-    public JsonResult DeleteJobLogMapping(@PathVariable("id") String id) throws Exception {
+    public JsonResult deleteJobLogMapping(@PathVariable("id") String id) throws Exception {
         if (id == null) {
             return new JsonResult(Status.FAIL_INVALID_PARAM, "请选择需要删除的条目！");
         }

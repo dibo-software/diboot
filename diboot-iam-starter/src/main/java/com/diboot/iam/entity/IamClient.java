@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2025, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2099, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -34,8 +34,8 @@ import java.util.Set;
 @Getter
 @Setter
 @Accessors(chain = true)
-@TableName(value = "dbt_client", autoResultMap = true)
-public class Client extends BaseLoginUser {
+@TableName(value = "dbt_iam_client", autoResultMap = true)
+public class IamClient extends BaseLoginUser {
     @Serial
     private static final long serialVersionUID = 8928160569300882231L;
 
@@ -85,6 +85,6 @@ public class Client extends BaseLoginUser {
 
     @Override
     public String getUserType() {
-        return Client.class.getSimpleName();
+        return IamClient.class.getSimpleName();
     }
 }

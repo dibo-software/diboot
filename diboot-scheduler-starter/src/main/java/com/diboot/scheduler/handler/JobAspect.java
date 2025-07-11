@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2099, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -63,7 +63,7 @@ public class JobAspect {
     @Around(value = "pointCut()")
     public void afterHandler(ProceedingJoinPoint joinPoint) {
         ScheduleJobLog jobLog = new ScheduleJobLog();
-        jobLog.setJobId(Long.valueOf(((JobExecutionContext) joinPoint.getArgs()[0]).getJobDetail().getKey().getName()));
+        jobLog.setJobId(((JobExecutionContext) joinPoint.getArgs()[0]).getJobDetail().getKey().getName());
         try {
             jobLog.setStartTime(LocalDateTime.now());
             joinPoint.proceed(joinPoint.getArgs());

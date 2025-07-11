@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2099, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -24,6 +24,9 @@ import com.diboot.core.util.V;
 import diboot.core.test.StartupApplication;
 import diboot.core.test.binder.entity.Department;
 import diboot.core.test.binder.entity.User;
+import diboot.core.test.binder.multi.Animal;
+import diboot.core.test.binder.multi.CatVO;
+import diboot.core.test.binder.multi.DogVO;
 import diboot.core.test.binder.service.DepartmentService;
 import diboot.core.test.binder.service.UserService;
 import diboot.core.test.binder.vo.*;
@@ -36,6 +39,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -103,6 +107,26 @@ public class TestCountBinder {
             //Assert.assertTrue(vo.getRoleCount() == vo.getRoleCodes().size());
             System.out.println(JSON.stringify(vo));
         }
+    }
+
+    @Test
+    public void testMultiExtendBind() {
+        List<Animal> animals = new ArrayList();
+
+        DogVO dogVO = new DogVO();
+        dogVO.setCategory("DOG");
+        animals.add(dogVO);
+
+        CatVO catVO = new CatVO();
+        catVO.setCategory("CAT");
+        animals.add(catVO);
+        Binder.bindRelations(animals);
+
+        //Binder.bindRelations(animals.stream().filter(animal -> animal.getClass().equals(DogVO.class)).toList());
+        //Binder.bindRelations(animals.stream().filter(animal -> animal.getClass().equals(CatVO.class)).toList());
+
+        Assert.assertEquals(3l, (long) animals.get(0).getCount());
+        Assert.assertEquals(2l, (long) animals.get(1).getCount());
     }
 
 }

@@ -79,7 +79,7 @@ const dragend = (e: DragEvent) => {
             </el-select>
           </el-form-item>
           <el-form-item :label="$t('layout.setting.enableTabs')">
-            <el-switch v-model="appStore.enableTabs" />
+            <el-switch v-model="appStore.enableTabs" @change="$router.go(0)" />
           </el-form-item>
           <el-form-item :label="$t('layout.setting.colorPrimary')">
             <el-color-picker v-model="colorPrimary" @update:model-value="appStore.colorPrimary = $event as string" />

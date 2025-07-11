@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2099, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -26,6 +26,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -105,6 +106,11 @@ public class D extends DateUtils{
 	public static final long MS_1DAY = 24 * MS_1HOUR;
 
 	/**
+	 * 默认时区
+	 */
+	public static final ZoneId DEFAULT_ZONE_ID = ZoneId.of("Asia/Shanghai");
+
+	/**
 	 * 当前的日期时间
 	 * @return format指定格式的日期时间
 	 */
@@ -154,6 +160,15 @@ public class D extends DateUtils{
 			log.warn("日期格式转换异常");
 		}
 		return null;
+	}
+
+	/**
+	 * 转换LocalDateTime 为 Date
+	 * @param localDateTime
+	 * @return
+	 */
+	public static Date convertToDate(LocalDateTime localDateTime) {
+		return Date.from(localDateTime.atZone(DEFAULT_ZONE_ID).toInstant());
 	}
 
 	/**

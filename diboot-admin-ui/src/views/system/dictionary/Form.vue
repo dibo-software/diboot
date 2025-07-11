@@ -115,7 +115,7 @@ const enableI18n = import.meta.env.VITE_APP_ENABLE_I18N === 'true'
 defineExpose({ open })
 </script>
 <template>
-  <el-dialog v-model="visible" :width="width" :title="title" append-to-body>
+  <el-dialog v-model="visible" :width="width" :title="title" append-to-body draggable>
     <el-form v-if="model" ref="formRef" v-loading="loading" :model="model" :rules="rules" label-position="top">
       <el-row :gutter="16">
         <el-col :span="12">

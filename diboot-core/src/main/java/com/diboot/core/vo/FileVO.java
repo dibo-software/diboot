@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2029, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2099, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -41,6 +41,11 @@ public class FileVO implements Serializable {
      * 文件名
      */
     private String fileName;
+
+    /**
+     * 文件类型/后缀
+     */
+    private String fileType;
 
     /**
      * 文件下载/访问url

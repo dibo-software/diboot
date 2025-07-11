@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2099, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -15,7 +15,9 @@
  */
 package com.diboot.iam.shiro;
 
+import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.S;
+import com.diboot.core.util.V;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.IamUser;
 import com.diboot.iam.util.TokenUtils;
@@ -97,6 +99,9 @@ public class IamAuthToken implements RememberMeAuthenticationToken {
     }
 
     public IamAuthToken(String userInfoStr){
+        if(V.isEmpty(userInfoStr)){
+            throw new InvalidUsageException("userInfo 不能为空");
+        }
         String[] fields = userInfoStr.split(Cons.SEPARATOR_COMMA);
         this.tenantId = fields[0];
         this.authAccount = fields[1];
@@ -109,7 +114,12 @@ public class IamAuthToken implements RememberMeAuthenticationToken {
             }
         }
         this.authType = fields[3];
-        this.expiresInMinutes = Integer.parseInt(fields[4]);
+        try {
+            this.expiresInMinutes = Integer.parseInt(fields[4]);
+        }
+        catch (Exception e){
+            log.warn("extract expiresInMinutes from token:{} error", userInfoStr);
+        }
     }
 
     /**

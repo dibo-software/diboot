@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2099, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -207,8 +207,7 @@ public class IamAutoConfig {
         filterChainMap.put("/auth/captcha", "anon");
         filterChainMap.put("/auth/login", "anon");
         filterChainMap.put("/auth/token", "anon");
-
-        filterChainMap.put("/client/login", "anon");
+        filterChainMap.put("/auth/client-login", "anon");
 
         Set<String> anonUrls = iamProperties.getAnonUrls();
         if (V.notEmpty(anonUrls)) {

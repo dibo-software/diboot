@@ -56,7 +56,7 @@ defineExpose({
 })
 </script>
 <template>
-  <el-dialog v-model="visible" width="60%" :title="$t('tenantInfo.resourceForm.title')">
+  <el-dialog v-model="visible" width="60%" :title="$t('tenantInfo.resourceForm.title')" draggable>
     <el-scrollbar height="calc(80vh - 350px)">
       <el-tree
         ref="treeRef"

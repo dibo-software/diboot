@@ -187,8 +187,7 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
 
-  background-image:
-    radial-gradient(closest-side, rgb(120, 142, 225), rgba(248, 192, 147, 0)),
+  background-image: radial-gradient(closest-side, rgb(120, 142, 225), rgba(248, 192, 147, 0)),
     radial-gradient(closest-side, rgb(168, 178, 220), rgba(170, 142, 245, 0)),
     radial-gradient(closest-side, rgb(143, 173, 210), rgba(235, 105, 78, 0)),
     radial-gradient(closest-side, rgb(129, 199, 211), rgba(243, 11, 164, 0)),

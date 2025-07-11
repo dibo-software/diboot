@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2025, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2099, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -15,7 +15,7 @@
  */
 package com.diboot.iam.dto;
 
-import com.diboot.iam.entity.Client;
+import com.diboot.iam.entity.IamClient;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -43,7 +43,7 @@ public class ClientCredential extends AuthCredential {
 
     public ClientCredential() {
         this.setAuthType(AUTH_TYPE);
-        this.setUserTypeClass(Client.class);
+        this.setUserTypeClass(IamClient.class);
     }
 
     public ClientCredential(String appKey, String appSecret) {

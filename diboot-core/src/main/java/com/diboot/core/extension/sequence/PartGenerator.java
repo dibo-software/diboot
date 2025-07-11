@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2029, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2099, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -36,6 +36,10 @@ public class PartGenerator {
         }
         if("date".equals(part.getType())) {
             Date date = new Date();
+            // 临时替换格式，3.6+后续版本移除
+            if(part.getValue().endsWith("MMDD")){
+                part.setValue(part.getValue().replaceAll("MMDD", "MMdd"));
+            }
             return D.convert2FormatString(date, part.getValue());
         }
         if("random".equals(part.getType())) {
@@ -43,5 +47,4 @@ public class PartGenerator {
         }
         return null;
     }
-
 }

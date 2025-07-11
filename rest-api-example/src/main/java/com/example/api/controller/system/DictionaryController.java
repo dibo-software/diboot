@@ -7,9 +7,11 @@ import com.diboot.core.config.Cons;
 import com.diboot.core.controller.BaseCrudRestController;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.service.DictionaryService;
-import com.diboot.core.service.DictionaryServiceExtProvider;
 import com.diboot.core.util.V;
-import com.diboot.core.vo.*;
+import com.diboot.core.vo.DictionaryVO;
+import com.diboot.core.vo.JsonResult;
+import com.diboot.core.vo.LabelValue;
+import com.diboot.core.vo.Pagination;
 import com.diboot.iam.annotation.BindPermission;
 import com.diboot.iam.annotation.OperationCons;
 import jakarta.validation.Valid;
@@ -35,8 +37,6 @@ public class DictionaryController extends BaseCrudRestController<Dictionary> {
 
     @Autowired
     protected DictionaryService dictionaryService;
-    @Autowired
-    protected DictionaryServiceExtProvider dictionaryServiceExtProvider;
 
     /**
      * 查询ViewObject的分页数据
@@ -170,7 +170,7 @@ public class DictionaryController extends BaseCrudRestController<Dictionary> {
             wrapper.ne(V.notEmpty(id), Dictionary::getId, id);
             boolean alreadyExists = dictionaryService.exists(wrapper);
             if (alreadyExists) {
-                return JsonResult.FAIL_VALIDATION( "类型编码已存在");
+                return JsonResult.FAIL_VALIDATION("exception.business.dictionary.duplicate-type");
             }
         }
         return JsonResult.OK();

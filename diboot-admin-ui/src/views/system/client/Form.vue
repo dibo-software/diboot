@@ -8,7 +8,7 @@ import PermissionSelect from '@/views/system/resource/components/PermissionSelec
 
 const i18n = useI18n()
 
-const baseApi = '/client'
+const baseApi = '/iam/client'
 
 const emit = defineEmits<{
   (e: 'complete', id?: string, isNew?: boolean): void

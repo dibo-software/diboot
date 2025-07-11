@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2099, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -289,8 +289,15 @@ public class BaseController {
 					return Collections.emptyList();
 				}
 				String parentPath = S.valueOf(BeanUtils.getProperty(rootNode, relatedDataDTO.getParentPath()));
+				String parentIdsPathVal;
+				if(V.notEmpty(parentPath)) {
+					parentIdsPathVal = S.endsWith(parentPath, Cons.SEPARATOR_COMMA)? parentPath + rootId : parentPath + Cons.SEPARATOR_COMMA + rootId;
+				}
+				else {
+					parentIdsPathVal = S.valueOf(rootId);
+				}
 				queryWrapper.and(query -> {
-					query.likeRight(parentPathColumn, V.isEmpty(parentPath) ? S.valueOf(rootId) : parentPath + Cons.SEPARATOR_COMMA + rootId);
+					query.likeRight(parentPathColumn, parentIdsPathVal);
 					query.or().eq(idColumn, rootId);
 				});
 			}

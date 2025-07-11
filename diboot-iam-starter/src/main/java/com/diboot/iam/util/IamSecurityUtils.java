@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2099, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -31,8 +31,10 @@ import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.lang.util.ByteSource;
+import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.util.ThreadContext;
 
 import java.util.Collection;
 
@@ -149,8 +151,21 @@ public class IamSecurityUtils extends SecurityUtils {
      * @return
      */
     public static String getCurrentUserId() {
-        BaseLoginUser user = getCurrentUser();
-        return user != null ? user.getId() : null;
+        SecurityManager securityManager = ThreadContext.getSecurityManager();
+        if (securityManager == null) {
+            try {
+                BaseLoginUser user = getCurrentUser();
+                return user != null ? user.getId() : null;
+            }
+            catch (Exception e) {
+                log.warn("当前线程无法获取登录用户ID：SecurityManager is null");
+            }
+        }
+        else {
+            BaseLoginUser user = getCurrentUser();
+            return user != null ? user.getId() : null;
+        }
+        return null;
     }
 
     /**

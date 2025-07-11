@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2099, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -65,6 +65,9 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
      * @param entity
      */
     protected void beforeCreate(Dictionary entity) {
+        if(existsDictType(entity.getType())) {
+            throw new BusinessException(Status.FAIL_VALIDATION, "exception.business.dictionary.duplicate-type");
+        }
         dictionaryCacheManager.removeCachedItems(entity.getType());
         log.debug("字典 {}:{} 的缓存已被移除", entity.getItemName(), entity.getType());
     }

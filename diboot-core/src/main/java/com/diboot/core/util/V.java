@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2099, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -306,6 +306,25 @@ public class V {
      */
     public static boolean containsIgnoreCase(Collection<String> collection, String target) {
         return collection != null && (collection.contains(target) || collection.contains(target.toLowerCase()) || collection.contains(target.toUpperCase()));
+    }
+
+    /**
+     * 集合中是否包含指定元素列表中的任意一个
+     *
+     * @param collection 集合
+     * @param searchList 查找元素list
+     * @return 集合为空或者不包含元素，则返回false
+     */
+    public static <T> boolean containsAny(Collection<T> collection, Collection<T> searchList) {
+        if(collection == null) {
+            return searchList == null;
+        }
+        for (T target : searchList) {
+            if (collection.contains(target)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -751,7 +770,7 @@ public class V {
      *
      * @return 违法约束的集合
      */
-    public static <T> Set<ConstraintViolation<T>> validateBean(T obj, Class<?>... groups) {
+    public synchronized static <T> Set<ConstraintViolation<T>> validateBean(T obj, Class<?>... groups) {
         if (VALIDATOR == null) {
             VALIDATOR = Validation.byProvider(HibernateValidator.class).configure().failFast(false).buildValidatorFactory().getValidator();
         }

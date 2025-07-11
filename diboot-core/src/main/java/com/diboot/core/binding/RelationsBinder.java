@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2099, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -17,6 +17,7 @@ package com.diboot.core.binding;
 
 import com.diboot.core.binding.helper.DeepRelationsBinder;
 import com.diboot.core.binding.helper.RelationsBindingManager;
+import com.diboot.core.binding.helper.VirtualThreadExecutor;
 import com.diboot.core.binding.parser.BindAnnotationGroup;
 import com.diboot.core.binding.parser.FieldAnnotation;
 import com.diboot.core.binding.parser.ParserCache;
@@ -29,9 +30,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.context.request.RequestContextHolder;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 /**
  * 关联关系绑定管理器
@@ -114,7 +118,32 @@ public class RelationsBinder {
             return;
         }
         // 获取VO类
-        Class<?> voClass = voList.get(0).getClass();
+        List<Class<?>> uniqueClassesList = new ArrayList<>();
+        uniqueClassesList.add(voList.get(0).getClass());
+        voList.forEach(vo -> {
+            if(!uniqueClassesList.contains(vo.getClass())){
+                uniqueClassesList.add(vo.getClass());
+            }
+        });
+        if(uniqueClassesList.size() == 1) {
+            bind(uniqueClassesList.get(0), voList, enableDeepBind);
+        }
+        else {
+            for(Class<?> voClazz : uniqueClassesList){
+                bind(voClazz, voList.stream().filter(vo->vo.getClass().equals(voClazz)).toList(), enableDeepBind);
+            }
+        }
+    }
+
+    /**
+     * 自动绑定多个VO集合的关联对象
+     * @param voList 需要注解绑定的对象集合
+     * @param enableDeepBind
+     * @return
+     * @throws Exception
+     */
+    private static <VO> void bind(Class<?> voClass, List<VO> voList, boolean enableDeepBind){
+        // 获取VO类
         BindAnnotationGroup bindAnnotationGroup = ParserCache.getBindAnnotationGroup(voClass);
         if(bindAnnotationGroup.isEmpty()){
             return;
@@ -122,34 +151,77 @@ public class RelationsBinder {
         RequestContextHolder.setRequestAttributes(RequestContextHolder.getRequestAttributes(), true);
         LocaleContextHolder.setLocaleContext(LocaleContextHolder.getLocaleContext(),true);
         RelationsBindingManager bindingManager = getBindingManager();
+        ExecutorService bindingExecutor = VirtualThreadExecutor.getVirtualThreadExecutor();
+        List<Future<?>> binderFutures = bindingExecutor != null? new ArrayList<>() : null;
         // 绑定Field字段名
         Map<String, List<FieldAnnotation>> bindFieldGroupMap = bindAnnotationGroup.getBindFieldGroupMap();
         if(bindFieldGroupMap != null){
             for(Map.Entry<String, List<FieldAnnotation>> entry : bindFieldGroupMap.entrySet()){
-                bindingManager.doBindingField(voList, entry.getValue());
+                if(bindingExecutor != null) {
+                    Future<?> bindFieldFuture = bindingExecutor.submit(() -> {
+                        bindingManager.doBindingField(voList, entry.getValue());
+                    });
+                    binderFutures.add(bindFieldFuture);
+                }
+                else {
+                    bindingManager.doBindingField(voList, entry.getValue());
+                }
             }
         }
         // 绑定数据字典
         List<FieldAnnotation> dictAnnoList = bindAnnotationGroup.getBindDictAnnotations();
         if(dictAnnoList != null){
+            if(bindAnnotationGroup.isRequireSequential() && bindingExecutor != null && V.notEmpty(binderFutures)){
+                try {
+                    for (Future<?> future : binderFutures) {
+                        future.get();
+                    }
+                    binderFutures.clear();
+                }
+                catch (Exception e) {
+                    log.error("虚拟线程执行绑定异常: ", e);
+                }
+            }
             for(FieldAnnotation annotation : dictAnnoList){
-                bindingManager.doBindingDict(voList, annotation);
+                if(bindingExecutor != null) {
+                    Future<?> bindDictFuture = bindingExecutor.submit(() -> {
+                        bindingManager.doBindingDict(voList, annotation);
+                    });
+                    binderFutures.add(bindDictFuture);
+                }
+                else {
+                    bindingManager.doBindingDict(voList, annotation);
+                }
             }
         }
         // 绑定Entity实体
         List<FieldAnnotation> entityAnnoList = bindAnnotationGroup.getBindEntityAnnotations();
         if(entityAnnoList != null){
             for(FieldAnnotation anno : entityAnnoList){
-                // 绑定关联对象entity
-                bindingManager.doBindingEntity(voList, anno);
+                if(bindingExecutor != null) {
+                    Future<?> bindEntFuture = bindingExecutor.submit(() -> {
+                        bindingManager.doBindingEntity(voList, anno);
+                    });
+                    binderFutures.add(bindEntFuture);
+                }
+                else {
+                    bindingManager.doBindingEntity(voList, anno);
+                }
             }
         }
         // 绑定Entity实体List
         List<FieldAnnotation> entitiesAnnoList = bindAnnotationGroup.getBindEntityListAnnotations();
         if(entitiesAnnoList != null){
             for(FieldAnnotation anno : entitiesAnnoList){
-                // 绑定关联对象entity
-                bindingManager.doBindingEntityList(voList, anno);
+                if(bindingExecutor != null) {
+                    Future<?> bindEntListFuture = bindingExecutor.submit(() -> {
+                        bindingManager.doBindingEntityList(voList, anno);
+                    });
+                    binderFutures.add(bindEntListFuture);
+                }
+                else {
+                    bindingManager.doBindingEntityList(voList, anno);
+                }
             }
         }
         // 绑定Entity field List
@@ -157,7 +229,15 @@ public class RelationsBinder {
         if(bindFieldListGroupMap != null){
             // 解析条件并且执行绑定
             for(Map.Entry<String, List<FieldAnnotation>> entry : bindFieldListGroupMap.entrySet()){
-                bindingManager.doBindingFieldList(voList, entry.getValue());
+                if(bindingExecutor != null) {
+                    Future<?> bindFldListFuture = bindingExecutor.submit(() -> {
+                        bindingManager.doBindingFieldList(voList, entry.getValue());
+                    });
+                    binderFutures.add(bindFldListFuture);
+                }
+                else {
+                    bindingManager.doBindingFieldList(voList, entry.getValue());
+                }
             }
         }
         // 绑定count子项计数
@@ -165,7 +245,15 @@ public class RelationsBinder {
         if(countAnnoList != null){
             for(FieldAnnotation anno : countAnnoList){
                 // 绑定关联对象count计数
-                bindingManager.doBindingCount(voList, anno);
+                if(bindingExecutor != null) {
+                    Future<?> bindCountFuture = bindingExecutor.submit(() -> {
+                        bindingManager.doBindingCount(voList, anno);
+                    });
+                    binderFutures.add(bindCountFuture);
+                }
+                else {
+                    bindingManager.doBindingCount(voList, anno);
+                }
             }
         }
         // 开启国际化
@@ -174,10 +262,31 @@ public class RelationsBinder {
             List<FieldAnnotation> i18nAnnoList = bindAnnotationGroup.getBindI18nAnnotations();
             if(i18nAnnoList != null){
                 for(FieldAnnotation anno : i18nAnnoList){
-                    // 绑定关联对象count计数
-                    bindingManager.doBindingI18n(voList, anno);
+                    if(bindingExecutor != null) {
+                        Future<?> bindI18nFuture = bindingExecutor.submit(() -> {
+                            bindingManager.doBindingI18n(voList, anno);
+                        });
+                        binderFutures.add(bindI18nFuture);
+                    }
+                    else {
+                        bindingManager.doBindingI18n(voList, anno);
+                    }
                 }
             }
+        }
+        if(bindingExecutor != null) {
+            if(V.notEmpty(binderFutures)) {
+                try {
+                    for (Future<?> future : binderFutures) {
+                        future.get();
+                    }
+                }
+                catch (Exception e) {
+                    log.error("虚拟线程汇总执行绑定异常: ", e);
+                }
+            }
+            bindingExecutor.shutdown();
+            log.debug("虚拟线程执行关联绑定完成 <-=");
         }
         // 深度绑定
         if(enableDeepBind){

@@ -14,13 +14,16 @@ defineExpose({
 </script>
 
 <template>
-  <el-dialog v-model="visible" :width="720" :title="$t('title.detail')">
+  <el-dialog v-model="visible" :width="720" :title="$t('title.detail')" draggable>
     <el-descriptions v-loading="loading" :column="2" class="margin-top" border>
       <el-descriptions-item :label="$t('position.name')">
         {{ model.name }}
       </el-descriptions-item>
       <el-descriptions-item :label="$t('position.code')">
         {{ model.code }}
+      </el-descriptions-item>
+      <el-descriptions-item :label="$t('position.user')">
+        {{ [...new Set(model.userNames ?? [])].join('、') }}
       </el-descriptions-item>
       <el-descriptions-item :label="$t('position.gradeName')">
         {{ model.gradeName }}

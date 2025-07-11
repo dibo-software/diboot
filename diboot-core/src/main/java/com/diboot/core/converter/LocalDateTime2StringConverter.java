@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2029, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2099, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -15,7 +15,6 @@
  */
 package com.diboot.core.converter;
 
-import com.diboot.core.converter.annotation.CollectThisConvertor;
 import com.diboot.core.util.D;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
