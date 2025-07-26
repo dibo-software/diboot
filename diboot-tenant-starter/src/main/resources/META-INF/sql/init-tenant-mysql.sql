@@ -11,7 +11,7 @@ create table dbt_iam_tenant
     description varchar(300)                          null comment '描述',
     status      varchar(10) default 'A'               not null comment '租户状态',
     is_deleted  tinyint(1)  default 0                 not null comment '删除标记',
-    create_by   bigint      default 0                 null comment '创建人',
+    create_by   varchar(32)                  null comment '创建人',
     create_time datetime    default CURRENT_TIMESTAMP not null comment '创建时间',
     update_time datetime    default CURRENT_TIMESTAMP null comment '更新时间'
 ) comment '租户';
