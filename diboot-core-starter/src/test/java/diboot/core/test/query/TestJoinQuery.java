@@ -25,16 +25,11 @@ import com.diboot.core.config.Cons;
 import com.diboot.core.vo.Pagination;
 import diboot.core.test.StartupApplication;
 import diboot.core.test.binder.dto.DepartmentDTO;
+import diboot.core.test.binder.dto.PetDTO;
 import diboot.core.test.binder.dto.ProblemDTO;
 import diboot.core.test.binder.dto.UserDTO;
-import diboot.core.test.binder.entity.Department;
-import diboot.core.test.binder.entity.Problem;
-import diboot.core.test.binder.entity.StrIdTest;
-import diboot.core.test.binder.entity.User;
-import diboot.core.test.binder.service.DepartmentService;
-import diboot.core.test.binder.service.ProblemService;
-import diboot.core.test.binder.service.StrIdTestService;
-import diboot.core.test.binder.service.UserService;
+import diboot.core.test.binder.entity.*;
+import diboot.core.test.binder.service.*;
 import diboot.core.test.binder.vo.DepartmentVO;
 import diboot.core.test.config.SpringMvcConfig;
 import org.apache.ibatis.jdbc.SQL;
@@ -69,6 +64,11 @@ public class TestJoinQuery {
 
     @Autowired
     ProblemService problemService;
+
+    @Autowired
+    PetService petService;
+    @Autowired
+    PetAdoptService petAdoptService;
 
     @Test
     public void testDateCompaire(){
@@ -385,5 +385,23 @@ public class TestJoinQuery {
         QueryWrapper<Problem> queryWrapper = QueryBuilder.toQueryWrapper(problemDTO);
         List<Problem> list = problemService.getEntityList(queryWrapper);
         Assert.assertTrue(list.size() >= 1);
+    }
+
+    @Test
+    public void testJoinQueryPerformance() {
+        long start = System.currentTimeMillis();
+        PetDTO petDTO = new PetDTO();
+        //petDTO.setCode("#DOG1-381");
+        petDTO.setPetAdoptName("宠物");
+        QueryWrapper<Pet> queryWrapper = QueryBuilder.toQueryWrapper(petDTO);
+
+        Pagination pagination = new Pagination();
+        List<Pet> list = petService.getEntityList(queryWrapper, pagination);
+        Assert.assertTrue(list.size() >= 1);
+        long count = pagination.getTotalCount();
+        Assert.assertTrue(count >= 1);
+
+        long time = System.currentTimeMillis() - start;
+        System.out.println(time + " 执行完成。"+count);
     }
 }
