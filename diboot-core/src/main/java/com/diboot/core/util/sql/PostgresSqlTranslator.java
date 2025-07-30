@@ -36,13 +36,11 @@ public class PostgresSqlTranslator extends BaseTranslator {
     @Override
     protected String translateColDefineSql(String colDefineSql) {
         // boolean 类型
-        if(S.containsIgnoreCase(colDefineSql, "tinyint")) {
-            colDefineSql = S.replaceEach(colDefineSql,
-                new String[]{"tinyint(1)", "tinyint", "DEFAULT '1'", "DEFAULT 1", "default 1", "DEFAULT '0'", "default 0", "DEFAULT 0"},
-                new String[]{"BOOLEAN", "BOOLEAN", "DEFAULT TRUE", "DEFAULT TRUE", "DEFAULT TRUE", "DEFAULT FALSE", "DEFAULT FALSE", "DEFAULT FALSE"}
-            );
-        }
-        else if(S.containsIgnoreCase(colDefineSql, "datetime")) {
+        colDefineSql = S.replaceEach(colDefineSql,
+            new String[]{"tinyint(1)", "tinyint", " text", " mediumtext", " longtext", "DEFAULT '1'", "DEFAULT 1", "default 1", "DEFAULT '0'", "default 0", "DEFAULT 0"},
+            new String[]{"BOOLEAN", "BOOLEAN", " TEXT", " TEXT", " TEXT", "DEFAULT TRUE", "DEFAULT TRUE", "DEFAULT TRUE", "DEFAULT FALSE", "DEFAULT FALSE", "DEFAULT FALSE"}
+        );
+        if(S.containsIgnoreCase(colDefineSql, "datetime")) {
             colDefineSql = S.replaceEach(colDefineSql, new String[] {"datetime"}, new String[]{"timestamp"});
         }
         return escapeKeyword(colDefineSql);

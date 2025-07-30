@@ -35,8 +35,8 @@ public final class SqlServerTranslator extends BaseTranslator {
     @Override
     protected String translateColDefineSql(String colDefineSql) {
         colDefineSql = S.replaceEach(colDefineSql,
-            new String[]{"tinyint(1)"},
-            new String[]{"tinyint"}
+            new String[]{"tinyint(1)", " text", " mediumtext", " longtext"},
+            new String[]{"tinyint", " TEXT", " TEXT", " TEXT"}
         );
         return escapeKeyword(colDefineSql);
     }
