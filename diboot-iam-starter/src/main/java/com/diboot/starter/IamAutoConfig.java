@@ -252,7 +252,7 @@ public class IamAutoConfig {
     }
 
     @Configuration
-    private class ThreadPoolTaskExecutorConfig {
+    public class ThreadPoolTaskExecutorConfig {
         public ThreadPoolTaskExecutorConfig(@Qualifier("applicationTaskExecutor") ObjectProvider<ThreadPoolTaskExecutor> taskExecutorObjectProvider) {
             log.info("初始化: ThreadPoolTaskExecutor 指定子线程传递用户信息");
             taskExecutorObjectProvider.ifAvailable(taskExecutor -> taskExecutor.setTaskDecorator(new ShiroContextTaskDecorator()));
