@@ -16,6 +16,8 @@
 package com.diboot.file.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.diboot.core.binding.query.BindQuery;
+import com.diboot.core.binding.query.Comparison;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.file.util.FileHelper;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -70,6 +72,7 @@ public class FileRecord extends BaseEntity<String> {
     /**
      * 文件名称
      */
+    @BindQuery(comparison = Comparison.LIKE)
     private String fileName;
 
     /**
