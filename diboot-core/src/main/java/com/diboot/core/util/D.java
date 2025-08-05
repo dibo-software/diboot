@@ -427,6 +427,34 @@ public class D extends DateUtils{
 	}
 
 	/**
+	 * 转换耗时毫秒数为 天,小时,分钟,秒 显示文本
+	 * @param duration 时长毫秒数
+	 */
+	public static String formatDurationCnLabel(Long duration) {
+		if (duration == null) {
+			return "-";
+		}
+		long days = duration / MS_1DAY;
+		if (days > 0) {
+			return days + "天";
+		}
+		// 必然小于MS_1DAY，不需要取模
+		long hours = duration / MS_1HOUR;
+		if (hours > 0) {
+			return hours + "小时";
+		}
+		long minutes = duration / MS_1MINUTE;
+		if (minutes > 0) {
+			return minutes + "分钟";
+		}
+		long seconds = duration / MS_1SECOND;
+		if (seconds > 0) {
+			return seconds + "秒";
+		}
+		return "<1秒";
+	}
+
+	/**
 	 * 字符串时间戳转日期
 	 */
 	public static Date convert2Date(String date){
