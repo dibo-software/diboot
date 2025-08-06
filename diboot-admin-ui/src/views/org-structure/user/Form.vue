@@ -304,9 +304,9 @@ const rules: FormRules = {
           </el-form-item>
         </el-col>
         <el-col :md="12" :sm="24">
-          <el-form-item prop="birthday" :label="$t('user.birthday')">
+          <el-form-item prop="birthdate" :label="$t('user.birthday')">
             <el-date-picker
-              v-model="model.birthday"
+              v-model="model.birthdate"
               value-format="YYYY-MM-DD"
               type="date"
               :placeholder="$t('user.placeholder.birthday')"

@@ -68,6 +68,9 @@ defineExpose({
           </template>
         </template>
       </el-descriptions-item>
+      <el-descriptions-item :label="$t('user.birthday')">
+        {{ model.birthdate }}
+      </el-descriptions-item>
       <el-descriptions-item :label="$t('user.sortId')">
         {{ model.sortId }}
       </el-descriptions-item>
