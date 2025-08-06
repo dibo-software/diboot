@@ -164,7 +164,7 @@ public abstract class BaseExcelFileController extends BaseController {
                     .setFileName(errorDataFileName)
                     .setFileSize(fileSize)
                     .setStoragePath(errorDataFilePath)
-                    .setAccessUrl(fileStorageService.buildAccessUrl(errorDataFileUidName, ""));
+                    .setAccessUrl(fileStorageService.buildAccessUrl(errorDataFileUidName, "xlsx"));
         } else {
             errorFile = fileStorageService.save(Files.newInputStream(errDataFile.toPath()), errorDataFileName, fileSize);
             FileHelper.deleteFile(errorDataFilePath);
