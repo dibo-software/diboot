@@ -136,7 +136,9 @@ public class UserExcelController extends BaseExcelFileController {
         for (IamUserVO vo : userVoList) {
             UserExportModel excelModel = new UserExportModel();
             BeanUtils.copyProperties(vo, excelModel);
-            excelModel.setGender(vo.getGenderLabel().getLabel());
+            if(V.notEmpty(vo.getGenderLabel())) {
+                excelModel.setGender(vo.getGenderLabel().getLabel());
+            }
             excelModelList.add(excelModel);
         }
         return excelModelList;
