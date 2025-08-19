@@ -7,11 +7,11 @@
     <parent>
         <artifactId>diboot-root</artifactId>
         <groupId>com.diboot</groupId>
-        <version>3.7.0</version>
+        <version>3.7.1</version>
     </parent>
 
     <artifactId>diboot-file-spring-boot-starter</artifactId>
-    <version>3.7.0</version>
+    <version>3.7.1</version>
     <packaging>jar</packaging>
     <description>diboot file component project</description>
 
@@ -44,7 +44,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-compress</artifactId>
-            <version>1.27.1</version>
+            <version>1.28.0</version>
         </dependency>
 
         <!-- http -->
@@ -65,7 +65,7 @@
         <dependency>
             <groupId>com.aliyun.oss</groupId>
             <artifactId>aliyun-sdk-oss</artifactId>
-            <version>3.18.2</version>
+            <version>3.18.3</version>
             <scope>provided</scope>
         </dependency>
 
