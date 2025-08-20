@@ -21,20 +21,21 @@ import com.diboot.core.config.BaseConfig;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.core.util.BeanUtils;
+import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.LabelValue;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.IamOrg;
+import com.diboot.iam.entity.IamUser;
 import com.diboot.iam.mapper.IamOrgMapper;
 import com.diboot.iam.service.IamOrgService;
+import com.diboot.iam.service.IamUserService;
 import com.diboot.iam.vo.IamOrgVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -176,6 +177,28 @@ public class IamOrgServiceImpl extends BaseServiceImpl<IamOrgMapper, IamOrg> imp
     @Override
     public String getTenantRootOrgId(String tenantId) {
         return getMapper().getTenantRootOrgId(tenantId, BaseConfig.getActiveFlagValue());
+    }
+
+    @Override
+    public Map<String, List<LabelValue>> getOrgUsersMap(List<String> orgIds) {
+        if (V.isEmpty(orgIds)) {
+            return Collections.emptyMap();
+        }
+        IamUserService userService = ContextHolder.getBean(IamUserService.class);
+        LambdaQueryWrapper<IamUser> queryWrapper = Wrappers.<IamUser>lambdaQuery()
+                .select(IamUser::getRealname, IamUser::getId, IamUser::getOrgId)
+                .in( IamUser::getOrgId, orgIds);
+        List<LabelValue> orgUsers = userService.getLabelValueList(queryWrapper);
+        if (V.isEmpty(orgUsers)) {
+            return Collections.emptyMap();
+        }
+        Map<String, List<LabelValue>> orgUsersMap = new HashMap<>();
+        for (LabelValue userItem : orgUsers) {
+            String orgId = (String)userItem.getExt();
+            List<LabelValue> userList = orgUsersMap.computeIfAbsent(orgId, k -> new ArrayList<>());
+            userList.add(userItem);
+        }
+        return orgUsersMap;
     }
 
 }

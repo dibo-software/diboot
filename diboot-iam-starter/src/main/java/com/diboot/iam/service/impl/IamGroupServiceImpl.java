@@ -17,17 +17,17 @@ package com.diboot.iam.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.diboot.core.service.impl.BaseServiceImpl;
+import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.LabelValue;
 import com.diboot.iam.entity.IamGroup;
 import com.diboot.iam.mapper.IamGroupMapper;
 import com.diboot.iam.service.IamGroupService;
+import com.diboot.iam.service.IamUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -84,6 +84,42 @@ public class IamGroupServiceImpl extends BaseServiceImpl<IamGroupMapper, IamGrou
             return newGroupList;
         }
         return Collections.emptyList();
+    }
+
+    @Override
+    public Map<String, List<LabelValue>> getGroupUsersMap(List<String> groupIds) {
+        LambdaQueryWrapper<IamGroup> queryWrapper = new LambdaQueryWrapper<IamGroup>()
+                .select(IamGroup::getId, IamGroup::getMembers)
+                .in(IamGroup::getId, groupIds);
+        List<IamGroup> groupList = getEntityList(queryWrapper);
+        if (V.isEmpty(groupList)) {
+            return Collections.emptyMap();
+        }
+        Map<String, List<LabelValue>> group2UsersMap = new HashMap<>();
+        List<String> groupMembers = new ArrayList<>();
+        for (IamGroup group : groupList) {
+            String groupId = group.getId();
+            List<LabelValue> userList = group2UsersMap.computeIfAbsent(groupId, k -> new ArrayList<>());
+            if (V.notEmpty(group.getMembers())) {
+                for (String userId : group.getMembers()) {
+                    userList.add(new LabelValue(null, userId));
+                }
+            }
+            groupMembers.addAll(group.getMembers());
+        }
+        groupMembers = groupMembers.stream().distinct().collect(Collectors.toList());
+
+        IamUserService userService = ContextHolder.getBean(IamUserService.class);
+        Map<String, LabelValue> userMap = userService.getLabelValueMap(groupMembers);
+        for (Map.Entry<String, List<LabelValue>> entry : group2UsersMap.entrySet()) {
+            for (LabelValue labelValue : entry.getValue()) {
+                LabelValue user = userMap.get(labelValue.getValue());
+                if (user != null) {
+                    labelValue.setLabel(user.getLabel());
+                }
+            }
+        }
+        return group2UsersMap;
     }
 
 }

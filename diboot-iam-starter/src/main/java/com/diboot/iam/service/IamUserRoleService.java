@@ -16,6 +16,7 @@
 package com.diboot.iam.service;
 
 import com.diboot.core.service.BaseService;
+import com.diboot.core.vo.LabelValue;
 import com.diboot.iam.auth.IamExtensible;
 import com.diboot.iam.entity.BaseLoginUser;
 import com.diboot.iam.entity.IamRole;
@@ -24,6 +25,7 @@ import com.diboot.iam.util.IamSecurityUtils;
 import com.diboot.iam.vo.IamRoleVO;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 用户角色关联相关Service
@@ -125,4 +127,12 @@ public interface IamUserRoleService extends BaseService<IamUserRole> {
      * @return
      */
     List<String> getUserIdsByRoleIds(List<String> roleIds);
+
+    /**
+     * 根据角色ids获取对应的用户id及名称
+     * @param roleIds
+     * @return
+     */
+    Map<String, List<LabelValue>> getRoleUsersMap(List<String> roleIds);
+
 }

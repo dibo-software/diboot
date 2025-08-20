@@ -16,9 +16,11 @@
 package com.diboot.iam.service;
 
 import com.diboot.core.service.BaseService;
+import com.diboot.core.vo.LabelValue;
 import com.diboot.iam.entity.IamUserPosition;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 用户岗位关联相关Service
@@ -70,4 +72,12 @@ public interface IamUserPositionService extends BaseService<IamUserPosition> {
      * @return
      */
     List<String> getUserIdsByPosition(String orgId, List<String> positionIds);
+
+    /**
+     * 根据岗位ids获取对应的用户id及名称
+     * @param orgId
+     * @return
+     */
+    Map<String, List<LabelValue>> getPositionUsersMap(String orgId, List<String> positionIds);
+
 }
