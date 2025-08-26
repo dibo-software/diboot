@@ -16,6 +16,7 @@
 package com.diboot.iam.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.exception.BusinessException;
@@ -86,6 +87,25 @@ public class IamOrgServiceImpl extends BaseServiceImpl<IamOrgMapper, IamOrg> imp
                 } else {
                     iamOrg.setParentIdsPath(S.joinWith(Cons.SEPARATOR_COMMA, parentOrg.getParentIdsPath(), parentOrg.getId()));
                 }
+            }
+        }
+    }
+
+    /**
+     * 更新之前同步更新其他关联数据
+     */
+    protected void beforeUpdate(IamOrg entity){
+        super.beforeUpdate(entity);
+        // 由 部门 改为 公司
+        if(Cons.DICTCODE_ORG_TYPE.COMP.name().equals(entity.getType())) {
+            IamOrg oldOrg = getEntity(entity.getId());
+            if (Cons.DICTCODE_ORG_TYPE.DEPT.name().equals(oldOrg.getType())) {
+                // 更新其下属部门节点rootOrgId
+                List<String> childOrgIds = getChildOrgIds(entity.getId());
+                LambdaUpdateWrapper<IamOrg> updateWrapper = Wrappers.lambdaUpdate();
+                updateWrapper.set(IamOrg::getRootOrgId, entity.getId()).in(IamOrg::getId, childOrgIds);
+                updateEntity(updateWrapper);
+                log.info("同步更新子节点的rootOrgId为 {}", entity.getId());
             }
         }
     }
