@@ -74,6 +74,7 @@ public class IamPosition extends BaseEntity<String> {
      */
     @NotNull(message = "{validation.iamPosition.code.NotNull.message}")
     @Length(max = 50, message = "{validation.iamPosition.code.Length.message}")
+    @BindQuery(comparison = Comparison.LIKE)
     @TableField()
     private String code;
 
