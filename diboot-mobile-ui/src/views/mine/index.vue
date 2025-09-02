@@ -14,9 +14,10 @@ const login = () => {
   auth.clearToken()
   router.push({ name: 'Login' }).finally()
 }
-
+const hasMorePosition = computed(() => positions.value && positions.value.length > 1)
 const show = ref(false);
 const showPopup = () => {
+  if (!hasMorePosition.value) return
   show.value = true;
 }
 
@@ -40,15 +41,16 @@ const switchPosition = async (selectedPosition: LabelValue) => {
     <van-cell-group>
       <van-cell :title="$t('mine.userNum')" size="large" icon="user-o" :value="authStore.info?.userNum" />
       <van-cell :title="$t('mine.orgName')" size="large" icon="cluster-o" :value="authStore.info?.orgIdLabel" />
-      <van-cell is-link size="large" icon="points" :value="$t('mine.switchPosition')"  @click="showPopup">
+      <van-cell v-if="hasMorePosition" is-link size="large" icon="points" :value="$t('mine.switchPosition')"  @click="showPopup">
         <template #title>
           <span class="custom-title">{{$t('mine.position')}}</span>
           <van-badge :dot="position.value === curPosition?.value"  v-for="(position, idx) in positions" :key="idx" :offset="[-5, 5]">
             <van-tag class="custom-tag" type="primary" :plain="position.value !== curPosition?.value">{{position?.label}}</van-tag>
           </van-badge>
-
         </template>
       </van-cell>
+      <van-cell v-else :title="$t('mine.position')" size="large" icon="points" :value="curPosition?.label" />
+
       <van-cell :title="$t('mine.mobilePhone')" size="large" icon="phone-o" :value="authStore.info?.mobilePhone" />
       <van-cell :title="$t('mine.email')" size="large" icon="envelop-o" :value="authStore.info?.email" />
     </van-cell-group>
