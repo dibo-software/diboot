@@ -47,6 +47,17 @@ public interface IamUserPositionService extends BaseService<IamUserPosition> {
      */
     List<String> getPositionIdsByOrg(String orgId);
 
+
+
+    /**
+     * 获取用户岗位（包含主岗和兼职岗）
+     *
+     * @param userType
+     * @param userId
+     * @return
+     */
+    List<IamUserPosition> getUserPositions(String userType, String userId);
+
     /**
      * 获取用户的第一主岗
      *
@@ -55,6 +66,15 @@ public interface IamUserPositionService extends BaseService<IamUserPosition> {
      * @return
      */
     IamUserPosition getUserPrimaryPosition(String userType, String userId);
+
+    /**
+     * 获取用户的兼职岗
+     *
+     * @param userType
+     * @param userId
+     * @return
+     */
+    List<IamUserPosition> getUserPartTimeJobPosition(String userType, String userId);
 
     /**
      * 批量更新用户-岗位的关联关系

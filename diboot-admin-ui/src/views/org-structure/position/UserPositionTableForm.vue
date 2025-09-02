@@ -77,20 +77,20 @@ defineExpose({
         </template>
         <template #default="scope">
           <el-form-item
-              :prop="`${scope.$index}.orgId`"
-              :rules="{
+            :prop="`${scope.$index}.orgId`"
+            :rules="{
               required: true,
               message: `${$t('placeholder.select')} ${$t('org.dept')}`,
               trigger: 'blur'
             }"
           >
             <el-tree-select
-                v-model="scope.row.orgId"
-                :placeholder="`${$t('placeholder.select')} ${$t('org.dept')}`"
-                class="tree-selector"
-                :data="orgTree"
-                :default-expand-all="true"
-                :check-strictly="true"
+              v-model="scope.row.orgId"
+              :placeholder="`${$t('placeholder.select')} ${$t('org.dept')}`"
+              class="tree-selector"
+              :data="orgTree"
+              :default-expand-all="true"
+              :check-strictly="true"
             />
           </el-form-item>
         </template>

@@ -10,6 +10,8 @@ export interface IAuthStore {
   realname: string
   avatar?: string
   roles: Array<Role>
+  positions: Array<LabelValue>
+  curPosition?: LabelValue
   info?: UserModel
 }
 
@@ -19,6 +21,8 @@ export default defineStore('auth', {
       realname: '',
       avatar: undefined,
       roles: [],
+      positions: [],
+      curPosition: undefined,
       info: undefined
     }
   },
@@ -41,11 +45,18 @@ export default defineStore('auth', {
     },
     getInfo: async function (refresh = false) {
       try {
-        const res = await api.get<{ info: UserModel; roles: Array<Role> }>('/auth/user-info', { refresh })
+        const res = await api.get<{
+          info: UserModel
+          roles: Array<Role>
+          curPosition: LabelValue
+          positions: Array<LabelValue>
+        }>('/auth/user-info', { refresh })
         this.info = res.data?.info
         if (this.info?.avatarUrl) this.avatar = buildImgSrc(this.info?.avatarUrl)
         this.realname = `${this.info?.realname}`
         this.roles = res.data?.roles ?? []
+        this.positions = res.data?.positions ?? []
+        this.curPosition = res.data?.curPosition ?? {}
 
         if (import.meta.env.VITE_APP_ENABLE_I18N === 'true') {
           api
@@ -55,6 +66,17 @@ export default defineStore('auth', {
         }
       } catch (e) {
         throw new Error('获取登录用户信息异常', e)
+      }
+    },
+    /**
+     * 切换岗位
+     * @param position
+     */
+    async switchPosition(position: LabelValue) {
+      try {
+        await api.post('/auth/switch-position', position)
+      } finally {
+        window.location.reload()
       }
     },
     async logout() {
