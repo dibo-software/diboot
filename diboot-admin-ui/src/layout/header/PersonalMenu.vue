@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import useAuthStore from '@/store/auth'
-import type { MenuSelectEvent } from 'element-plus/es/components/menu/src/menu'
 
 import { ArrowDown, UserFilled, Moon, Sunny } from '@element-plus/icons-vue'
 const authStore = useAuthStore()

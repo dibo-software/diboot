@@ -5,6 +5,7 @@ const en: Locale = {
     userNum: 'User Num',
     orgName: 'Department',
     position: 'Position',
+    switchPosition: 'Switch Position',
     mobilePhone: 'Phone',
     email: 'Email',
     logout: 'Logout',
