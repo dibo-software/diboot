@@ -22,6 +22,7 @@ import com.diboot.core.util.S;
 import com.diboot.core.vo.LabelValue;
 
 import java.io.Serial;
+import java.util.List;
 
 /**
  * 可登录用户Base类定义
@@ -62,11 +63,25 @@ public abstract class BaseLoginUser extends BaseEntity<String> {
     @TableField(exist = false)
     private LabelValue extensionObj;
 
+    /**
+     * 兼职岗 + 主岗
+      */
+    @TableField(exist = false)
+    private List<LabelValue> positions;
+
     public LabelValue getExtensionObj(){
         return this.extensionObj;
     }
     public void setExtensionObj(LabelValue extensionObj){
         this.extensionObj = extensionObj;
+    }
+
+    public List<LabelValue> getPositions() {
+        return positions;
+    }
+
+    public void setPositions(List<LabelValue> positions) {
+        this.positions = positions;
     }
 
     public String getAuthToken(){

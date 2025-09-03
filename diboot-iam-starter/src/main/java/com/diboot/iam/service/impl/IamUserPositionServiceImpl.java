@@ -67,6 +67,15 @@ public class IamUserPositionServiceImpl extends BaseServiceImpl<IamUserPositionM
     }
 
     @Override
+    public List<IamUserPosition> getUserPositions(String userType, String userId) {
+        LambdaQueryWrapper<IamUserPosition> queryWrapper = Wrappers.<IamUserPosition>lambdaQuery()
+                .eq(IamUserPosition::getUserType, userType)
+                .eq(IamUserPosition::getUserId, userId);
+        List<IamUserPosition> userPositionList = baseMapper.selectList(queryWrapper);
+        return userPositionList;
+    }
+
+    @Override
     public IamUserPosition getUserPrimaryPosition(String userType, String userId) {
         LambdaQueryWrapper<IamUserPosition> queryWrapper = Wrappers.<IamUserPosition>lambdaQuery()
                 .eq(IamUserPosition::getUserType, userType)
@@ -80,6 +89,16 @@ public class IamUserPositionServiceImpl extends BaseServiceImpl<IamUserPositionM
             log.warn("用户 {}:{} 主岗多于1个，当前以第一个为准", userType, userId);
         }
         return userPositionList.get(0);
+    }
+
+    @Override
+    public List<IamUserPosition> getUserPartTimeJobPosition(String userType, String userId) {
+        LambdaQueryWrapper<IamUserPosition> queryWrapper = Wrappers.<IamUserPosition>lambdaQuery()
+                .eq(IamUserPosition::getUserType, userType)
+                .eq(IamUserPosition::getUserId, userId)
+                .eq(IamUserPosition::getIsPrimaryPosition, false);
+        List<IamUserPosition> userPositionList = baseMapper.selectList(queryWrapper);
+        return userPositionList;
     }
 
     @Transactional(rollbackFor = Exception.class)

@@ -72,6 +72,14 @@ public class TokenUtils {
         }
         return authtoken;
     }
+    /**
+     * 从Response中获取Token
+     * @param response
+     * @return
+     */
+    public static String getResponseToken(HttpServletResponse response) {
+        return response.getHeader(AUTH_HEADER);
+    }
 
     /**
      * 生成Token
