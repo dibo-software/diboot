@@ -17,6 +17,7 @@ package com.diboot.iam.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.diboot.core.binding.RelationsBinder;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.core.util.ContextHolder;
@@ -27,6 +28,7 @@ import com.diboot.iam.entity.IamUserPosition;
 import com.diboot.iam.mapper.IamUserPositionMapper;
 import com.diboot.iam.service.IamUserPositionService;
 import com.diboot.iam.service.IamUserService;
+import com.diboot.iam.vo.IamUserPositionVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -76,7 +78,7 @@ public class IamUserPositionServiceImpl extends BaseServiceImpl<IamUserPositionM
     }
 
     @Override
-    public IamUserPosition getUserPrimaryPosition(String userType, String userId) {
+    public IamUserPositionVO getUserPrimaryPosition(String userType, String userId) {
         LambdaQueryWrapper<IamUserPosition> queryWrapper = Wrappers.<IamUserPosition>lambdaQuery()
                 .eq(IamUserPosition::getUserType, userType)
                 .eq(IamUserPosition::getUserId, userId)
@@ -88,17 +90,20 @@ public class IamUserPositionServiceImpl extends BaseServiceImpl<IamUserPositionM
         if(userPositionList.size() > 1){
             log.warn("用户 {}:{} 主岗多于1个，当前以第一个为准", userType, userId);
         }
-        return userPositionList.get(0);
+        return RelationsBinder.convertAndBind(userPositionList.get(0), IamUserPositionVO.class);
     }
 
     @Override
-    public List<IamUserPosition> getUserPartTimeJobPosition(String userType, String userId) {
+    public List<IamUserPositionVO> getUserPartTimeJobPosition(String userType, String userId) {
         LambdaQueryWrapper<IamUserPosition> queryWrapper = Wrappers.<IamUserPosition>lambdaQuery()
                 .eq(IamUserPosition::getUserType, userType)
                 .eq(IamUserPosition::getUserId, userId)
                 .eq(IamUserPosition::getIsPrimaryPosition, false);
         List<IamUserPosition> userPositionList = baseMapper.selectList(queryWrapper);
-        return userPositionList;
+        if(V.isEmpty(userPositionList)){
+            return Collections.emptyList();
+        }
+        return RelationsBinder.convertAndBind(userPositionList, IamUserPositionVO.class);
     }
 
     @Transactional(rollbackFor = Exception.class)

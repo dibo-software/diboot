@@ -24,7 +24,10 @@ const showPopup = () => {
 
 const switchPosition = async (selectedPosition: LabelValue) => {
   // 如果当前切换的值 等于 当前岗位 不做处理
-  if (selectedPosition.value === curPosition?.value?.value) return
+  if (
+      `${selectedPosition.value}${selectedPosition?.ext?.orgId || ''}` ===
+      `${curPosition?.value?.value}${curPosition?.value?.ext?.orgId || ''}`
+  ) return
   // 执行岗位切换
   await authStore.switchPosition(selectedPosition)
 }
@@ -44,8 +47,10 @@ const switchPosition = async (selectedPosition: LabelValue) => {
       <van-cell v-if="hasMorePosition" is-link size="large" icon="points" :value="$t('mine.switchPosition')"  @click="showPopup">
         <template #title>
           <span class="custom-title">{{$t('mine.position')}}</span>
-          <van-badge :dot="position.value === curPosition?.value"  v-for="(position, idx) in positions" :key="idx" :offset="[-5, 5]">
-            <van-tag class="custom-tag" type="primary" :plain="position.value !== curPosition?.value">{{position?.label}}</van-tag>
+          <van-badge :dot="`${position.value}${position.ext?.orgId}` === `${curPosition?.value}${curPosition?.ext?.orgId}`"  v-for="(position, idx) in positions" :key="idx" :offset="[-5, 5]">
+            <van-tag class="custom-tag" type="primary" :plain="position.value !== curPosition?.value">
+              {{ position?.label }}{{ position?.ext?.orgName ? `(${position?.ext?.orgName})` : '' }}
+            </van-tag>
           </van-badge>
         </template>
       </van-cell>
@@ -60,8 +65,8 @@ const switchPosition = async (selectedPosition: LabelValue) => {
       <van-cell-group>
         <van-cell v-for="(position, idx) in positions" :key="idx" @click="switchPosition(position)">
           <template #title>
-            <van-badge :dot="position.value === curPosition?.value">
-              {{ position?.label }}
+            <van-badge :dot="`${position.value}${position.ext?.orgId}` === `${curPosition?.value}${curPosition?.ext?.orgId}`">
+              {{ position?.label }}{{ position?.ext?.orgName ? `(${position?.ext?.orgName})` : '' }}
             </van-badge>
           </template>
         </van-cell>

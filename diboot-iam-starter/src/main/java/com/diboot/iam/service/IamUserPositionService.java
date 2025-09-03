@@ -18,6 +18,7 @@ package com.diboot.iam.service;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.vo.LabelValue;
 import com.diboot.iam.entity.IamUserPosition;
+import com.diboot.iam.vo.IamUserPositionVO;
 
 import java.util.List;
 import java.util.Map;
@@ -65,7 +66,7 @@ public interface IamUserPositionService extends BaseService<IamUserPosition> {
      * @param userId
      * @return
      */
-    IamUserPosition getUserPrimaryPosition(String userType, String userId);
+    IamUserPositionVO getUserPrimaryPosition(String userType, String userId);
 
     /**
      * 获取用户的兼职岗
@@ -74,7 +75,7 @@ public interface IamUserPositionService extends BaseService<IamUserPosition> {
      * @param userId
      * @return
      */
-    List<IamUserPosition> getUserPartTimeJobPosition(String userType, String userId);
+    List<IamUserPositionVO> getUserPartTimeJobPosition(String userType, String userId);
 
     /**
      * 批量更新用户-岗位的关联关系
