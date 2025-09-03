@@ -10,6 +10,7 @@ const en: Locale = {
       default: 'Medium',
       small: 'Small',
       personal: 'Personal Center',
+      switchPosition: 'Switch Position',
       logout: 'Logout',
       menuSearch: 'Menu Search'
     },

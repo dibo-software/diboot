@@ -49,7 +49,7 @@ const handleMenuSelect = (index: string, indexPath: string[]) => {
         <el-menu-item index="personal">{{ $t('layout.header.personal') }}</el-menu-item>
         <el-sub-menu v-if="curPosition?.label" index="switch_position">
           <template #title>
-            <span>切换岗位</span>
+            <span>{{ $t('layout.header.switchPosition') }}</span>
           </template>
           <el-menu-item v-for="(position, idx) in positions" :key="idx" :index="idx">
             <el-badge :is-dot="position.value === curPosition.value" :offset="[10, 20]">
