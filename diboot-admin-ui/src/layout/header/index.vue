@@ -3,7 +3,6 @@ import { ArrowDown, UserFilled, Moon, Sunny } from '@element-plus/icons-vue'
 import { isDark, isSmall } from '@/utils/theme'
 import MessageBell from './message-bell/index.vue'
 import MenuSearch from './MenuSearch.vue'
-import useAuthStore from '@/store/auth'
 import Logo from '@/assets/logo.png'
 import useAppStore from '@/store/app'
 import i18n from '@/utils/i18n'
@@ -13,17 +12,6 @@ withDefaults(defineProps<{ showLogo?: boolean }>(), { showLogo: true })
 
 const router = useRouter()
 const appStore = useAppStore()
-const authStore = useAuthStore()
-
-const { curPosition, positions } = storeToRefs(authStore)
-
-const logout = async () => {
-  await authStore.logout()
-}
-
-const goPersonal = () => {
-  router.push({ name: 'Personal' }).finally()
-}
 
 const openChatAi = () => router.push('/chat-ai')
 
