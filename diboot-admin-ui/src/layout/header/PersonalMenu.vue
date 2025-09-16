@@ -84,10 +84,10 @@ const handleMenuSelect = (index: string, indexPath: string[]) => {
   top: 120%; /* 位于触发元素下方 */
   left: 40%;
   z-index: 2000; /* 确保在其他元素之上 */
-  border: 1px solid #e4e7ed;
+  border: 1px solid var(--el-menu-border-color);
   border-radius: 4px;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-  background-color: #fff;
+  background-color: var(--el-bg-color-page);
   min-width: 160px;
 }
 .nested-menu {
