@@ -28,7 +28,7 @@ public class AutoFillMetaObjectHandler implements MetaObjectHandler {
 
     @Override
     public void updateFill(MetaObject metaObject) {
-        this.strictUpdateFill(metaObject, Cons.FieldName.updateTime.name(), LocalDateTime::now, LocalDateTime.class);
-        this.strictUpdateFill(metaObject, Cons.FieldName.updateBy.name(), IamSecurityUtils::getCurrentUserId, String.class);
+        this.setFieldValByName(Cons.FieldName.updateTime.name(), LocalDateTime.now(), metaObject);
+        this.setFieldValByName(Cons.FieldName.updateBy.name(), IamSecurityUtils.getCurrentUserId(), metaObject);
     }
 }
