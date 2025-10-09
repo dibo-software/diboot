@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ArrowDown, UserFilled, Moon, Sunny } from '@element-plus/icons-vue'
+import { Moon, Sunny } from '@element-plus/icons-vue'
 import { isDark, isSmall } from '@/utils/theme'
 import MessageBell from './message-bell/index.vue'
 import MenuSearch from './MenuSearch.vue'

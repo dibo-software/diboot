@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import useAuthStore from '@/store/auth'
 
-import { ArrowDown, UserFilled, Moon, Sunny } from '@element-plus/icons-vue'
+import { ArrowDown, UserFilled } from '@element-plus/icons-vue'
 const authStore = useAuthStore()
 
 const { curPosition, positions } = storeToRefs(authStore)
