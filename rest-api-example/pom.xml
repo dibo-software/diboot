@@ -154,9 +154,9 @@
         <dependency>
             <groupId>com.diboot</groupId>
             <artifactId>diboot-lcdp-devtools</artifactId>
-            <version>3.7.0</version>
+            <version>${diboot.version}</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/libs/diboot-lcdp-devtools-3.7.0.jar</systemPath>
+            <systemPath>${project.basedir}/libs/diboot-lcdp-devtools-${diboot.version}.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.mybatis.dynamic-sql</groupId>
