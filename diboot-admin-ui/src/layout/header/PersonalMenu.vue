@@ -60,7 +60,7 @@ const handleMenuSelect = (index: string, indexPath: string[]) => {
                 :is-dot="`${position.value}${position.ext?.orgId}` === `${curPosition.value}${curPosition?.ext?.orgId}`"
                 :offset="[10, 20]"
             >
-              {{ position?.label }}{{ position?.ext?.orgName ? `(${position?.ext?.orgName})` : '' }}
+              {{ position?.label }}{{ position?.ext?.orgName ? ` (${position?.ext?.orgName})` : '' }}
             </el-badge>
           </el-menu-item>
         </el-sub-menu>
