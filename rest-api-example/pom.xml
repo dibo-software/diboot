@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.3</version>
+        <version>3.5.6</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.example</groupId>
@@ -15,7 +15,7 @@
     <description>Rest API example project for Diboot</description>
 
     <properties>
-        <diboot.version>3.7.0</diboot.version>
+        <diboot.version>3.8.0</diboot.version>
     </properties>
 
     <dependencies>
@@ -29,7 +29,7 @@
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
-            <version>9.3.0</version>
+            <version>9.4.0</version>
         </dependency>
         <!-- sqlite 数据库驱动-->
 <!--        <dependency>-->
@@ -64,11 +64,11 @@
 <!--            <systemPath>${project.basedir}/libs/DmJdbcDriver18.jar</systemPath>-->
 <!--        </dependency>-->
 
-        <!-- redis可选依赖
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
-        </dependency>-->
+        <!-- redis可选依赖-->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-data-redis</artifactId>-->
+<!--        </dependency>-->
 
         <!-- diboot-core内核 -->
         <dependency>
@@ -154,9 +154,9 @@
         <dependency>
             <groupId>com.diboot</groupId>
             <artifactId>diboot-lcdp-devtools</artifactId>
-            <version>3.7.0</version>
+            <version>${diboot.version}</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/libs/diboot-lcdp-devtools-3.7.0.jar</systemPath>
+            <systemPath>${project.basedir}/libs/diboot-lcdp-devtools-${diboot.version}.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.mybatis.dynamic-sql</groupId>
@@ -166,7 +166,7 @@
         <dependency>
             <groupId>com.github.javaparser</groupId>
             <artifactId>javaparser-core</artifactId>
-            <version>3.26.4</version>
+            <version>3.27.1</version>
         </dependency>
         <!-- devtools 代码生成工具 及其相关依赖 end -->
 

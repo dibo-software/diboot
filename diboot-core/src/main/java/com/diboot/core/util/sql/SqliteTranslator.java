@@ -37,8 +37,8 @@ public class SqliteTranslator extends BaseTranslator {
     protected String translateColDefineSql(String colDefineSql) {
         // boolean 类型
         colDefineSql = S.replaceEach(colDefineSql,
-            new String[]{" smallint ", " int ", " tinyint(1) ", " tinyint ", " datetime ", " bigint ", " json ", " JSON ", " text", " VARCHAR("},
-            new String[]{" INTEGER ", " INTEGER ", " INTEGER ", " INTEGER ", " TEXT "," INTEGER ", " TEXT ", " TEXT ", " TEXT", " varchar("}
+            new String[]{" smallint ", " int ", " tinyint(1) ", " tinyint ", " datetime ", " bigint ", " json ", " JSON ", " text", " mediumtext", " longtext", " VARCHAR("},
+            new String[]{" INTEGER ", " INTEGER ", " INTEGER ", " INTEGER ", " TEXT "," INTEGER ", " TEXT ", " TEXT ", " TEXT", " TEXT", " TEXT", " varchar("}
         );
         if(S.contains(colDefineSql, "varchar(")) {
             colDefineSql = S.substringBefore(colDefineSql, "varchar(") + " TEXT " + S.substringAfter(colDefineSql, ") ");

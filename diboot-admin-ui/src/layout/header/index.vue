@@ -1,26 +1,17 @@
 <script setup lang="ts">
-import { ArrowDown, UserFilled, Moon, Sunny } from '@element-plus/icons-vue'
+import { Moon, Sunny } from '@element-plus/icons-vue'
 import { isDark, isSmall } from '@/utils/theme'
 import MessageBell from './message-bell/index.vue'
 import MenuSearch from './MenuSearch.vue'
-import useAuthStore from '@/store/auth'
 import Logo from '@/assets/logo.png'
 import useAppStore from '@/store/app'
 import i18n from '@/utils/i18n'
+import PersonalMenu from '@/layout/header/PersonalMenu.vue'
 
 withDefaults(defineProps<{ showLogo?: boolean }>(), { showLogo: true })
 
 const router = useRouter()
 const appStore = useAppStore()
-const authStore = useAuthStore()
-
-const logout = async () => {
-  await authStore.logout()
-}
-
-const goPersonal = () => {
-  router.push({ name: 'Personal' }).finally()
-}
 
 const openChatAi = () => router.push('/chat-ai')
 
@@ -108,21 +99,7 @@ const enableI18n = import.meta.env.VITE_APP_ENABLE_I18N === 'true'
           </el-dropdown-menu>
         </template>
       </el-dropdown>
-      <el-dropdown>
-        <span class="item">
-          <el-avatar :size="36" :icon="UserFilled" :src="authStore.avatar" />
-          <span style="margin: 0 8px">{{ authStore.realname }}</span>
-          <el-icon>
-            <arrow-down />
-          </el-icon>
-        </span>
-        <template #dropdown>
-          <el-dropdown-menu>
-            <el-dropdown-item @click="goPersonal">{{ $t('layout.header.personal') }}</el-dropdown-item>
-            <el-dropdown-item divided @click="logout()">{{ $t('layout.header.logout') }}</el-dropdown-item>
-          </el-dropdown-menu>
-        </template>
-      </el-dropdown>
+      <personal-menu />
     </div>
   </div>
 </template>

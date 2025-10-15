@@ -80,4 +80,11 @@ public interface IamOrgService extends BaseService<IamOrg> {
      */
     String getTenantRootOrgId(String tenantId);
 
+    /**
+     * 根据部门ids获取对应的用户id及名称
+     * @param orgIds
+     * @return
+     */
+    Map<String, List<LabelValue>> getOrgUsersMap(List<String> orgIds);
+
 }

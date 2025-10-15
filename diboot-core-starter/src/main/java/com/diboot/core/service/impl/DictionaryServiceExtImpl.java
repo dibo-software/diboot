@@ -65,7 +65,8 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
      * @param entity
      */
     protected void beforeCreate(Dictionary entity) {
-        if(existsDictType(entity.getType())) {
+        // 非添加子项时检查重复
+        if(V.isEmpty(entity.getParentId()) && existsDictType(entity.getType())) {
             throw new BusinessException(Status.FAIL_VALIDATION, "exception.business.dictionary.duplicate-type");
         }
         dictionaryCacheManager.removeCachedItems(entity.getType());

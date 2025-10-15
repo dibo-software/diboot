@@ -16,7 +16,7 @@ export interface UserModel {
   userNum: string
   gender: string
   genderLabel?: LabelValue<{ color?: string }>
-  birthday?: string
+  birthdate?: string
   mobilePhone?: string
   email?: string
   sortId?: number

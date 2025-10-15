@@ -77,10 +77,19 @@ public class DynamicSqlProvider {
     private <DTO> String buildDynamicSql(Page<?> page, QueryWrapper<DTO> ew){
         DynamicJoinQueryWrapper wrapper = (DynamicJoinQueryWrapper)ew;
         return new SQL() {{
-            SELECT_DISTINCT(formatSqlSelect(ew.getSqlSelect(), wrapper.getMainEntityClass(), page));
+            boolean requireDistinct = false;
+            List<AnnoJoiner> annoJoinerList = wrapper.getAnnoJoiners();
+            if(V.notEmpty(annoJoinerList)){
+                requireDistinct = annoJoinerList.stream().anyMatch(AnnoJoiner::isDistinct);
+            }
+            if(requireDistinct) {
+                SELECT_DISTINCT(formatSqlSelect(ew.getSqlSelect(), wrapper.getMainEntityClass(), page));
+            }
+            else {
+                SELECT(formatSqlSelect(ew.getSqlSelect(), wrapper.getMainEntityClass(), page));
+            }
             FROM(wrapper.getEntityTable()+" self");
             //提取字段，根据查询条件中涉及的表，动态join
-            List<AnnoJoiner> annoJoinerList = wrapper.getAnnoJoiners();
             if(V.notEmpty(annoJoinerList)){
                 Set<String> tempSet = new HashSet<>();
                 StringBuilder sb = new StringBuilder();

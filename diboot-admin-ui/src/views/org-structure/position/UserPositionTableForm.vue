@@ -73,6 +73,31 @@ defineExpose({
       <el-table-column width="250">
         <template #header>
           <span class="required-flag">*</span>
+          {{ $t('org.label') }}
+        </template>
+        <template #default="scope">
+          <el-form-item
+            :prop="`${scope.$index}.orgId`"
+            :rules="{
+              required: true,
+              message: `${$t('placeholder.select')} ${$t('org.dept')}`,
+              trigger: 'blur'
+            }"
+          >
+            <el-tree-select
+              v-model="scope.row.orgId"
+              :placeholder="`${$t('placeholder.select')} ${$t('org.dept')}`"
+              class="tree-selector"
+              :data="orgTree"
+              :default-expand-all="true"
+              :check-strictly="true"
+            />
+          </el-form-item>
+        </template>
+      </el-table-column>
+      <el-table-column width="250">
+        <template #header>
+          <span class="required-flag">*</span>
           {{ $t('position.label') }}
         </template>
         <template #default="scope">
@@ -104,31 +129,6 @@ defineExpose({
               }"
               data-type="IamPosition"
               :placeholder="$t('position.placeholder.label')"
-            />
-          </el-form-item>
-        </template>
-      </el-table-column>
-      <el-table-column width="250">
-        <template #header>
-          <span class="required-flag">*</span>
-          {{ $t('org.label') }}
-        </template>
-        <template #default="scope">
-          <el-form-item
-            :prop="`${scope.$index}.orgId`"
-            :rules="{
-              required: true,
-              message: `${$t('placeholder.select')} ${$t('org.dept')}`,
-              trigger: 'blur'
-            }"
-          >
-            <el-tree-select
-              v-model="scope.row.orgId"
-              :placeholder="`${$t('placeholder.select')} ${$t('org.dept')}`"
-              class="tree-selector"
-              :data="orgTree"
-              :default-expand-all="true"
-              :check-strictly="true"
             />
           </el-form-item>
         </template>

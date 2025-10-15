@@ -40,6 +40,8 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
+import org.apache.shiro.cache.Cache;
+import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 
@@ -111,6 +113,7 @@ public class IamAuthorizingRealm extends AuthorizingRealm {
                 LabelValue extensionObj = iamExtensible.getUserExtensionObj(iamAuthToken.getUserTypeClass().getSimpleName(), account.getUserId(), iamAuthToken.getExtObj());
                 if(extensionObj != null){
                     loginUser.setExtensionObj(extensionObj);
+                    loginUser.setPositions(extensionObj.getChildren());
                 }
             }
             // 清空当前用户缓存
@@ -203,6 +206,20 @@ public class IamAuthorizingRealm extends AuthorizingRealm {
             iamTenantPermission = ContextHolder.getBean(IamTenantPermission.class);
         }
         return iamTenantPermission;
+    }
+
+    /**
+     * 刷新用户信息缓存
+     *
+     * @param token
+     * @param loginUser
+     * @return
+     */
+    public Cache<Object, AuthenticationInfo> refreshAuthenticationCache(String token, BaseLoginUser loginUser) {
+        Cache<Object, AuthenticationInfo> cache = this.getAuthenticationCache();
+        SimpleAuthenticationInfo simpleAuthenticationInfo = new SimpleAuthenticationInfo(loginUser, token, new CustomSimpleByteSource(), this.getName());
+        cache.put(token, simpleAuthenticationInfo);
+        return cache;
     }
 
 }

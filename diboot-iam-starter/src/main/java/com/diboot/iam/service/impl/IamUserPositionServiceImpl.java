@@ -17,19 +17,23 @@ package com.diboot.iam.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.diboot.core.binding.RelationsBinder;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.service.impl.BaseServiceImpl;
+import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.V;
+import com.diboot.core.vo.LabelValue;
 import com.diboot.core.vo.Status;
 import com.diboot.iam.entity.IamUserPosition;
 import com.diboot.iam.mapper.IamUserPositionMapper;
 import com.diboot.iam.service.IamUserPositionService;
+import com.diboot.iam.service.IamUserService;
+import com.diboot.iam.vo.IamUserPositionVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -65,7 +69,16 @@ public class IamUserPositionServiceImpl extends BaseServiceImpl<IamUserPositionM
     }
 
     @Override
-    public IamUserPosition getUserPrimaryPosition(String userType, String userId) {
+    public List<IamUserPosition> getUserPositions(String userType, String userId) {
+        LambdaQueryWrapper<IamUserPosition> queryWrapper = Wrappers.<IamUserPosition>lambdaQuery()
+                .eq(IamUserPosition::getUserType, userType)
+                .eq(IamUserPosition::getUserId, userId);
+        List<IamUserPosition> userPositionList = baseMapper.selectList(queryWrapper);
+        return userPositionList;
+    }
+
+    @Override
+    public IamUserPositionVO getUserPrimaryPosition(String userType, String userId) {
         LambdaQueryWrapper<IamUserPosition> queryWrapper = Wrappers.<IamUserPosition>lambdaQuery()
                 .eq(IamUserPosition::getUserType, userType)
                 .eq(IamUserPosition::getUserId, userId)
@@ -77,7 +90,20 @@ public class IamUserPositionServiceImpl extends BaseServiceImpl<IamUserPositionM
         if(userPositionList.size() > 1){
             log.warn("用户 {}:{} 主岗多于1个，当前以第一个为准", userType, userId);
         }
-        return userPositionList.get(0);
+        return RelationsBinder.convertAndBind(userPositionList.get(0), IamUserPositionVO.class);
+    }
+
+    @Override
+    public List<IamUserPositionVO> getUserPartTimeJobPosition(String userType, String userId) {
+        LambdaQueryWrapper<IamUserPosition> queryWrapper = Wrappers.<IamUserPosition>lambdaQuery()
+                .eq(IamUserPosition::getUserType, userType)
+                .eq(IamUserPosition::getUserId, userId)
+                .eq(IamUserPosition::getIsPrimaryPosition, false);
+        List<IamUserPosition> userPositionList = baseMapper.selectList(queryWrapper);
+        if(V.isEmpty(userPositionList)){
+            return Collections.emptyList();
+        }
+        return RelationsBinder.convertAndBind(userPositionList, IamUserPositionVO.class);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -125,5 +151,41 @@ public class IamUserPositionServiceImpl extends BaseServiceImpl<IamUserPositionM
             return userPositions.stream().map(IamUserPosition::getUserId).distinct().collect(Collectors.toList());
         }
         return Collections.emptyList();
+    }
+
+    @Override
+    public Map<String, List<LabelValue>> getPositionUsersMap(String orgId, List<String> positionIds) {
+        if (V.isEmpty(positionIds)) {
+            return Collections.emptyMap();
+        }
+        LambdaQueryWrapper<IamUserPosition> queryWrapper = Wrappers.<IamUserPosition>lambdaQuery()
+                .select(IamUserPosition::getUserId, IamUserPosition::getPositionId)
+                .in(IamUserPosition::getPositionId, positionIds);
+        if(V.notEmpty(orgId)) {
+            queryWrapper.eq(IamUserPosition::getOrgId, orgId);
+        }
+        List<IamUserPosition> userPositions = baseMapper.selectList(queryWrapper);
+        if(V.isEmpty(userPositions)) {
+            return Collections.emptyMap();
+        }
+        Map<String, List<LabelValue>> position2UsersMap = new HashMap<>();
+        List<String> userIds = new ArrayList<>();
+        for (IamUserPosition userPosition : userPositions){
+            String positionId = userPosition.getPositionId();
+            List<LabelValue> userList = position2UsersMap.computeIfAbsent(positionId, k -> new ArrayList<>());
+            userList.add(new LabelValue(null, userPosition.getUserId()));
+            userIds.add(userPosition.getUserId());
+        }
+        IamUserService userService = ContextHolder.getBean(IamUserService.class);
+        Map<String, LabelValue> userMap = userService.getLabelValueMap(userIds);
+        for (Map.Entry<String, List<LabelValue>> entry : position2UsersMap.entrySet()) {
+            for (LabelValue labelValue : entry.getValue()) {
+                LabelValue user = userMap.get(labelValue.getValue());
+                if (user != null) {
+                    labelValue.setLabel(user.getLabel());
+                }
+            }
+        }
+        return position2UsersMap;
     }
 }

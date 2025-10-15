@@ -8,6 +8,7 @@ const zhCN = {
       default: '中',
       small: '小',
       personal: '个人中心',
+      switchPosition: '切换岗位',
       logout: '退出登录',
       menuSearch: '搜索菜单'
     },

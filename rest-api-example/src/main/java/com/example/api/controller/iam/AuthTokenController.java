@@ -7,8 +7,10 @@ import com.diboot.core.cache.BaseCacheManager;
 import com.diboot.core.controller.BaseController;
 import com.diboot.core.entity.AbstractEntity;
 import com.diboot.core.exception.BusinessException;
+import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
+import com.diboot.core.vo.LabelValue;
 import com.diboot.core.vo.Status;
 import com.diboot.iam.annotation.BindPermission;
 import com.diboot.iam.annotation.Log;
@@ -18,14 +20,15 @@ import com.diboot.iam.dto.ClientCredential;
 import com.diboot.iam.dto.PwdCredential;
 import com.diboot.iam.entity.*;
 import com.diboot.iam.entity.route.RouteRecord;
-import com.diboot.iam.service.IamResourceService;
-import com.diboot.iam.service.IamRoleResourceService;
-import com.diboot.iam.service.IamUserRoleService;
-import com.diboot.iam.service.IamUserService;
+import com.diboot.iam.service.*;
+import com.diboot.iam.shiro.IamAuthorizingRealm;
 import com.diboot.iam.util.IamSecurityUtils;
 import com.diboot.iam.util.TokenUtils;
 import com.diboot.iam.vo.IamUserOrgVO;
+import com.diboot.iam.vo.PositionDataScope;
 import com.pig4cloud.captcha.ArithmeticCaptcha;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,11 +62,15 @@ public class AuthTokenController extends BaseController {
     @Autowired
     private IamUserRoleService iamUserRoleService;
     @Autowired
+    private IamUserPositionService iamUserPositionService;
+    @Autowired
     private IamUserService iamUserService;
     @Autowired
     private IamRoleResourceService iamRoleResourceService;
     @Autowired
     private IamResourceService iamResourceService;
+    @Resource
+    private IamAuthorizingRealm iamAuthorizingRealm;
 
     @Autowired
     @Qualifier("iamCacheManager")
@@ -167,6 +174,8 @@ public class AuthTokenController extends BaseController {
         // 角色权限数据
         List<IamRole> roles = iamUserRoleService.getUserRoleList(IamUser.class.getSimpleName(), currentUser.getId());
         data.put("roles", roles);
+        data.put("positions", currentUser.getPositions());
+        data.put("curPosition", currentUser.getExtensionObj());
 
         // 移动端权限列表
         if ("mobile".equals(module)) {
@@ -207,6 +216,32 @@ public class AuthTokenController extends BaseController {
     public JsonResult<List<RouteRecord>> getRouteRecord() {
         List<RouteRecord> routeRecords = iamRoleResourceService.getRouteRecords();
         return JsonResult.OK(routeRecords);
+    }
+
+    /**
+     * 变更当前岗位为制定岗位
+     * @param position
+     * @return
+     */
+    @PostMapping("/switch-position")
+    public JsonResult<String> changePosition(@RequestBody LabelValue position, HttpServletRequest request, HttpServletResponse response) {
+        IamUser currentUser = IamSecurityUtils.getCurrentUser();
+        // 获取当前岗
+        LabelValue extensionObj = currentUser.getExtensionObj();
+        // 替换为前端岗 ：extensionObj中children 字段存放的是当前用户所有岗位信息，所以不用跟随切换
+        extensionObj.setLabel(position.getLabel()).setValue(position.getValue());
+        // 扩展信息 前端提交过来的是 linkmap，需要对其进行重新转换为PositionDataScope实体
+        if(V.notEmpty(position.getExt())) {
+            String positionDataScopeStr = JSON.stringify(position.getExt());
+            PositionDataScope positionDataScope = JSON.parseObject(positionDataScopeStr, PositionDataScope.class);
+            extensionObj.setExt(positionDataScope);
+        }
+        currentUser.setExtensionObj(extensionObj);
+        String requestToken = TokenUtils.getRequestToken(request);
+        String responseToken = TokenUtils.getResponseToken(response);
+        String token = V.notEmpty(responseToken) ? responseToken : requestToken;
+        iamAuthorizingRealm.refreshAuthenticationCache(token, currentUser);
+        return JsonResult.OK();
     }
 
     /**

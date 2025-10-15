@@ -54,6 +54,12 @@ public @interface BindQuery {
     Class<?> entity() default NullType.class;
 
     /**
+     * 查询是否需要去重
+     * @return
+     */
+    boolean distinct() default true;
+
+    /**
      * JOIN连接条件，支持动态的跨表JOIN查询
      */
     String condition() default "";

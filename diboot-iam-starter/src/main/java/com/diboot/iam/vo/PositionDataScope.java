@@ -34,11 +34,12 @@ public class PositionDataScope implements Serializable {
 
     public PositionDataScope(){}
 
-    public PositionDataScope(String positionId, String dataPermissionType, String userId, String orgId){
+    public PositionDataScope(String positionId, String dataPermissionType, String userId, String orgId, String orgName) {
         this.positionId = positionId;
         this.dataPermissionType = dataPermissionType;
         this.userId = userId;
         this.orgId = orgId;
+        this.orgName = orgName;
     }
 
     /**
@@ -55,6 +56,11 @@ public class PositionDataScope implements Serializable {
      * 当前部门id
      */
     private String orgId;
+
+    /**
+     * 当前部门名称
+     */
+    private String orgName;
 
     /**
      * 当前及子级别部门ids

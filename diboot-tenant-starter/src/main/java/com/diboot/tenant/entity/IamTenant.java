@@ -28,7 +28,7 @@ import org.hibernate.validator.constraints.Length;
 
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * 租户 Entity定义
@@ -117,8 +117,7 @@ IamTenant extends BaseEntity<String> {
     /**
      * 更新时间
      */
-    @TableField(fill = FieldFill.UPDATE)
-    private Date updateTime;
-
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private LocalDateTime updateTime;
 
 }

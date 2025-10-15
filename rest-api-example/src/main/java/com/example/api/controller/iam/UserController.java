@@ -123,6 +123,7 @@ public class UserController extends BaseCrudRestController<IamUser> {
     @BindPermission(name = OperationCons.LABEL_UPDATE, code = OperationCons.CODE_WRITE)
     @PutMapping("/{id}")
     public JsonResult updateEntityMapping(@PathVariable("id") String id, @Valid @RequestBody IamUserFormDTO iamUserFormDTO) throws Exception {
+        iamUserFormDTO.setUpdateTime(null);
         iamUserService.updateUserRelatedInfo(iamUserFormDTO);
         return JsonResult.OK();
     }

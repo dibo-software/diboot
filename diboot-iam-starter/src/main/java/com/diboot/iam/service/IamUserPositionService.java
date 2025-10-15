@@ -16,9 +16,12 @@
 package com.diboot.iam.service;
 
 import com.diboot.core.service.BaseService;
+import com.diboot.core.vo.LabelValue;
 import com.diboot.iam.entity.IamUserPosition;
+import com.diboot.iam.vo.IamUserPositionVO;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 用户岗位关联相关Service
@@ -45,6 +48,17 @@ public interface IamUserPositionService extends BaseService<IamUserPosition> {
      */
     List<String> getPositionIdsByOrg(String orgId);
 
+
+
+    /**
+     * 获取用户岗位（包含主岗和兼职岗）
+     *
+     * @param userType
+     * @param userId
+     * @return
+     */
+    List<IamUserPosition> getUserPositions(String userType, String userId);
+
     /**
      * 获取用户的第一主岗
      *
@@ -52,7 +66,16 @@ public interface IamUserPositionService extends BaseService<IamUserPosition> {
      * @param userId
      * @return
      */
-    IamUserPosition getUserPrimaryPosition(String userType, String userId);
+    IamUserPositionVO getUserPrimaryPosition(String userType, String userId);
+
+    /**
+     * 获取用户的兼职岗
+     *
+     * @param userType
+     * @param userId
+     * @return
+     */
+    List<IamUserPositionVO> getUserPartTimeJobPosition(String userType, String userId);
 
     /**
      * 批量更新用户-岗位的关联关系
@@ -70,4 +93,12 @@ public interface IamUserPositionService extends BaseService<IamUserPosition> {
      * @return
      */
     List<String> getUserIdsByPosition(String orgId, List<String> positionIds);
+
+    /**
+     * 根据岗位ids获取对应的用户id及名称
+     * @param orgId
+     * @return
+     */
+    Map<String, List<LabelValue>> getPositionUsersMap(String orgId, List<String> positionIds);
+
 }

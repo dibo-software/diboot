@@ -72,6 +72,7 @@ public class AnnoJoiner implements Serializable {
         if(V.notEmpty(query.condition())){
             this.condition = query.condition();
         }
+        this.distinct = query.distinct();
     }
 
     private String key;
@@ -98,6 +99,11 @@ public class AnnoJoiner implements Serializable {
      * 中间表
      */
     private String middleTable;
+
+    /**
+     * 是否需要去重
+     */
+    private boolean distinct;
 
     /**
      * 中间表别名

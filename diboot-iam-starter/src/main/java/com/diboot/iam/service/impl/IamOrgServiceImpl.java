@@ -16,25 +16,27 @@
 package com.diboot.iam.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.core.util.BeanUtils;
+import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.LabelValue;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.IamOrg;
+import com.diboot.iam.entity.IamUser;
 import com.diboot.iam.mapper.IamOrgMapper;
 import com.diboot.iam.service.IamOrgService;
+import com.diboot.iam.service.IamUserService;
 import com.diboot.iam.vo.IamOrgVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -85,6 +87,25 @@ public class IamOrgServiceImpl extends BaseServiceImpl<IamOrgMapper, IamOrg> imp
                 } else {
                     iamOrg.setParentIdsPath(S.joinWith(Cons.SEPARATOR_COMMA, parentOrg.getParentIdsPath(), parentOrg.getId()));
                 }
+            }
+        }
+    }
+
+    /**
+     * 更新之前同步更新其他关联数据
+     */
+    protected void beforeUpdate(IamOrg entity){
+        super.beforeUpdate(entity);
+        // 由 部门 改为 公司
+        if(Cons.DICTCODE_ORG_TYPE.COMP.name().equals(entity.getType())) {
+            IamOrg oldOrg = getEntity(entity.getId());
+            if (Cons.DICTCODE_ORG_TYPE.DEPT.name().equals(oldOrg.getType())) {
+                // 更新其下属部门节点rootOrgId
+                List<String> childOrgIds = getChildOrgIds(entity.getId());
+                LambdaUpdateWrapper<IamOrg> updateWrapper = Wrappers.lambdaUpdate();
+                updateWrapper.set(IamOrg::getRootOrgId, entity.getId()).in(IamOrg::getId, childOrgIds);
+                updateEntity(updateWrapper);
+                log.info("同步更新子节点的rootOrgId为 {}", entity.getId());
             }
         }
     }
@@ -176,6 +197,28 @@ public class IamOrgServiceImpl extends BaseServiceImpl<IamOrgMapper, IamOrg> imp
     @Override
     public String getTenantRootOrgId(String tenantId) {
         return getMapper().getTenantRootOrgId(tenantId, BaseConfig.getActiveFlagValue());
+    }
+
+    @Override
+    public Map<String, List<LabelValue>> getOrgUsersMap(List<String> orgIds) {
+        if (V.isEmpty(orgIds)) {
+            return Collections.emptyMap();
+        }
+        IamUserService userService = ContextHolder.getBean(IamUserService.class);
+        LambdaQueryWrapper<IamUser> queryWrapper = Wrappers.<IamUser>lambdaQuery()
+                .select(IamUser::getRealname, IamUser::getId, IamUser::getOrgId)
+                .in( IamUser::getOrgId, orgIds);
+        List<LabelValue> orgUsers = userService.getLabelValueList(queryWrapper);
+        if (V.isEmpty(orgUsers)) {
+            return Collections.emptyMap();
+        }
+        Map<String, List<LabelValue>> orgUsersMap = new HashMap<>();
+        for (LabelValue userItem : orgUsers) {
+            String orgId = (String)userItem.getExt();
+            List<LabelValue> userList = orgUsersMap.computeIfAbsent(orgId, k -> new ArrayList<>());
+            userList.add(userItem);
+        }
+        return orgUsersMap;
     }
 
 }

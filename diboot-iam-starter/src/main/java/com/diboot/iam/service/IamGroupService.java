@@ -20,6 +20,7 @@ import com.diboot.core.vo.LabelValue;
 import com.diboot.iam.entity.IamGroup;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 用户组相关Service
@@ -49,5 +50,12 @@ public interface IamGroupService extends BaseService<IamGroup> {
      * @return
      */
     List<IamGroup> getGroupListByUserIds(List<String> userIds);
+
+    /**
+     * 根据组/团队ids获取对应的用户id及名称
+     * @param groupIds
+     * @return
+     */
+    Map<String, List<LabelValue>> getGroupUsersMap(List<String> groupIds);
 
 }
