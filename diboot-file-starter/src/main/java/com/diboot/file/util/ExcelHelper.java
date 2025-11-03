@@ -15,20 +15,20 @@
  */
 package com.diboot.file.util;
 
-import com.alibaba.excel.EasyExcel;
-import com.alibaba.excel.ExcelWriter;
-import com.alibaba.excel.enums.CacheLocationEnum;
-import com.alibaba.excel.metadata.FieldWrapper;
-import com.alibaba.excel.metadata.GlobalConfiguration;
-import com.alibaba.excel.read.listener.ReadListener;
-import com.alibaba.excel.support.ExcelTypeEnum;
-import com.alibaba.excel.util.ClassUtils;
-import com.alibaba.excel.write.builder.ExcelWriterBuilder;
-import com.alibaba.excel.write.builder.ExcelWriterSheetBuilder;
-import com.alibaba.excel.write.handler.WriteHandler;
-import com.alibaba.excel.write.metadata.WriteSheet;
-import com.alibaba.excel.write.metadata.holder.WriteSheetHolder;
-import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
+import cn.idev.excel.FastExcel;
+import cn.idev.excel.ExcelWriter;
+import cn.idev.excel.enums.CacheLocationEnum;
+import cn.idev.excel.metadata.FieldWrapper;
+import cn.idev.excel.metadata.GlobalConfiguration;
+import cn.idev.excel.read.listener.ReadListener;
+import cn.idev.excel.support.ExcelTypeEnum;
+import cn.idev.excel.util.ClassUtils;
+import cn.idev.excel.write.builder.ExcelWriterBuilder;
+import cn.idev.excel.write.builder.ExcelWriterSheetBuilder;
+import cn.idev.excel.write.handler.WriteHandler;
+import cn.idev.excel.write.metadata.WriteSheet;
+import cn.idev.excel.write.metadata.holder.WriteSheetHolder;
+import cn.idev.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.I18n;
 import com.diboot.core.util.S;
@@ -93,7 +93,7 @@ public class ExcelHelper {
      * @param headClazz   ExcelModel.class
      */
     public static <T> void read(InputStream inputStream, ExcelTypeEnum excelType, ReadListener<T> listener, Class<T> headClazz) {
-        EasyExcel.read(inputStream).excelType(excelType).registerReadListener(listener).head(headClazz).sheet().doRead();
+        FastExcel.read(inputStream).excelType(excelType).registerReadListener(listener).head(headClazz).sheet().doRead();
     }
 
     /**
@@ -110,7 +110,7 @@ public class ExcelHelper {
             throw new BusinessException("exception.business.file.nonexist");
         }
         try {
-            EasyExcel.read(new FileInputStream(excelFile)).excelType(null)
+            FastExcel.read(new FileInputStream(excelFile)).excelType(null)
                     .registerReadListener(listener).head(listener.getExcelModelClass()).sheet().doRead();
         }
         catch (FileNotFoundException e) {
@@ -135,7 +135,7 @@ public class ExcelHelper {
      */
     public static void write(OutputStream outputStream, String sheetName, List<List<String>> headList,
                              List<List<String>> dataList, WriteHandler... writeHandlers) {
-        ExcelWriterBuilder write = EasyExcel.write(outputStream);
+        ExcelWriterBuilder write = FastExcel.write(outputStream);
         write = write.registerWriteHandler(new LongestMatchColumnWidthStyleStrategy());
         for (WriteHandler handler : writeHandlers) {
             write = write.registerWriteHandler(handler);
@@ -199,7 +199,7 @@ public class ExcelHelper {
      */
     public static <T> void write(OutputStream outputStream, Class<T> clazz, Collection<String> columnNameList,
                                  Boolean autoClose, Supplier<List<T>> dataList, WriteHandler... writeHandlers) {
-        ExcelWriter excel = EasyExcel.write(outputStream).autoCloseStream(autoClose).build();
+        ExcelWriter excel = FastExcel.write(outputStream).autoCloseStream(autoClose).build();
         writeSheet(excel, "Sheet1", clazz, columnNameList, dataList, writeHandlers);
         excel.finish();
     }
@@ -269,7 +269,7 @@ public class ExcelHelper {
      */
     public static <T> void buildWriteSheet(String sheetName, Class<T> clazz, Collection<String> columnNameList,
                                            BiConsumer<CommentWriteHandler, WriteSheet> consumer, WriteHandler... writeHandlers) {
-        ExcelWriterSheetBuilder writerSheet = EasyExcel.writerSheet().sheetName(sheetName).head(clazz);
+        ExcelWriterSheetBuilder writerSheet = FastExcel.writerSheet().sheetName(sheetName).head(clazz);
         CommentWriteHandler commentWriteHandler = new CommentWriteHandler();
         writerSheet.registerWriteHandler(new LongestMatchColumnWidthStyleStrategy());
         writerSheet.registerWriteHandler(new OptionWriteHandler());
@@ -346,7 +346,7 @@ public class ExcelHelper {
     public static void exportExcel(HttpServletResponse response, String fileName, Consumer<ExcelWriter> writerConsumer) {
         setExportExcelResponseHeader(response, fileName);
         try {
-            ExcelWriter excel = EasyExcel.write(response.getOutputStream()).autoCloseStream(Boolean.FALSE).build();
+            ExcelWriter excel = FastExcel.write(response.getOutputStream()).autoCloseStream(Boolean.FALSE).build();
             writerConsumer.accept(excel);
             excel.finish();
         } catch (Exception e) {

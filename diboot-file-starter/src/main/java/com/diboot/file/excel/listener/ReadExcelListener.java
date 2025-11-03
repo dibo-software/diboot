@@ -15,16 +15,16 @@
  */
 package com.diboot.file.excel.listener;
 
-import com.alibaba.excel.EasyExcel;
-import com.alibaba.excel.ExcelWriter;
-import com.alibaba.excel.context.AnalysisContext;
-import com.alibaba.excel.exception.ExcelDataConvertException;
-import com.alibaba.excel.metadata.Head;
-import com.alibaba.excel.metadata.data.ReadCellData;
-import com.alibaba.excel.read.listener.ModelBuildEventListener;
-import com.alibaba.excel.read.listener.ReadListener;
-import com.alibaba.excel.read.metadata.property.ExcelReadHeadProperty;
-import com.alibaba.excel.write.metadata.WriteSheet;
+import cn.idev.excel.FastExcel;
+import cn.idev.excel.ExcelWriter;
+import cn.idev.excel.context.AnalysisContext;
+import cn.idev.excel.exception.ExcelDataConvertException;
+import cn.idev.excel.metadata.Head;
+import cn.idev.excel.metadata.data.ReadCellData;
+import cn.idev.excel.read.listener.ModelBuildEventListener;
+import cn.idev.excel.read.listener.ReadListener;
+import cn.idev.excel.read.metadata.property.ExcelReadHeadProperty;
+import cn.idev.excel.write.metadata.WriteSheet;
 import com.diboot.core.binding.annotation.BindDict;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.exception.BusinessException;
@@ -352,7 +352,7 @@ public abstract class ReadExcelListener<T extends BaseExcelModel> implements Rea
                         + Cons.FILE_PATH_SEPARATOR + S.newUuid() + ".xlsx";
             }
             FileHelper.makeDirectory(errorDataFilePath);
-            excelWriter = EasyExcel.write(errorDataFilePath).build();
+            excelWriter = FastExcel.write(errorDataFilePath).build();
             ExcelHelper.buildWriteSheet("Sheet1", getExcelModelClass(), null, (commentWriteHandler, writeSheet) -> {
                 this.commentWriteHandler = commentWriteHandler;
                 this.writeSheet = writeSheet;

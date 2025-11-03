@@ -15,7 +15,7 @@
  */
 package com.diboot.file.example.custom;
 
-import com.alibaba.excel.annotation.ExcelProperty;
+import cn.idev.excel.annotation.ExcelProperty;
 import com.diboot.file.excel.BaseExcelModel;
 import com.diboot.file.excel.annotation.DuplicateStrategy;
 import com.diboot.file.excel.annotation.EmptyStrategy;
