@@ -68,15 +68,22 @@ public class ScheduleJobServiceImpl extends BaseServiceImpl<ScheduleJobMapper, S
         if (!success) {
             throw new BusinessException(Status.FAIL_OPERATION, "exception.business.scheduleJobService.updateFailed");
         }
-        // job如果存在且参数发生了变化，那么先触发删除原来的job
-        if (quartzSchedulerService.existJob(entity.getId()) &&
-                (V.notEquals(oldJob.getJobStatus(), entity.getJobStatus())
-                || V.notEquals(oldJob.getJobKey(), entity.getJobKey())
-                || V.notEquals(oldJob.getCron(), entity.getCron())
-                || V.notEquals(oldJob.getParamJson(), entity.getParamJson())
-                || V.notEquals(oldJob.getInitStrategy(), entity.getInitStrategy()))
-        ) {
-            quartzSchedulerService.deleteJob(entity.getId());
+        // job如果存在且参数发生了变化，那么先触发删除原来的job，再重新添加
+        if (quartzSchedulerService.existJob(entity.getId())) {
+            if (V.notEquals(oldJob.getJobStatus(), entity.getJobStatus())
+                            || V.notEquals(oldJob.getJobKey(), entity.getJobKey())
+                            || V.notEquals(oldJob.getCron(), entity.getCron())
+                            || V.notEquals(oldJob.getParamJson(), entity.getParamJson())
+                            || V.notEquals(oldJob.getInitStrategy(), entity.getInitStrategy())) {
+                quartzSchedulerService.deleteJob(entity.getId());
+                if (V.equals(entity.getJobStatus(), Cons.ENABLE_STATUS.A.name())) {
+                    quartzSchedulerService.addJob(entity);
+                }
+            }
+
+        }
+        // job不存在，且当前job是启用状态，那么添加job
+        else {
             if (V.equals(entity.getJobStatus(), Cons.ENABLE_STATUS.A.name())) {
                 quartzSchedulerService.addJob(entity);
             }
