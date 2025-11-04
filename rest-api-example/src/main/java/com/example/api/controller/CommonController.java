@@ -88,12 +88,14 @@ public class CommonController extends BaseController {
         if (IamSecurityUtils.getSubject().hasRole(Cons.ROLE_SUPER_ADMIN)) {
             return true;
         }
+        // 普通用户，是否检查选项数据的读权限，默认不限制
+        /*
         try {
             IamSecurityUtils.getSubject().checkPermission(relatedDataDTO.getType() + ":read");
         } catch (Exception e) {
             log.warn("无权获取 relatedData: {}", relatedDataDTO.getType());
             return false;
-        }
+        }*/
         return true;
     }
 
