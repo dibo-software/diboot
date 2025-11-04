@@ -1,6 +1,6 @@
 package com.example.api.excel.model;
 
-import com.alibaba.excel.annotation.ExcelProperty;
+import cn.idev.excel.annotation.ExcelProperty;
 import com.diboot.file.excel.BaseExcelModel;
 import com.diboot.file.excel.annotation.ExcelOption;
 import lombok.Getter;
