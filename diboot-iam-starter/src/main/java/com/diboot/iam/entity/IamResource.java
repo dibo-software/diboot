@@ -62,7 +62,7 @@ public class IamResource extends BaseEntity<String> {
      * 应用模块
      */
     @TableField
-    private String appModule;
+    private String appModule = "PC";
 
     /**
      * 父级菜单
