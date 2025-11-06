@@ -15,7 +15,7 @@
     <description>Rest API example project for Diboot</description>
 
     <properties>
-        <diboot.version>3.8.1</diboot.version>
+        <diboot.version>3.9.0</diboot.version>
     </properties>
 
     <dependencies>
@@ -157,6 +157,12 @@
             <version>${diboot.version}</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/libs/diboot-lcdp-devtools-3.8.0.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>easyexcel</artifactId>
+            <version>4.0.3</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.mybatis.dynamic-sql</groupId>
