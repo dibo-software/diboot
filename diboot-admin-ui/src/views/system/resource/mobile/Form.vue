@@ -20,12 +20,12 @@ const { initRelatedData, relatedData } = useOption({
       label: 'displayName',
       parent: 'parentId',
       lazyChild: false,
-      conditions: [{ field: 'appModule', value: 'mobile' }]
+      conditions: [{ field: 'appModule', value: 'MOBILE' }]
     }
   }
 })
 
-const { loadData, loading, model } = useDetail<Resource>(baseApi, { appModule: 'mobile', displayType: 'PERMISSION' })
+const { loadData, loading, model } = useDetail<Resource>(baseApi, { appModule: 'MOBILE', displayType: 'PERMISSION' })
 
 const { submitting, submit } = useForm({ baseApi, successCallback: (id, isNew) => emit('complete', id, isNew) })
 watch(submitting, value => emit('submitting', value))

@@ -47,6 +47,7 @@ export interface TreeOption<T> {
   baseApi: string
   treeApi: string
   sortApi?: string
+  initQueryParam?: Partial<T>
   transformField?: TransformField
   clickNodeCallback?: (node: T) => void
 }
@@ -57,7 +58,7 @@ export default <T>(option: TreeOption<T>) => {
     children: 'children',
     parentId: 'parentId'
   }
-  const { baseApi, treeApi, sortApi, transformField, clickNodeCallback } = option
+  const { baseApi, treeApi, sortApi, transformField, initQueryParam, clickNodeCallback } = option
   Object.assign(optionsTransformField, transformField || {})
   const dataState: DataType<T> = reactive({
     selectedIdList: [],
@@ -87,7 +88,7 @@ export default <T>(option: TreeOption<T>) => {
   const getTree = async () => {
     loading.value = true
     try {
-      const result = await api.get<T[]>(`${baseApi}${treeApi}`)
+      const result = await api.get<T[]>(`${baseApi}${treeApi}`, initQueryParam)
       if (result && result.code === 0) {
         dataState.treeDataList = []
         dataState.treeDataList.push(...(result.data ?? []))
