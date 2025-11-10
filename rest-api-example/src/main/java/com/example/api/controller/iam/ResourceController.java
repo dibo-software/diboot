@@ -1,6 +1,7 @@
-package com.example.api.controller.iam;
+package com.example.demo.controller.iam;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.controller.BaseCrudRestController;
 import com.diboot.core.dto.SortParamDTO;
@@ -73,9 +74,9 @@ public class ResourceController extends BaseCrudRestController<IamResource> {
     }
 
     @GetMapping("/tree")
-    public JsonResult getTreeList() {
-        LambdaQueryWrapper<IamResource> queryWrapper = Wrappers.lambdaQuery();
-        queryWrapper.orderByAsc(IamResource::getSortId).orderByAsc(IamResource::getId);
+    public JsonResult getTreeList(IamResourceDTO entity) throws Exception {
+        QueryWrapper<IamResource> queryWrapper = super.buildQueryWrapperByDTO(entity);
+        queryWrapper.lambda().orderByAsc(IamResource::getSortId).orderByAsc(IamResource::getId);
         List<IamResourceListVO> list = iamResourceService.getViewObjectList(queryWrapper, null, IamResourceListVO.class);
         List<IamResourceListVO> tree = BeanUtils.buildTree(list, Cons.TREE_ROOT_ID);
         tree.sort(Comparator.comparing(IamResource::getAppModule, Comparator.nullsFirst(Comparator.naturalOrder())));

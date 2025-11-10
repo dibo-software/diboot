@@ -9,7 +9,7 @@ const i18n = useI18n()
 const baseApi = '/iam/resource'
 
 const { queryParam, loading, dataList, pagination, getList, onSearch, resetFilter, remove, batchRemove } =
-  useList<Resource>({ baseApi, initQueryParam: { appModule: 'mobile' }, deleteCallback: () => refreshData() })
+  useList<Resource>({ baseApi, initQueryParam: { appModule: 'MOBILE' }, deleteCallback: () => refreshData() })
 
 defineExpose({
   refresh: onSearch,
@@ -129,7 +129,7 @@ router.currentRoute.value.meta.keepAlive ? onActivated(activated) : activated()
       label="displayName"
       parent="parentId"
       :lazy-child="false"
-      :conditions="[{ field: 'appModule', value: 'mobile' }]"
+      :conditions="[{ field: 'appModule', value: 'MOBILE' }]"
       @click-node="(id?: string) => (parent = id)"
       @change-order="onSearch()"
     />
@@ -194,6 +194,7 @@ router.currentRoute.value.meta.keepAlive ? onActivated(activated) : activated()
         v-if="pagination.total"
         v-model:current-page="pagination.current"
         v-model:page-size="pagination.pageSize"
+        :page-sizes="[10, 15, 20, 30, 50, 100]"
         size="small"
         background
         layout="total, sizes, prev, pager, next, jumper"

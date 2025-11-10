@@ -21,8 +21,8 @@ const switchPosition = async (idx: number) => {
   if (!selectedPosition) return
   // 如果当前切换的值 等于 当前岗位 不做处理
   if (
-      `${selectedPosition.value}${selectedPosition?.ext?.orgId || ''}` ===
-      `${curPosition?.value?.value}${curPosition?.value?.ext?.orgId || ''}`
+    `${selectedPosition.value}${selectedPosition?.ext?.orgId || ''}` ===
+    `${curPosition?.value?.value}${curPosition?.value?.ext?.orgId || ''}`
   )
     return
   // 执行岗位切换
@@ -40,8 +40,8 @@ const handleMenuSelect = (index: string, indexPath: string[]) => {
     <span class="trigger-element" @click="menuVisible = !menuVisible">
       <el-avatar :size="36" :icon="UserFilled" :src="authStore.avatar" />
       <span style="margin: 0 8px; color: var(--el-text-color-regular); font-size: var(--el-font-size-base)">{{
-          authStore.realname
-        }}</span>
+        authStore.realname
+      }}</span>
       <el-icon>
         <arrow-down />
       </el-icon>
@@ -57,8 +57,8 @@ const handleMenuSelect = (index: string, indexPath: string[]) => {
           </template>
           <el-menu-item v-for="(position, idx) in positions" :key="idx" :index="idx">
             <el-badge
-                :is-dot="`${position.value}${position.ext?.orgId}` === `${curPosition.value}${curPosition?.ext?.orgId}`"
-                :offset="[10, 20]"
+              :is-dot="`${position.value}${position.ext?.orgId}` === `${curPosition.value}${curPosition?.ext?.orgId}`"
+              :offset="[10, 20]"
             >
               {{ position?.label }}{{ position?.ext?.orgName ? ` (${position?.ext?.orgName})` : '' }}
             </el-badge>

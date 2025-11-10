@@ -240,7 +240,9 @@ const en: Locale = {
     userList: 'Role Users',
     description: 'Note',
     grantPermission: 'Authorize Permissions',
-    permissionList: 'Role Authorization'
+    permissionList: 'Role Authorization',
+    expand: 'Expand',
+    putAway: 'Put Away'
   },
   scheduleJob: {
     jobKey: 'Scheduled Task',

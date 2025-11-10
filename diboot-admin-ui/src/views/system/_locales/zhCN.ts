@@ -239,7 +239,9 @@ const zhCN = {
     userList: '角色人员',
     description: '备注',
     grantPermission: '授权权限',
-    permissionList: '角色授权'
+    permissionList: '角色授权',
+    expand: '展开',
+    putAway: '收起'
   },
   scheduleJob: {
     jobKey: '定时任务',
