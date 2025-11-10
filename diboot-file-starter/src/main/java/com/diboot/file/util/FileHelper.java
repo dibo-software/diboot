@@ -51,7 +51,7 @@ public class FileHelper{
 	public static final List<String> DEFAULT_VALID_EXT_LIST = Arrays.asList(
 		"txt", "pdf", "xml",
 		"csv", "xls", "xlsx", "doc", "docx", "dot", "ppt", "pptx",
-		"bmp", "gif", "jpeg", "jpg", "png", "mp3", "avi", "wav", "wmf",
+		"bmp", "gif", "jpeg", "jpg", "png", "mp3", "mp4", "avi", "wav", "wmf",
 		"zip","rar","gz", "bz2"
 	);
 
