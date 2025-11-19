@@ -12,9 +12,9 @@ const zhCN = {
     permissionsPlaceholder: '请选择接口权限'
   },
   config: {
-    propKey: '属性名',
-    propLabel: '属性标签',
-    propValue: '属性值',
+    propKey: '参数名',
+    propLabel: '参数说明',
+    propValue: '参数值',
     category: '类别',
     dataType: '填写类型',
     dataTypeOptions: {
