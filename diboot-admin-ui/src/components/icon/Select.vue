@@ -18,13 +18,13 @@ const selectIcon = (name?: string) => {
 }
 </script>
 <template>
-  <el-icon :size="25" style="vertical-align: middle; margin-right: 10px">
+  <el-icon :size="25" style="vertical-align: middle; margin-right: 4px">
     <icon :name="modelValue" />
   </el-icon>
-  <el-button text bg type="primary" @click="visible = true">
+  <el-button text bg type="primary" size="small" @click="visible = true">
     {{ modelValue ? $t('components.icon.reselect') : $t('components.icon.choose') }}</el-button
   >
-  <el-button v-show="modelValue" text bg type="danger" @click="selectIcon()">
+  <el-button v-show="modelValue" text bg type="warning" size="small" @click="selectIcon()">
     {{ $t('components.icon.clear') }}
   </el-button>
   <el-dialog v-model="visible" :title="$t('components.icon.selector')" top="10vh">

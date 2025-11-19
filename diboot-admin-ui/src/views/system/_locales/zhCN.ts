@@ -173,7 +173,7 @@ const zhCN = {
     newButtonPermission: '新按钮权限',
     parentId: '上级目录',
     parentId0: '顶级目录',
-    displayType: '菜单分类',
+    displayType: '菜单类型',
     displayName: '菜单名称',
     routeMetaIcon: '菜单图标',
     routePath: '路由路径',
@@ -227,7 +227,7 @@ const zhCN = {
     componentNameChange: '组件名称变更，以免页面缓存不生效，请重新选择！',
     componentNonExist: '组件不存在，将无法加载菜单，请重新选择！',
     permissionSelect: {
-      title: '菜单分类 可配置权限接口',
+      title: '`菜单`类型的节点可配置权限接口',
       permissionApi: '配置权限接口',
       searchPlaceholder: '搜索需要设置的接口：支持标题、权限码、接口地址模糊搜索',
       tip: '选择 应用模块 后配置权限'
