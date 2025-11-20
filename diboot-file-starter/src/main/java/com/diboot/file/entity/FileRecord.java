@@ -109,7 +109,7 @@ public class FileRecord extends BaseEntity<String> {
     /**
      * 创建人
      */
-    @TableField(fill = FieldFill.INSERT)
+    @TableField(fill = FieldFill.INSERT, insertStrategy = FieldStrategy.NOT_EMPTY)
     private String createBy;
 
     /**
