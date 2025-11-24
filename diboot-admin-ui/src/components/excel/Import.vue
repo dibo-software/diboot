@@ -135,7 +135,7 @@ const TableColumn = defineComponent({
         <el-button :icon="Upload" type="primary" plain> {{ $t('operation.import') }} </el-button>
       </slot>
     </span>
-
+    <Teleport to="body">
     <el-drawer v-model="visible" :size="width || '50%'">
       <template #header>
         <span>{{ $t('components.excel.dataUpload') }}</span>
@@ -221,6 +221,7 @@ const TableColumn = defineComponent({
         </el-table>
       </div>
     </el-drawer>
+    </Teleport>
   </span>
 </template>
 
