@@ -2,6 +2,7 @@
 import type { OrgModel } from '@/views/org-structure/org/type'
 import { Search, Plus } from '@element-plus/icons-vue'
 import OrgForm from './Form.vue'
+import UserInfo from '@/components/display/UserInfo.vue'
 
 const props = defineProps<{ parentId?: string }>()
 
@@ -68,7 +69,12 @@ const onFormComplete = () => {
     >
       <el-table-column prop="name" :label="$t('org.name')" />
       <el-table-column prop="code" :label="$t('org.code')" />
-      <el-table-column prop="managerName" :label="$t('org.managerName')" />
+      <el-table-column prop="managerName" :label="$t('org.managerName')">
+        <template #default="{ row }">
+          <user-info :name="row.managerName" :popover="row.managerUser" />
+        </template>
+      </el-table-column>
+
       <el-table-column prop="sortId" :label="$t('org.sortId')" />
       <el-table-column prop="updateTime" :label="$t('baseField.updateTime')" width="185" />
       <el-table-column :label="$t('operation.label')" width="160" fixed="right">

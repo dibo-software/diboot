@@ -7,11 +7,14 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    CardUserCard: typeof import('@/components/display/UserCard.vue')['default']
     Chart: typeof import('@/components/chart/index.vue')['default']
     DateRange: typeof import('@/components/date-range/index.vue')['default']
     DiInput: typeof import('@/components/di/Input.vue')['default']
     DiList: typeof import('@/components/di/List.vue')['default']
     DiSelector: typeof import('@/components/di/Selector.vue')['default']
+    DisplayUser: typeof import('@/components/display/User.vue')['default']
+    DisplayUserInfo: typeof import('@/components/display/UserInfo.vue')['default']
     DiTable: typeof import('@/components/di/Table.vue')['default']
     DiTree: typeof import('@/components/di/Tree.vue')['default']
     DocumentExcel: typeof import('@/components/document/Excel.vue')['default']
