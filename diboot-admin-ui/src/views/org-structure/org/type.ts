@@ -1,4 +1,3 @@
-import type {UserModel} from '@/views/org-structure/user/type'
 
 export interface OrgModel {
   id?: string
@@ -9,7 +8,9 @@ export interface OrgModel {
   code: string
   sortId?: string
   managerId: string
-  managerUser: UserModel
+  managerName: string
+  managerAvatarUrl: string
+  managerGender: string
   depth: number
   orgComment?: string
   createTime: string
