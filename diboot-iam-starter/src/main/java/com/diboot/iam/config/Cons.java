@@ -124,6 +124,14 @@ public class Cons extends com.diboot.core.config.Cons {
     }
 
     /**
+     * 资源模块
+     */
+    public enum RESOURCE_APP_MODULE{
+        PC,
+        MOBILE
+    }
+
+    /**
      * 菜单类别列表
      */
     public static final List<String> MENU_CATEGORY_LIST = Arrays.asList(
