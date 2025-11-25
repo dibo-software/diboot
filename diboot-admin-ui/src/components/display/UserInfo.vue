@@ -36,7 +36,7 @@ const avatarText = computed(() => {
 const buttonRef = ref()
 const popoverRef = ref<PopoverInstance>()
 const onClickOutside = () => {
-  model.value = undefined
+  model.value = {}
   popoverRef.value?.hide()
 }
 
@@ -45,7 +45,7 @@ const { model, loadData, loading } = useDetail<UserModel>('/iam/user')
 
 <template>
   <div style="display: flex">
-    <div ref="buttonRef" v-click-outside="onClickOutside" class="user-info" @click="loadData(id)">
+    <div ref="buttonRef" v-click-outside="onClickOutside" class="user-info">
       <div v-if="avatar" class="avatar">
         <img :src="buildImgSrc(avatar)" />
       </div>
@@ -55,15 +55,22 @@ const { model, loadData, loading } = useDetail<UserModel>('/iam/user')
       <span class="name">{{ name }}</span>
     </div>
   </div>
-  <el-popover ref="popoverRef" :virtual-ref="buttonRef" trigger="click" virtual-triggering width="300px">
-    <el-descriptions :loading="loading" size="small" direction="horizontal" :column="1" border>
+  <el-popover
+    ref="popoverRef"
+    :virtual-ref="buttonRef"
+    trigger="click"
+    virtual-triggering
+    width="300px"
+    @show="loadData(id)"
+  >
+    <el-descriptions v-loading="loading" size="small" direction="horizontal" :column="1" border>
       <el-descriptions-item :label="$t('user.userNum')"> {{ model.userNum }}</el-descriptions-item>
       <el-descriptions-item :label="$t('user.role')">
         <el-tag v-for="item in model.roleList" :key="item.id" effect="plain">
           {{ item.name }}
         </el-tag>
       </el-descriptions-item>
-      <el-descriptions-item v-if="model.userPositionList" :label="$t('position.label')">
+      <el-descriptions-item v-if="model?.userPositionList" :label="$t('position.label')">
         <template v-if="model.userPositionList?.length === 1">
           <el-tag v-for="item in model.userPositionList" :key="item.id" type="success" effect="plain">
             {{ item.positionName }}
