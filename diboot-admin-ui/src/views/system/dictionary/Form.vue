@@ -14,7 +14,7 @@ type Props = {
 }
 withDefaults(defineProps<Props>(), {
   type: 'modal',
-  width: 720
+  width: 640
 })
 
 const emit = defineEmits(['complete'])
@@ -35,7 +35,7 @@ const open = async (id?: string) => {
   }
 }
 
-const formLabelWidth = '120px'
+const formLabelWidth = '90px'
 const predefineColors = ref(['#ff4500', '#ff8c00', '#ffd700', '#90ee90', '#00ced1', '#1e90ff', '#c71585', '#c71585'])
 
 const checkTypeDuplicate = checkValue(`${baseApi}/check-type-duplicate`, 'type', () => model.value?.id)
@@ -116,7 +116,7 @@ defineExpose({ open })
 </script>
 <template>
   <el-dialog v-model="visible" :width="width" :title="title" append-to-body draggable>
-    <el-form v-if="model" ref="formRef" v-loading="loading" :model="model" :rules="rules" label-position="top">
+    <el-form v-if="model" ref="formRef" v-loading="loading" :model="model" :rules="rules">
       <el-row :gutter="16">
         <el-col :span="12">
           <el-form-item :label="$t('dictionary.itemName')" prop="itemName" :label-width="formLabelWidth">
@@ -132,7 +132,7 @@ defineExpose({ open })
       <el-form-item :label="$t('dictionary.description')" :label-width="formLabelWidth">
         <el-input
           v-model="model.description"
-          :rows="2"
+          :rows="1"
           type="textarea"
           :placeholder="`${$t('placeholder.input')} ${$t('dictionary.description')}`"
         />
@@ -198,7 +198,7 @@ defineExpose({ open })
                   <i18n-selector v-model="element.itemNameI18n" style="position: relative; top: -8px" />
                 </td>
                 <td>
-                  <el-button size="small" type="danger" @click="removeItem(index)">{{
+                  <el-button size="small" type="warning" @click="removeItem(index)">{{
                     $t('operation.delete')
                   }}</el-button>
                 </td>
@@ -231,6 +231,7 @@ defineExpose({ open })
 
   th {
     padding-bottom: 12px;
+    border-bottom: 1px solid var(--el-border-color);
   }
 
   td {
@@ -239,11 +240,14 @@ defineExpose({ open })
   }
 
   td > * {
-    margin-bottom: 18px;
+    margin-top: 2px;
+    padding: 2px;
+    margin-bottom: 4px;
   }
 
   .drag-handle {
     cursor: move;
+    width: 40px;
   }
 
   .sortable-ghost {
