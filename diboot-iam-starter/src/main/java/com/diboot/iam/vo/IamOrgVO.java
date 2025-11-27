@@ -62,7 +62,11 @@ public class IamOrgVO extends IamOrg  {
     private String managerName;
 
     // 字段关联：this.manager_id=id
-    @BindEntity(entity = IamUser.class, condition = "this.manager_id=id", deepBind = true)
-    private IamUserVO managerUser;
+    @BindField(entity = IamUser.class, field = "avatarUrl", condition = "this.manager_id=id")
+    private String managerAvatarUrl;
+
+    // 字段关联：this.manager_id=id
+    @BindField(entity = IamUser.class, field = "gender", condition = "this.manager_id=id")
+    private String managerGender;
 
 }
