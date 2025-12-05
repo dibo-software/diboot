@@ -879,6 +879,10 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 			// 如果重新执行了count进行查询，则更新pagination中的总数
 			if(page.searchCount()){
 				pagination.setTotalCount(page.getTotal());
+				if (pagination.checkAndCorrectPageIndex()) {
+					page = convertToIPage(pagination);
+					page = super.page(page, queryWrapper);
+				}
 			}
 			return page.getRecords();
 		}
@@ -1035,6 +1039,10 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 			// 如果重新执行了count进行查询，则更新pagination中的总数
 			if(page.searchCount()){
 				pagination.setTotalCount(page.getTotal());
+				if (pagination.checkAndCorrectPageIndex()) {
+					page = convertToIPage(pagination);
+					resultPage = super.pageMaps(page, queryWrapper);
+				}
 			}
 			return resultPage.getRecords();
 		}

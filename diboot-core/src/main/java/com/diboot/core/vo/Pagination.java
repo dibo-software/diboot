@@ -170,4 +170,20 @@ public class Pagination implements Serializable {
     public static boolean isPaginationParam(String paramName){
         return Cons.PaginationParam.isPaginationParam(paramName);
     }
+
+    public boolean checkAndCorrectPageIndex() {
+        int pageIndex = this.getPageIndex();
+        if (this.getTotalCount() > 0 && (long) this.getPageSize() * pageIndex > this.getTotalCount()) {
+            pageIndex = (int) Math.ceil((double) this.getTotalCount() / this.getPageSize());
+            if (pageIndex < 1) {
+                pageIndex = 1;
+            }
+            if (pageIndex != this.getPageIndex()) {
+                log.debug("分页参数pageIndex {} 超出范围，已自动修正为：{}", this.getPageIndex(), pageIndex);
+                this.setPageIndex(pageIndex);
+                return true;
+            }
+        }
+        return false;
+    }
 }
