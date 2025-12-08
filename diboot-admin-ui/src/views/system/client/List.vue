@@ -146,38 +146,22 @@ const viewClientIdLogs = ref()
       <el-button v-has-permission="'create'" type="primary" :icon="Plus" @click="openForm()">
         {{ $t('operation.create') }}
       </el-button>
-
       <el-space>
-        <span class="search">
-          <el-input v-model="queryParam.name" placeholder="名称" clearable @change="onSearch" />
-        </span>
+        <el-input v-model="queryParam.name" placeholder="客户端名称" clearable @change="onSearch" />
+        <el-input v-model="queryParam.appKey" placeholder="AppKey" clearable @change="onSearch" />
+        <el-select
+          v-model="queryParam.status"
+          filterable
+          clearable
+          :placeholder="$t('client.status')"
+          @change="onSearch"
+        >
+          <el-option v-for="item in relatedData.accountStatusOptions" :key="item.value" v-bind="item" />
+        </el-select>
         <el-button :icon="Search" type="primary" @click="onSearch">{{ $t('operation.search') }}</el-button>
         <el-button :title="$t('title.reset')" @click="resetFilter">{{ $t('operation.reset') }}</el-button>
-        <el-button
-          :icon="searchState ? ArrowUp : ArrowDown"
-          :title="searchState ? $t('searchState.up') : $t('searchState.down')"
-          @click="searchState = !searchState"
-        />
       </el-space>
     </el-space>
-
-    <el-form v-show="searchState" label-width="80px" class="list-search" @submit.prevent>
-      <el-row :gutter="18">
-        <el-col :md="8" :sm="24">
-          <el-form-item prop="appKey" label="AppKey">
-            <el-input v-model="queryParam.appKey" clearable @change="onSearch" />
-          </el-form-item>
-        </el-col>
-        <el-col :md="8" :sm="24">
-          <el-form-item prop="status" :label="$t('client.status')">
-            <el-select v-model="queryParam.status" filterable clearable @change="onSearch">
-              <el-option v-for="item in relatedData.accountStatusOptions" :key="item.value" v-bind="item" />
-            </el-select>
-          </el-form-item>
-        </el-col>
-      </el-row>
-    </el-form>
-
     <el-table
       ref="tableRef"
       v-loading="loading"

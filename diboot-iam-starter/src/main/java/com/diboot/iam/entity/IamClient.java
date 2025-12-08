@@ -19,6 +19,8 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
+import com.diboot.core.binding.query.BindQuery;
+import com.diboot.core.binding.query.Comparison;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -53,6 +55,7 @@ public class IamClient extends BaseLoginUser {
      * 应用Key
      */
     @NotNull(message = "{validation.clientCredential.appKey.NotNull.message}")
+    @BindQuery(comparison = Comparison.LIKE)
     private String appKey;
 
     /**
