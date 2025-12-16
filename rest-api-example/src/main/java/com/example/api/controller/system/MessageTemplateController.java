@@ -138,6 +138,6 @@ public class MessageTemplateController extends BaseCrudRestController<MessageTem
      */
     @GetMapping("/variable-list")
     public JsonResult getVariableList() throws Exception {
-        return JsonResult.OK(messageTemplateService.getTemplateVariableList());
+        return JsonResult.OK(messageTemplateService.getAllTemplateVariables());
     }
 }

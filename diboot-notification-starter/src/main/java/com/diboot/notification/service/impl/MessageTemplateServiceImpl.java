@@ -27,7 +27,9 @@ import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
 * 消息模版相关Service实现
@@ -43,7 +45,7 @@ public class MessageTemplateServiceImpl extends BaseServiceImpl<MessageTemplateM
     /**
      * 模板变量列表
      */
-    private static List<String> templateVariableList = new ArrayList<>();
+    private static Map<String, List<String>> templateVariableListCache = new LinkedHashMap<>();
 
     public static void extractVariablesFrom(List<Class<?>> variableObjectClasses) {
         if(variableObjectClasses != null) {
@@ -52,19 +54,26 @@ public class MessageTemplateServiceImpl extends BaseServiceImpl<MessageTemplateM
                 if(V.isEmpty(fields)){
                     continue;
                 }
+                templateVariableListCache.put(objClass.getSimpleName(), new ArrayList<>());
                 fields.forEach( fld -> {
                     BindVariable bindVariable = fld.getAnnotation(BindVariable.class);
-                    if(!templateVariableList.contains(bindVariable.name())) {
-                        templateVariableList.add(bindVariable.name());
-                    }
+                    templateVariableListCache.get(objClass.getSimpleName()).add(bindVariable.name());
                 });
             }
         }
     }
 
+    @Deprecated
     @Override
     public List<String> getTemplateVariableList() {
+        List<String> templateVariableList = new ArrayList<>();
+        templateVariableListCache.values().forEach(templateVariableList::addAll);
         return templateVariableList;
+    }
+
+    @Override
+    public Map<String, List<String>> getAllTemplateVariables() {
+        return templateVariableListCache;
     }
 
 }
