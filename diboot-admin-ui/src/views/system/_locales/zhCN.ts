@@ -136,7 +136,9 @@ const zhCN = {
       content: '发送日期'
     },
     selectableVariables: '可选变量',
-    addVariable: '添加此变量'
+    addVariable: '添加此变量',
+    selectVarFrom: '选择变量来源',
+    fromModel: '来自模型'
   },
   operationLog: {
     business: '业务操作日志',

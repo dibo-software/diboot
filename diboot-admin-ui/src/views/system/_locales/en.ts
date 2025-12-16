@@ -137,7 +137,9 @@ const en: Locale = {
       content: 'Send Date'
     },
     selectableVariables: 'Selectable Variables',
-    addVariable: 'Add This Variable'
+    addVariable: 'Add This Variable',
+    selectVarFrom: 'Select variables from..',
+    fromModel: 'From model'
   },
   operationLog: {
     business: 'Business operation logs',
