@@ -205,13 +205,13 @@ router.currentRoute.value.meta.keepAlive ? onActivated(activated) : activated()
     >
       <el-table-column :label="$t('group.name')" prop="name" show-overflow-tooltip :min-width="100" />
       <el-table-column :label="$t('group.orgId')" prop="orgLabel" show-overflow-tooltip :min-width="100" />
-      <el-table-column :label="$t('group.members')" prop="members" show-overflow-tooltip :min-width="180">
+      <el-table-column :label="$t('org.managerName')" prop="managerLabel" show-overflow-tooltip :min-width="100" />
+      <el-table-column :label="$t('group.members')" prop="members" show-overflow-tooltip :min-width="200">
         <template #default="{ row }: { row: Group }">
           {{ row.membersLabel?.join('、') }}
         </template>
       </el-table-column>
       <el-table-column :label="$t('group.description')" prop="description" show-overflow-tooltip :min-width="130" />
-      <el-table-column :label="$t('baseField.createTime')" prop="createTime" show-overflow-tooltip :width="165" />
       <el-table-column :label="$t('baseField.updateTime')" prop="updateTime" show-overflow-tooltip :width="165" />
       <el-table-column :label="$t('operation.label')" fixed="right" :width="180">
         <template #default="{ row }: { row: Group }">

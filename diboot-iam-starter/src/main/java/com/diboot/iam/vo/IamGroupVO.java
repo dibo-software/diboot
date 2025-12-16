@@ -44,7 +44,11 @@ public class IamGroupVO extends IamGroup {
     @BindField(entity = IamOrg.class, condition = "this.org_id = id", field = "name")
     private String orgLabel;
 
-    // 字典关联
+    // 关联负责人
+    @BindField(entity = IamUser.class, condition = "this.manager_id = id", field = "realname")
+    private String managerLabel;
+
+    // 关联成员
     @BindFieldList(entity = IamUser.class, condition = "this.members = id", field = "realname")
     private List<String> membersLabel;
 

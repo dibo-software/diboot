@@ -9,6 +9,8 @@ export interface Group {
   // 组织
   orgId?: string
   orgLabel?: string
+  managerId?: string
+  managerLabel?: string
   // 成员
   members: string[]
   membersLabel?: string[]
