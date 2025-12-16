@@ -10,6 +10,7 @@ const en: Locale = {
     name: 'Name',
     code: 'Code',
     type: 'Type',
+    area: 'Area',
     managerName: 'Manager',
     sortId: 'Sort ID',
     parentId: 'Parent ID',

@@ -6,6 +6,7 @@ export interface OrgModel {
   name: string
   type: string
   code: string
+  area?: string
   sortId?: string
   managerId: string
   managerName: string

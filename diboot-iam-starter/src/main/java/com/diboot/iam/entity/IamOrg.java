@@ -91,6 +91,12 @@ public class IamOrg extends BaseTreeEntity<String> {
     private String code;
 
     /**
+     * 地区
+     */
+    @TableField()
+    private String area;
+
+    /**
      * 负责人ID
      */
     @TableField()

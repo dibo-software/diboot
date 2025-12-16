@@ -3,7 +3,6 @@ import type { OrgModel } from '@/views/org-structure/org/type'
 import { Search, Plus } from '@element-plus/icons-vue'
 import OrgForm from './Form.vue'
 import UserInfo from '@/components/display/UserInfo.vue'
-import { buildImgSrc } from '@/utils/file'
 
 const props = defineProps<{ parentId?: string }>()
 
@@ -70,6 +69,7 @@ const onFormComplete = () => {
     >
       <el-table-column prop="name" :label="$t('org.name')" />
       <el-table-column prop="code" :label="$t('org.code')" />
+      <el-table-column prop="area" :label="$t('org.area')" />
       <el-table-column prop="managerName" :label="$t('org.managerName')" width="150px">
         <template #default="{ row }">
           <user-info
