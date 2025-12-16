@@ -53,6 +53,7 @@ const onFormComplete = () => {
       <el-space>
         <el-input v-model="queryParam.name" clearable :placeholder="$t('org.name')" @change="onSearch" />
         <el-input v-model="queryParam.code" clearable :placeholder="$t('org.code')" @change="onSearch" />
+        <el-input v-model="queryParam.area" clearable :placeholder="$t('org.area')" @change="onSearch" />
         <el-button :icon="Search" type="primary" @click="onSearch">{{ $t('operation.search') }}</el-button>
         <el-button :title="$t('title.reset')" @click="resetFilter">{{ $t('operation.reset') }}</el-button>
       </el-space>
