@@ -110,14 +110,14 @@ public class IamResource extends BaseEntity<String> {
     /**
      * 权限编码
      */
-    @Length(max = 200, message = "{validation.iamResource.permissionCode.Length.message}")
+    @Length(max = 300, message = "{validation.iamResource.permissionCode.Length.message}")
     @TableField()
     private String permissionCode;
 
     /**
      * meta配置
      */
-    @Length(max = 200, message = "{validation.iamResource.meta.Length.message}")
+    @Length(max = 300, message = "{validation.iamResource.meta.Length.message}")
     @TableField()
     private String meta;
 
