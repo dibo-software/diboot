@@ -117,7 +117,7 @@ public class IamResource extends BaseEntity<String> {
     /**
      * meta配置
      */
-    @Length(max = 200, message = "{validation.iamResource.meta.Length.message}")
+    @Length(max = 500, message = "{validation.iamResource.meta.Length.message}")
     @TableField()
     private String meta;
 
