@@ -113,6 +113,11 @@ public class ContextHolder implements ApplicationContextAware, ApplicationListen
             return null;
         }
         if(clazzInstances.size() > 1){
+            for (T instance : clazzInstances) {
+                if (V.equals(clazz.getSimpleName(), instance.getClass().getSimpleName())) {
+                    return instance;
+                }
+            }
             throw new InvalidUsageException("getBean({}.class) 识别到多个实例，请检查调用！", clazz.getSimpleName());
         }
         return clazzInstances.get(0);
