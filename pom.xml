@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.6</version>
+        <version>3.5.9</version>
         <relativePath/>
     </parent>
 
@@ -30,12 +30,11 @@
 
     <properties>
         <hibernate-validator.version>9.0.1.Final</hibernate-validator.version>
-        <mybatis-plus.version>3.5.14</mybatis-plus.version>
+        <mybatis-plus.version>3.5.15</mybatis-plus.version>
         <okhttp.version>4.12.0</okhttp.version>
-        <aspectjweaver.version>1.9.24</aspectjweaver.version>
-        <commons-io.version>2.20.0</commons-io.version>
-        <easyexcel.version>4.0.3</easyexcel.version>
-        <shiro.version>2.0.5</shiro.version>
+        <aspectjweaver.version>1.9.25.1</aspectjweaver.version>
+        <commons-io.version>2.21.0</commons-io.version>
+        <shiro.version>2.0.6</shiro.version>
         <diboot.version>3.9.0</diboot.version>
     </properties>
 

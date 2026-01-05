@@ -386,7 +386,7 @@ public class BaseServiceTest {
     @Test
     public void testPagination(){
         Dictionary dict = new Dictionary();
-        dict.setType("GENDER");
+        dict.setType("GENDERGGG");
         //dict.setParentId(null);
         QueryWrapper<Dictionary> queryWrapper = QueryBuilder.toQueryWrapper(dict);
 
@@ -398,7 +398,7 @@ public class BaseServiceTest {
         Assert.assertTrue(voList.size() == 1);
         Assert.assertTrue(pagination.getTotalPage() >= 2);
 
-        pagination.setPageIndex(2);
+        pagination.setPageIndex(4);
         voList = dictionaryService.getViewObjectList(queryWrapper, pagination, DictionaryVO.class);
         Assert.assertTrue(voList.size() == 1);
 
@@ -724,6 +724,19 @@ public class BaseServiceTest {
         QueryWrapper<Department> queryWrapper = QueryBuilder.toQueryWrapper(departmentDTO);
         long count = departmentService.getEntityListCount(queryWrapper);
         Assert.assertTrue(count > 1);
+    }
+
+    @Test
+    @Transactional
+    public void testAutoFill() {
+        Pet pet = new Pet();
+        pet.setCategory("测试");
+        pet.setCode("测试");
+        pet.setRemark("测试");
+
+        PetService petService = ContextHolder.getBean(PetService.class);
+        petService.createEntity(pet);
+
     }
 
 }
