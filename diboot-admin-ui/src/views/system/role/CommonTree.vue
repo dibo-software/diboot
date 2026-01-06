@@ -76,7 +76,7 @@ defineExpose({
     :inactive-text="$t('role.putAway')"
     @change="changeTreeExpandStatus"
   />
-  <el-scrollbar height="calc(80vh - 350px)" style="width: 100%">
+  <el-scrollbar height="calc(80vh - 350px)" style="width: 100%; padding-top: 10px">
     <el-tree
       ref="treeRef"
       style="width: 100%"

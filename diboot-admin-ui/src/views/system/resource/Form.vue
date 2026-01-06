@@ -173,7 +173,7 @@ const enableI18n = import.meta.env.VITE_APP_ENABLE_I18N === 'true'
                 </el-col>
                 <el-col :span="10">
                   <el-form-item :label="$t('org.sortId')" prop="sortId">
-                    <el-input v-model="model.sortId" :placeholder="$t('user.placeholder.sortId')" clearable />
+                    <el-input v-model="model.sortId" type="number" :placeholder="$t('user.placeholder.sortId')" />
                   </el-form-item>
                 </el-col>
               </el-row>

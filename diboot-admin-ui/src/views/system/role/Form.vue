@@ -91,17 +91,23 @@ const getSelectedIdList = (idList: string[]) => {
       :rules="rules"
       :label-width="$i18n.locale === 'en' ? '150px' : '80px'"
     >
-      <el-form-item prop="name" :label="$t('role.name')">
-        <el-input v-model="model.name" />
-      </el-form-item>
-      <el-form-item prop="code" :label="$t('role.code')">
-        <el-input v-model="model.code" />
-      </el-form-item>
+      <el-row :gutter="16">
+        <el-col :span="12">
+          <el-form-item prop="name" :label="$t('role.name')">
+            <el-input v-model="model.name" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item prop="code" :label="$t('role.code')">
+            <el-input v-model="model.code" />
+          </el-form-item>
+        </el-col>
+      </el-row>
       <el-form-item prop="description" :label="$t('role.description')">
-        <el-input v-model="model.description" type="textarea" />
+        <el-input v-model="model.description" type="textarea" :rows="1" />
       </el-form-item>
       <el-form-item prop="permissionList" :label="$t('role.permissionList')">
-        <el-radio-group v-model="activeName" style="margin-right: 20px">
+        <el-radio-group v-model="activeName" style="margin-right: 20px" fill="#909399">
           <el-radio-button :label="$t('resource.main')" value="PC" />
           <el-radio-button :label="$t('resource.mobile.title')" value="Mobile" />
         </el-radio-group>
