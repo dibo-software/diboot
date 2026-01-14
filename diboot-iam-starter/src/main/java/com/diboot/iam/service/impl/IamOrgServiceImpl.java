@@ -99,7 +99,7 @@ public class IamOrgServiceImpl extends BaseServiceImpl<IamOrgMapper, IamOrg> imp
         // 由 部门 改为 公司
         if(Cons.DICTCODE_ORG_TYPE.COMP.name().equals(entity.getType())) {
             IamOrg oldOrg = getEntity(entity.getId());
-            if (Cons.DICTCODE_ORG_TYPE.DEPT.name().equals(oldOrg.getType())) {
+            if (oldOrg != null && Cons.DICTCODE_ORG_TYPE.DEPT.name().equals(oldOrg.getType())) {
                 // 更新其下属部门节点rootOrgId
                 List<String> childOrgIds = getChildOrgIds(entity.getId());
                 LambdaUpdateWrapper<IamOrg> updateWrapper = Wrappers.lambdaUpdate();
