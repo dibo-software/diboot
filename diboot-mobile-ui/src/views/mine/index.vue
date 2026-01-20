@@ -14,7 +14,7 @@ const login = () => {
   auth.clearToken()
   router.push({ name: 'Login' }).finally()
 }
-const hasMorePosition = computed(() => positions.value && positions.value.length > 1)
+const hasMorePosition = computed(() => positions?.value?.length > 1)
 const show = ref(false);
 const showPopup = () => {
   if (!hasMorePosition.value) return
