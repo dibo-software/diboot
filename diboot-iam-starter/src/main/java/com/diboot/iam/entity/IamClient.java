@@ -18,7 +18,7 @@ package com.diboot.iam.entity;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
+import com.baomidou.mybatisplus.extension.handlers.Jackson3TypeHandler;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
 import jakarta.validation.constraints.NotNull;
@@ -72,7 +72,7 @@ public class IamClient extends BaseLoginUser {
     /**
      * 权限
      */
-    @TableField(typeHandler = JacksonTypeHandler.class)
+    @TableField(typeHandler = Jackson3TypeHandler.class)
     private Set<String> permissions;
 
     /**

@@ -17,7 +17,7 @@ package diboot.core.test.binder.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
+import com.baomidou.mybatisplus.extension.handlers.Jackson3TypeHandler;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
 import com.diboot.core.binding.query.Strategy;
@@ -62,13 +62,13 @@ public class Department extends BaseEntity<String> {
     /**
      * JSON数组
      */
-    @TableField(typeHandler = JacksonTypeHandler.class)
+    @TableField(typeHandler = Jackson3TypeHandler.class)
     private List<Long> extjsonarr;
 
     /**
      * JSON对象
      */
-    @TableField(typeHandler = JacksonTypeHandler.class)
+    @TableField(typeHandler = Jackson3TypeHandler.class)
     private LinkedHashMap<String, Object> extjsonobj;
 
 }

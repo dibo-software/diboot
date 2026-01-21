@@ -18,7 +18,7 @@ package com.diboot.iam.entity;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
+import com.baomidou.mybatisplus.extension.handlers.Jackson3TypeHandler;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
 import com.diboot.core.entity.BaseEntity;
@@ -77,7 +77,7 @@ public class IamGroup extends BaseEntity<String>{
      * 成员
      */
     @NotNull(message = "{validation.iamGroup.members.NotNull.message}")
-    @TableField(typeHandler = JacksonTypeHandler.class)
+    @TableField(typeHandler = Jackson3TypeHandler.class)
     @BindQuery(comparison = Comparison.CONTAINS)
     private List<String> members;
 

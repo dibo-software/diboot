@@ -18,7 +18,7 @@ package com.diboot.core.entity;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
+import com.baomidou.mybatisplus.extension.handlers.Jackson3TypeHandler;
 import com.diboot.core.binding.annotation.BindI18n;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
@@ -123,7 +123,7 @@ public class Dictionary extends BaseEntity<String> {
     /**
      * 扩展字段
      */
-    @TableField(typeHandler = JacksonTypeHandler.class)
+    @TableField(typeHandler = Jackson3TypeHandler.class)
     private Map<String, Object> extension;
 
     /**
