@@ -15,9 +15,10 @@
  */
 package com.diboot.core.serial.serializer;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ValueSerializer;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -28,20 +29,13 @@ import java.math.BigDecimal;
  * @version v3.2.0
  * @date 2024/1/22
  */
-public class BigDecimal2StringSerializer extends StdSerializer<BigDecimal> {
-    private static final long serialVersionUID = -8536893521899234130L;
-
-    public static final BigDecimal2StringSerializer instance = new BigDecimal2StringSerializer();
-
-    public BigDecimal2StringSerializer() {
-        super(BigDecimal.class);
-    }
+public class BigDecimal2StringSerializer extends ValueSerializer<BigDecimal> {
 
     @Override
-    public void serialize(BigDecimal bigDecimal, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
+    public void serialize(BigDecimal bigDecimal, JsonGenerator gen, SerializationContext ctxt) throws JacksonException {
         if(bigDecimal != null) {
             String formatValue = bigDecimal.stripTrailingZeros().toPlainString();
-            jsonGenerator.writeString(formatValue);
+            gen.writeString(formatValue);
         }
     }
 

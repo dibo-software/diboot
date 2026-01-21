@@ -46,7 +46,7 @@ import java.util.concurrent.TimeUnit;
 @EnableConfigurationProperties({AiProperties.class})
 @ComponentScan(basePackages = {"com.diboot.ai"})
 @MapperScan(basePackages = {"com.diboot.ai.mapper"})
-public class AiAutoConfig implements WebMvcConfigurer {
+public class AiAutoConfig {
     private static final Logger log = LoggerFactory.getLogger(AiAutoConfig.class);
 
     @Autowired

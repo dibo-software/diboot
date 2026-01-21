@@ -20,8 +20,8 @@ import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
-import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.extern.slf4j.Slf4j;
+import tools.jackson.core.type.TypeReference;
 
 import java.util.Collections;
 import java.util.List;

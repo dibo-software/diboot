@@ -24,13 +24,6 @@ import com.diboot.core.extension.sequence.counter.RedisCacheSeqCounter;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.ser.FilterProvider;
-import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
-import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -41,8 +34,14 @@ import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.JacksonJsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.ser.FilterProvider;
+import tools.jackson.databind.ser.std.SimpleBeanPropertyFilter;
+import tools.jackson.databind.ser.std.SimpleFilterProvider;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -75,28 +74,25 @@ public class CoreRedisAutoConfig {
         redisTemplate.setKeySerializer(stringRedisSerializer);
         redisTemplate.setHashKeySerializer(stringRedisSerializer);
 
-        // 用Jackson2JsonRedisSerializer 序列化和反序列化value值
-        redisTemplate.setValueSerializer(jackson2JsonRedisSerializer());
-        redisTemplate.setHashValueSerializer(jackson2JsonRedisSerializer());
+        // 用JacksonJsonRedisSerializer 序列化和反序列化value值
+        redisTemplate.setValueSerializer(jacksonJsonRedisSerializer());
+        redisTemplate.setHashValueSerializer(jacksonJsonRedisSerializer());
 
         redisTemplate.setConnectionFactory(connectionFactory);
         redisTemplate.afterPropertiesSet();
         return redisTemplate;
     }
 
-    private Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.setVisibility(PropertyAccessor.ALL , JsonAutoDetect.Visibility.ANY);
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES , false);
-        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS , false);
-        objectMapper.activateDefaultTyping(objectMapper.getPolymorphicTypeValidator() , ObjectMapper.DefaultTyping.NON_FINAL);
-        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        objectMapper.registerModule(new JavaTimeModule());
-
-        FilterProvider filterProvider = new SimpleFilterProvider().addFilter("rewrite-bean" , SimpleBeanPropertyFilter.serializeAllExcept("realmNames"));
-        objectMapper.setFilterProvider(filterProvider);
-
-        return new Jackson2JsonRedisSerializer<>(objectMapper, Object.class);
+    private JacksonJsonRedisSerializer<Object> jacksonJsonRedisSerializer() {
+        FilterProvider filterProvider = new SimpleFilterProvider().addFilter("rewrite-bean", SimpleBeanPropertyFilter.serializeAllExcept("realmNames"));
+        JsonMapper jsonMapper = JsonMapper.builder()
+                .changeDefaultVisibility(v-> v.withVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY))
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+                .filterProvider(filterProvider)
+                .changeDefaultPropertyInclusion(inc -> inc.withValueInclusion(JsonInclude.Include.NON_NULL))
+                .build();
+        return new JacksonJsonRedisSerializer<>(jsonMapper, Object.class);
     }
 
     /**

@@ -36,12 +36,6 @@ import com.diboot.core.serial.serializer.BigDecimal2StringSerializer;
 import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.D;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.LocalDateTypeHandler;
 import org.mybatis.spring.annotation.MapperScan;
@@ -51,23 +45,30 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
-import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.web.servlet.filter.OrderedRequestContextFilter;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.jackson.autoconfigure.JacksonAutoConfiguration;
+import org.springframework.boot.jackson.autoconfigure.JsonMapperBuilderCustomizer;
+import org.springframework.boot.servlet.filter.OrderedRequestContextFilter;
+import org.springframework.context.annotation.*;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.format.FormatterRegistry;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.filter.RequestContextFilter;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.ext.javatime.deser.LocalDateDeserializer;
+import tools.jackson.databind.ext.javatime.deser.LocalTimeDeserializer;
+import tools.jackson.databind.ext.javatime.ser.LocalDateSerializer;
+import tools.jackson.databind.ext.javatime.ser.LocalDateTimeSerializer;
+import tools.jackson.databind.ext.javatime.ser.LocalTimeSerializer;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.module.SimpleModule;
+import tools.jackson.databind.ser.std.ToStringSerializer;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -75,7 +76,6 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -109,64 +109,50 @@ public class CoreAutoConfig implements WebMvcConfigurer {
         log.info("初始化 core 内核 自动配置");
     }
 
-    /**
-     * 默认配置 ObjectMapper, 并允许用户覆盖
-     *
-     * @return Jackson2ObjectMapperBuilderCustomizer
-     */
     @Bean
     @ConditionalOnMissingBean
-    public Jackson2ObjectMapperBuilderCustomizer jsonCustomizer() {
+    public JsonMapperBuilderCustomizer jacksonCustomizer() {
         return builder -> {
-            // Long转换成String避免JS超长问题
-            builder.serializerByType(Long.class, ToStringSerializer.instance);
-            builder.serializerByType(Long.TYPE, ToStringSerializer.instance);
-            builder.serializerByType(BigInteger.class, ToStringSerializer.instance);
-            // BigDecimal转换成String避免JS超长问题，以及格式化数值
-            builder.serializerByType(BigDecimal.class, BigDecimal2StringSerializer.instance);
-
-            // 支持java8时间类型
-            // LocalDateTime
-            DateTimeFormatter localDateTimeFormatter = DateTimeFormatter.ofPattern(D.FORMAT_DATETIME_Y4MDHMS);
-            builder.serializerByType(LocalDateTime.class, new LocalDateTimeSerializer(localDateTimeFormatter));
-            builder.deserializerByType(LocalDateTime.class, new LocalDateTimeDeserializer());
-            // LocalDate
-            DateTimeFormatter localDateFormatter = DateTimeFormatter.ofPattern(D.FORMAT_DATE_Y4MD);
-            builder.serializerByType(LocalDate.class, new LocalDateSerializer(localDateFormatter));
-            builder.deserializerByType(LocalDate.class, new LocalDateDeserializer(localDateFormatter));
-            // LocalTime
-            DateTimeFormatter localTimeFormatter = DateTimeFormatter.ofPattern(D.FORMAT_TIME_HHmmss);
-            builder.serializerByType(LocalTime.class, new LocalTimeSerializer(localTimeFormatter));
-            builder.deserializerByType(LocalTime.class, new LocalTimeDeserializer(localTimeFormatter));
-
+            builder.enable(SerializationFeature.INDENT_OUTPUT);
+            builder.addModule(new SimpleModule()
+                            .addSerializer(Long.class, ToStringSerializer.instance)
+                            .addSerializer(Long.TYPE, ToStringSerializer.instance)
+                            .addSerializer(BigInteger.class, ToStringSerializer.instance)
+                            // BigDecimal转换成String避免JS超长问题，以及格式化数值
+                            .addSerializer(BigDecimal.class, new BigDecimal2StringSerializer())
+                            // 日期时间格式
+                            .addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(D.FORMATTER_DATETIME_Y4MDHMS))
+                            .addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer())
+                            .addSerializer(LocalDate.class, new LocalDateSerializer(D.FORMATTER_DATE_Y4MD))
+                    .       addDeserializer(LocalDate.class, new LocalDateDeserializer(D.FORMATTER_DATE_Y4MD))
+                            .addSerializer(LocalTime.class, new LocalTimeSerializer(D.FORMATTER_TIME_HM))
+                            .addDeserializer(LocalTime.class, new LocalTimeDeserializer(D.FORMATTER_TIME_HM))
+             );
             // 设置序列化包含策略
-            builder.serializationInclusion(defaultPropertyInclusion);
+            builder.changeDefaultPropertyInclusion(incl -> incl.withValueInclusion(defaultPropertyInclusion));
+            builder.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             // 时间格式化
-            builder.failOnUnknownProperties(false);
-            builder.timeZone(TimeZone.getTimeZone(defaultTimeZone));
+            builder.defaultTimeZone(TimeZone.getTimeZone(defaultTimeZone));
             SimpleDateFormat dateFormat = new SimpleDateFormat(defaultDatePattern) {
                 @Override
                 public Date parse(String dateStr) {
                     return D.fuzzyConvert(dateStr);
                 }
             };
-            builder.dateFormat(dateFormat);
+            builder.defaultDateFormat(dateFormat);
         };
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public Jackson2ObjectMapperBuilder jackson2ObjectMapperBuilder() {
-        Jackson2ObjectMapperBuilder objectMapperBuilder = new Jackson2ObjectMapperBuilder();
-        jsonCustomizer().customize(objectMapperBuilder);
-        log.info("启用默认的Jackson自定义配置");
-        return objectMapperBuilder;
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
-    public MappingJackson2HttpMessageConverter jacksonMessageConverter() {
-        return new MappingJackson2HttpMessageConverter(jackson2ObjectMapperBuilder().build());
+    public JacksonJsonHttpMessageConverter jacksonMessageConverter() {
+        JsonMapper jsonMapper = JsonMapper.builder()
+                //.changeDefaultVisibility(v-> v.withVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.DEFAULT))
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+                .changeDefaultPropertyInclusion(inc -> inc.withValueInclusion(JsonInclude.Include.NON_NULL))
+                .build();
+        return new JacksonJsonHttpMessageConverter(jsonMapper);
     }
 
     /**

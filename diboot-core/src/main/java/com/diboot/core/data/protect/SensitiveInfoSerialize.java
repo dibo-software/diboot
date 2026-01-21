@@ -18,13 +18,11 @@ package com.diboot.core.data.protect;
 import com.diboot.core.data.annotation.DataMask;
 import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.ContextHolder;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.BeanProperty;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.ContextualSerializer;
 import lombok.extern.slf4j.Slf4j;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ValueSerializer;
 
 import java.io.IOException;
 import java.util.List;
@@ -40,7 +38,7 @@ import java.util.stream.Collectors;
  * @date 2021/08/19
  */
 @Slf4j
-public class SensitiveInfoSerialize<E> extends JsonSerializer<E> implements ContextualSerializer {
+public class SensitiveInfoSerialize<E> extends ValueSerializer<E> {
 
     /**
      * 保护字段处理器
@@ -57,8 +55,7 @@ public class SensitiveInfoSerialize<E> extends JsonSerializer<E> implements Cont
      */
     private String fieldName;
 
-    public SensitiveInfoSerialize() {
-    }
+    public SensitiveInfoSerialize() {}
 
     public SensitiveInfoSerialize(Class<?> clazz, String fieldName) {
         this.clazz = clazz;
@@ -66,7 +63,7 @@ public class SensitiveInfoSerialize<E> extends JsonSerializer<E> implements Cont
     }
 
     @Override
-    public void serialize(E value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+    public void serialize(E value, JsonGenerator gen, SerializationContext ctxt) throws JacksonException {
         if(this.dataMaskHandler == null) {
             this.dataMaskHandler = ContextHolder.getBean(DataMaskHandler.class);
             if(this.dataMaskHandler == null) {
@@ -74,12 +71,13 @@ public class SensitiveInfoSerialize<E> extends JsonSerializer<E> implements Cont
             }
         }
         if (value instanceof List) {
-            gen.writeObject(((List<String>) value).stream().map(e -> dataMaskHandler.mask(e)).collect(Collectors.toList()));
+            gen.writeObjectRef(((List<String>) value).stream().map(e -> dataMaskHandler.mask(e)).collect(Collectors.toList()));
         } else {
-            gen.writeObject(dataMaskHandler.mask((String) value));
+            gen.writeString(dataMaskHandler.mask((String) value));
         }
     }
 
+    /*
     @Override
     public JsonSerializer<?> createContextual(SerializerProvider prov, BeanProperty property) throws JsonMappingException {
         if (null == property) {
@@ -98,5 +96,5 @@ public class SensitiveInfoSerialize<E> extends JsonSerializer<E> implements Cont
             log.error("`@DataMask` 只支持 String 与 List<String> 类型脱敏！");
         }
         return prov.findValueSerializer(property.getType(), property);
-    }
+    }*/
 }

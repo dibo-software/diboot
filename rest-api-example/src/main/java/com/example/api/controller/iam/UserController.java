@@ -26,6 +26,7 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import tools.jackson.core.type.TypeReference;
 
 import java.util.List;
 import java.util.Map;
@@ -67,7 +68,7 @@ public class UserController extends BaseCrudRestController<IamUser> {
         dto.setOrgId(null);
         // 处理 _conditions
         if (V.notEmpty(_conditions)) {
-            List<Map> conditions = JSON.parseArray(_conditions, Map.class);
+            List<Map<String, Object>> conditions = JSON.parseArray(_conditions, new TypeReference<List<Map<String, Object>>>(){});
             for (Map<String, Object> condition : conditions) {
                 String field = String.valueOf(condition.get("field"));
                 Object value = condition.get("value");

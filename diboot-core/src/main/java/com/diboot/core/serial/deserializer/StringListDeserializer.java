@@ -17,13 +17,12 @@ package com.diboot.core.serial.deserializer;
 
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
-import com.fasterxml.jackson.core.JacksonException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.ValueDeserializer;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -36,19 +35,14 @@ import java.util.List;
  * @version : v3
  * @Date 2023/12/05
  */
-public class StringListDeserializer extends StdDeserializer<List<String>> {
-    private static final long serialVersionUID = -4162970093906595310L;
-
-    public StringListDeserializer() {
-        super(List.class);
-    }
+@Deprecated
+public class StringListDeserializer extends ValueDeserializer<List<String>> {
 
     @Override
-    public List<String> deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JacksonException {
+    public List<String> deserialize(JsonParser p, DeserializationContext ctxt) throws JacksonException {
         String stringList = p.readValueAs(String.class);
         if (V.notEmpty(stringList)) {
-            return JSON.parseArray(stringList, new TypeReference<List<String>>() {
-            });
+            return JSON.parseArray(stringList, new TypeReference<>() {});
         } else {
             return null;
         }

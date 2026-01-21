@@ -17,12 +17,11 @@ package com.diboot.core.serial.deserializer;
 
 import com.diboot.core.util.D;
 import com.diboot.core.util.V;
-import com.fasterxml.jackson.core.JacksonException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.ValueDeserializer;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -32,14 +31,10 @@ import java.time.LocalDateTime;
  * @version : v1.0
  * @Date 2023/9/18  15:05
  */
-public class LocalDateTimeDeserializer extends StdDeserializer<LocalDateTime> {
-    private static final long serialVersionUID = 8758976191733673106L;
+public class LocalDateTimeDeserializer extends ValueDeserializer<LocalDateTime> {
 
-    public LocalDateTimeDeserializer() {
-        super(LocalDateTime.class);
-    }
     @Override
-    public LocalDateTime deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JacksonException {
+    public LocalDateTime deserialize(JsonParser p, DeserializationContext ctxt) throws JacksonException {
         String dateString = p.readValueAs(String.class);
         dateString = D.formatDateTimeString(dateString);
         if(V.isEmpty(dateString)) {

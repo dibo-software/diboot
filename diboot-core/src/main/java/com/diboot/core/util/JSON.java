@@ -16,12 +16,12 @@
 package com.diboot.core.util;
 
 import com.diboot.core.exception.BusinessException;
-import com.diboot.core.exception.InvalidUsageException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.JavaType;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -37,20 +37,23 @@ import java.util.Map;
 public class JSON {
     private static final Logger log = LoggerFactory.getLogger(JSON.class);
 
-    private static ObjectMapper objectMapper;
+    private static JsonMapper objectMapper;
 
     /**
      * 初始化ObjectMapper
      * @return
      */
-    private static ObjectMapper getObjectMapper(){
+    private static JsonMapper getObjectMapper(){
         if(objectMapper != null){
             return objectMapper;
         }
-        objectMapper = ContextHolder.getBean(ObjectMapper.class);
+        objectMapper = ContextHolder.getBean(JsonMapper.class);
         if(objectMapper == null){
             log.warn("未找到 ObjectMapper实例，请检查配置类！");
-            return new ObjectMapper();
+            return JsonMapper.builder()
+                    .enable(SerializationFeature.INDENT_OUTPUT)
+                    //.serializationInclusion(JsonInclude.Include.NON_NULL)
+                    .build();
         }
         return objectMapper;
     }
@@ -76,7 +79,7 @@ public class JSON {
             String json = getObjectMapper().writeValueAsString(model);
             return json;
         } catch (Exception e) {
-            log.error("Java转Json异常: {}", e);
+            log.error("Java转Json异常:", e);
             throw new BusinessException("exception.business.JSON.toJSONString.message");
         }
     }
@@ -92,7 +95,7 @@ public class JSON {
             T model = getObjectMapper().readValue(jsonStr, clazz);
             return model;
         } catch (Exception e) {
-            log.error("Json: {} 转Java异常: {}", jsonStr, e);
+            log.error("Json: {} 转Java异常: ", jsonStr, e);
             throw new BusinessException("exception.business.JSON.toJavaObject.message");
         }
     }
@@ -150,7 +153,7 @@ public class JSON {
             JavaType javaType = getObjectMapper().getTypeFactory().constructParametricType(List.class, clazz);
             return getObjectMapper().readValue(jsonStr, javaType);
         } catch (Exception e) {
-            log.error("Json: {} 转List异常: {}", jsonStr, e);
+            log.error("Json: {} 转List异常", jsonStr, e);
             throw new BusinessException("exception.business.JSON.parseArray.message");
         }
     }
@@ -165,7 +168,7 @@ public class JSON {
         try {
             return getObjectMapper().readValue(jsonStr, typeReference);
         } catch (Exception e) {
-            log.error("Json: {} 转List异常: {}", jsonStr, e);
+            log.error("Json: {} 转List异常", jsonStr, e);
             throw new BusinessException("exception.business.JSON.parseArray.message");
         }
     }
