@@ -21,10 +21,10 @@ import com.diboot.core.util.ContextHolder;
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.BeanProperty;
 import tools.jackson.databind.SerializationContext;
 import tools.jackson.databind.ValueSerializer;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -77,11 +77,9 @@ public class SensitiveInfoSerialize<E> extends ValueSerializer<E> {
         }
     }
 
-    /*
-    @Override
-    public JsonSerializer<?> createContextual(SerializerProvider prov, BeanProperty property) throws JsonMappingException {
+    public ValueSerializer<?> createContextual(SerializationContext ctxt, BeanProperty property) {
         if (null == property) {
-            return prov.findNullValueSerializer(null);
+            return ctxt.findNullValueSerializer(null);
         }
         Class<?> rawClass = property.getType().getRawClass();
         if (rawClass == String.class || (rawClass == List.class && property.getType().getContentType().getRawClass() == String.class)) {
@@ -90,11 +88,12 @@ public class SensitiveInfoSerialize<E> extends ValueSerializer<E> {
                 protect = property.getContextAnnotation(DataMask.class);
             }
             if (null != protect) {
-                return new SensitiveInfoSerialize(property.getMember().getDeclaringClass(), property.getName());
+                return new SensitiveInfoSerialize<>(property.getMember().getDeclaringClass(), property.getName());
             }
         } else {
             log.error("`@DataMask` 只支持 String 与 List<String> 类型脱敏！");
         }
-        return prov.findValueSerializer(property.getType(), property);
-    }*/
+        return ctxt.findValueSerializer(property.getType());
+    }
+
 }
