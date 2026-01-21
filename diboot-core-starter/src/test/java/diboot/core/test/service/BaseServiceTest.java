@@ -35,7 +35,6 @@ import com.diboot.core.entity.Dictionary;
 import com.diboot.core.service.impl.DictionaryServiceExtImpl;
 import com.diboot.core.util.*;
 import com.diboot.core.vo.*;
-import com.fasterxml.jackson.core.type.TypeReference;
 import diboot.core.test.StartupApplication;
 import diboot.core.test.binder.dto.DepartmentDTO;
 import diboot.core.test.binder.dto.UserDTO;
@@ -54,6 +53,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
+import tools.jackson.core.type.TypeReference;
 
 import java.time.LocalDateTime;
 import java.util.*;
