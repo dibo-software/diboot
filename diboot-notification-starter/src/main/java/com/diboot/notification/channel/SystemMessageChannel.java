@@ -15,8 +15,11 @@
  */
 package com.diboot.notification.channel;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.diboot.core.util.ContextHolder;
 import com.diboot.notification.config.Cons;
 import com.diboot.notification.entity.Message;
+import com.diboot.notification.service.MessageService;
 
 /**
  * 系统消息通道
@@ -34,7 +37,18 @@ public class SystemMessageChannel implements MessageChannel {
 
     @Override
     public void send(Message message) {
-
+        if (Cons.MESSAGE_STATUS.DELIVERY.name().equals(message.getStatus())) {
+            return;
+        }
+        String result = "success";
+        String status = Cons.MESSAGE_STATUS.DELIVERY.name();
+        // 更新结果
+        ContextHolder.getBean(MessageService.class).updateEntity(
+                Wrappers.<Message>lambdaUpdate()
+                        .set(Message::getResult, result)
+                        .set(Message::getStatus, status)
+                        .eq(Message::getId, message.getId())
+        );
     }
 
 }
