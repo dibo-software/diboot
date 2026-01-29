@@ -122,7 +122,8 @@ const en: Locale = {
       title: 'Message Title',
       channel: 'Please choose the send channel',
       status: 'Please choose the message status',
-      createTime: 'Send Date'
+      start: 'Start Time',
+      end: 'End Time'
     }
   },
   messageTemplate: {

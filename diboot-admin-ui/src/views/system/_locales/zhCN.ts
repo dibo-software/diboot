@@ -121,7 +121,8 @@ const zhCN = {
       title: '消息标题',
       channel: '请选择发送通道',
       status: '请选择消息状态',
-      createTime: '发送日期'
+      start: '开始时间',
+      end: '结束时间'
     }
   },
   messageTemplate: {
