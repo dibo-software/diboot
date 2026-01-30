@@ -77,6 +77,7 @@ public class CoreRedisAutoConfig {
         // 用JacksonJsonRedisSerializer 序列化和反序列化value值
         redisTemplate.setValueSerializer(jacksonJsonRedisSerializer());
         redisTemplate.setHashValueSerializer(jacksonJsonRedisSerializer());
+        redisTemplate.setDefaultSerializer(jacksonJsonRedisSerializer());
 
         redisTemplate.setConnectionFactory(connectionFactory);
         redisTemplate.afterPropertiesSet();
@@ -86,7 +87,7 @@ public class CoreRedisAutoConfig {
     private JacksonJsonRedisSerializer<Object> jacksonJsonRedisSerializer() {
         FilterProvider filterProvider = new SimpleFilterProvider().addFilter("rewrite-bean", SimpleBeanPropertyFilter.serializeAllExcept("realmNames"));
         JsonMapper jsonMapper = JsonMapper.builder()
-                .changeDefaultVisibility(v-> v.withVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY))
+                .changeDefaultVisibility(v-> v.withVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY))
                 .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
                 .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
                 .filterProvider(filterProvider)

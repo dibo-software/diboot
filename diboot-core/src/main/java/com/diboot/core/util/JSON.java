@@ -16,6 +16,7 @@
 package com.diboot.core.util;
 
 import com.diboot.core.exception.BusinessException;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tools.jackson.core.type.TypeReference;
@@ -50,9 +51,9 @@ public class JSON {
         objectMapper = ContextHolder.getBean(JsonMapper.class);
         if(objectMapper == null){
             log.warn("未找到 ObjectMapper实例，请检查配置类！");
-            return JsonMapper.builder()
+            return JsonMapper.builderWithJackson2Defaults()
                     .enable(SerializationFeature.INDENT_OUTPUT)
-                    //.serializationInclusion(JsonInclude.Include.NON_NULL)
+                    .changeDefaultPropertyInclusion(inc -> inc.withValueInclusion(JsonInclude.Include.NON_NULL))
                     .build();
         }
         return objectMapper;

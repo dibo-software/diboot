@@ -35,7 +35,9 @@ import com.diboot.core.init.CoreRedisAutoConfig;
 import com.diboot.core.serial.serializer.BigDecimal2StringSerializer;
 import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.D;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.LocalDateTypeHandler;
 import org.mybatis.spring.annotation.MapperScan;
@@ -147,7 +149,7 @@ public class CoreAutoConfig implements WebMvcConfigurer {
     @ConditionalOnMissingBean
     public JacksonJsonHttpMessageConverter jacksonMessageConverter() {
         JsonMapper jsonMapper = JsonMapper.builder()
-                //.changeDefaultVisibility(v-> v.withVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.DEFAULT))
+                .changeDefaultVisibility(v-> v.withVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.DEFAULT))
                 .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
                 .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
                 .changeDefaultPropertyInclusion(inc -> inc.withValueInclusion(JsonInclude.Include.NON_NULL))
