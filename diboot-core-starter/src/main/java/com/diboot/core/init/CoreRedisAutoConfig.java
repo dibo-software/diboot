@@ -82,9 +82,10 @@ public class CoreRedisAutoConfig {
         redisTemplate.setHashKeySerializer(stringRedisSerializer);
 
         // 用GenericJacksonJsonRedisSerializer 序列化和反序列化value值
-        redisTemplate.setValueSerializer(genericJacksonJsonRedisSerializer());
-        redisTemplate.setHashValueSerializer(genericJacksonJsonRedisSerializer());
-        redisTemplate.setDefaultSerializer(genericJacksonJsonRedisSerializer());
+        GenericJacksonJsonRedisSerializer jacksonJsonRedisSerializer = genericJacksonJsonRedisSerializer();
+        redisTemplate.setValueSerializer(jacksonJsonRedisSerializer);
+        redisTemplate.setHashValueSerializer(jacksonJsonRedisSerializer);
+        redisTemplate.setDefaultSerializer(jacksonJsonRedisSerializer);
 
         redisTemplate.setConnectionFactory(connectionFactory);
         redisTemplate.afterPropertiesSet();
