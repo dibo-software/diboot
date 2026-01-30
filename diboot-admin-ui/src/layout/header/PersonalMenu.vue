@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import useAuthStore from '@/store/auth'
 
-import { ArrowDown, UserFilled } from '@element-plus/icons-vue'
+import { ArrowDown, UserFilled, User, Setting, SwitchButton } from '@element-plus/icons-vue'
 const authStore = useAuthStore()
 
 const { curPosition, positions } = storeToRefs(authStore)
@@ -50,12 +50,16 @@ const handleMenuSelect = (index: string, indexPath: string[]) => {
     <!-- 使用 ElTeleport 或 v-show 控制弹出层 -->
     <div v-show="menuVisible" class="dropdown-menu-popup">
       <el-menu :default-active="activeIndex" class="nested-menu" @select="handleMenuSelect">
-        <el-menu-item index="personal">{{ $t('layout.header.personal') }}</el-menu-item>
-        <el-sub-menu v-if="curPosition?.label" index="switch_position">
+        <el-menu-item index="personal" class="menu-item">
+          <el-icon><User /></el-icon>
+          <span>{{ $t('layout.header.personal') }}</span>
+        </el-menu-item>
+        <el-sub-menu v-if="curPosition?.label" index="switch_position" class="submenu-position">
           <template #title>
+            <el-icon><Setting /></el-icon>
             <span>{{ $t('layout.header.switchPosition') }}</span>
           </template>
-          <el-menu-item v-for="(position, idx) in positions" :key="idx" :index="idx">
+          <el-menu-item v-for="(position, idx) in positions" :key="idx" :index="idx" class="submenu-item">
             <el-badge
               :is-dot="`${position.value}${position.ext?.orgId}` === `${curPosition.value}${curPosition?.ext?.orgId}`"
               :offset="[10, 20]"
@@ -64,7 +68,10 @@ const handleMenuSelect = (index: string, indexPath: string[]) => {
             </el-badge>
           </el-menu-item>
         </el-sub-menu>
-        <el-menu-item index="logout">{{ $t('layout.header.logout') }}</el-menu-item>
+        <el-menu-item index="logout" class="menu-item-logout">
+          <el-icon><SwitchButton /></el-icon>
+          <span>{{ $t('layout.header.logout') }}</span>
+        </el-menu-item>
       </el-menu>
     </div>
 
@@ -81,25 +88,44 @@ const handleMenuSelect = (index: string, indexPath: string[]) => {
 }
 .dropdown-menu-popup {
   position: absolute;
-  top: 120%; /* 位于触发元素下方 */
-  left: 40%;
-  z-index: 2000; /* 确保在其他元素之上 */
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 2000;
   border: 1px solid var(--el-menu-border-color);
   border-radius: 4px;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
   background-color: var(--el-bg-color-page);
-  min-width: 160px;
+  min-width: 200px;
+  overflow: hidden;
 }
+
 .nested-menu {
-  border-right: none; /* 移除 ElMenu 默认的右边框 */
+  border-right: none;
 }
+
+.menu-item:hover {
+  color: var(--el-color-primary);
+}
+
+.menu-item-logout {
+  color: var(--el-color-warning);
+}
+
+.submenu-position {
+  margin-top: 4px;
+}
+
+.submenu-item:hover {
+  background-color: var(--el-fill-color-light);
+}
+
 .overlay {
   position: fixed;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
-  z-index: 1999; /* 位于弹出层之下，其他内容之上 */
+  z-index: 1999;
   background-color: transparent;
 }
 </style>
