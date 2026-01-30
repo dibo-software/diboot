@@ -15,6 +15,7 @@
  */
 package com.diboot.core.init;
 
+import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.diboot.core.cache.DictionaryCacheManager;
 import com.diboot.core.cache.DynamicRedisCacheManager;
 import com.diboot.core.cache.I18nCacheManager;
@@ -34,17 +35,23 @@ import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.GenericJacksonJsonRedisSerializer;
 import org.springframework.data.redis.serializer.JacksonJsonRedisSerializer;
+import org.springframework.data.redis.serializer.JacksonObjectReader;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.SerializationFeature;
 import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
+import tools.jackson.databind.jsontype.PolymorphicTypeValidator;
 import tools.jackson.databind.ser.FilterProvider;
 import tools.jackson.databind.ser.std.SimpleBeanPropertyFilter;
 import tools.jackson.databind.ser.std.SimpleFilterProvider;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * Redis 自动配置
@@ -84,16 +91,21 @@ public class CoreRedisAutoConfig {
         return redisTemplate;
     }
 
-    private JacksonJsonRedisSerializer<Object> jacksonJsonRedisSerializer() {
+    private GenericJacksonJsonRedisSerializer jacksonJsonRedisSerializer() {
         FilterProvider filterProvider = new SimpleFilterProvider().addFilter("rewrite-bean", SimpleBeanPropertyFilter.serializeAllExcept("realmNames"));
-        JsonMapper jsonMapper = JsonMapper.builder()
-                .changeDefaultVisibility(v-> v.withVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY))
-                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-                .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
-                .filterProvider(filterProvider)
-                .changeDefaultPropertyInclusion(inc -> inc.withValueInclusion(JsonInclude.Include.NON_NULL))
+        // 开启多态验证器，设置后允许序列化中加入@class 属性
+        PolymorphicTypeValidator typeValidator = BasicPolymorphicTypeValidator.builder().allowIfBaseType(Object.class).allowIfSubType((ctx, clazz) -> true).build();
+        Supplier<JsonMapper.Builder> jsonMapperBuilder = () ->
+                JsonMapper.builder()
+                        .changeDefaultVisibility(v -> v.withVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY))
+                        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                        .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+                        .activateDefaultTyping(typeValidator) // 反序列化的时候允许使用@class属性
+                        .filterProvider(filterProvider)
+                        .changeDefaultPropertyInclusion(inc -> inc.withValueInclusion(JsonInclude.Include.NON_NULL));
+        return GenericJacksonJsonRedisSerializer.builder(jsonMapperBuilder)
+                .enableDefaultTyping(typeValidator)
                 .build();
-        return new JacksonJsonRedisSerializer<>(jsonMapper, Object.class);
     }
 
     /**
