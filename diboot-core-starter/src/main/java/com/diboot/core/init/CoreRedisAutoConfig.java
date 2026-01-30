@@ -81,17 +81,17 @@ public class CoreRedisAutoConfig {
         redisTemplate.setKeySerializer(stringRedisSerializer);
         redisTemplate.setHashKeySerializer(stringRedisSerializer);
 
-        // 用JacksonJsonRedisSerializer 序列化和反序列化value值
-        redisTemplate.setValueSerializer(jacksonJsonRedisSerializer());
-        redisTemplate.setHashValueSerializer(jacksonJsonRedisSerializer());
-        redisTemplate.setDefaultSerializer(jacksonJsonRedisSerializer());
+        // 用GenericJacksonJsonRedisSerializer 序列化和反序列化value值
+        redisTemplate.setValueSerializer(genericJacksonJsonRedisSerializer());
+        redisTemplate.setHashValueSerializer(genericJacksonJsonRedisSerializer());
+        redisTemplate.setDefaultSerializer(genericJacksonJsonRedisSerializer());
 
         redisTemplate.setConnectionFactory(connectionFactory);
         redisTemplate.afterPropertiesSet();
         return redisTemplate;
     }
 
-    private GenericJacksonJsonRedisSerializer jacksonJsonRedisSerializer() {
+    private GenericJacksonJsonRedisSerializer genericJacksonJsonRedisSerializer() {
         FilterProvider filterProvider = new SimpleFilterProvider().addFilter("rewrite-bean", SimpleBeanPropertyFilter.serializeAllExcept("realmNames"));
         // 开启多态验证器，设置后允许序列化中加入@class 属性
         PolymorphicTypeValidator typeValidator = BasicPolymorphicTypeValidator.builder().allowIfBaseType(Object.class).allowIfSubType((ctx, clazz) -> true).build();
