@@ -109,7 +109,7 @@ function rowClick(row: DictionaryTableExpand) {
               >
                 {{ $t('operation.detail') }}
               </el-button>
-              <el-dropdown v-has-permission="['update', 'delete']">
+              <el-dropdown v-if="updatePermission || deletePermission">
                 <el-button text bg type="primary" size="small">
                   {{ $t('operation.more') }}
                   <el-icon :size="16" style="margin-left: 5px">
