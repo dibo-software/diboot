@@ -43,7 +43,7 @@ initRelatedData()
         <el-select
           v-model="queryParam.status"
           clearable
-          :placeholder="$t('message.placeholder.channel')"
+          :placeholder="$t('message.placeholder.status')"
           @change="onSearch"
         >
           <el-option
@@ -70,7 +70,11 @@ initRelatedData()
       <el-table-column prop="businessType" :label="$t('message.businessType')" />
       <el-table-column prop="title" :label="$t('message.title')" />
       <el-table-column prop="senderName" :label="$t('message.senderName')" />
-      <el-table-column prop="receiverName" :label="$t('message.receiverName')" />
+      <el-table-column prop="receiverName" :label="$t('message.receiverName')">
+        <template #default="{ row }">
+          {{ row.receiverName || row.receiver }}
+        </template>
+      </el-table-column>
       <el-table-column prop="channelLabel" :label="$t('message.channel')">
         <template #default="{ row }">
           <el-tag :color="row.channelLabel?.ext?.color" effect="dark" type="info">
