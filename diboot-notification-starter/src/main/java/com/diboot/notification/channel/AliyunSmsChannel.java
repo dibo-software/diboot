@@ -19,9 +19,11 @@ import com.aliyun.dysmsapi20170525.Client;
 import com.aliyun.dysmsapi20170525.models.SendSmsRequest;
 import com.aliyun.dysmsapi20170525.models.SendSmsResponse;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.S;
+import com.diboot.core.util.V;
 import com.diboot.notification.config.Cons;
 import com.diboot.notification.entity.Message;
 import com.diboot.notification.service.MessageService;
@@ -39,6 +41,14 @@ import org.springframework.scheduling.annotation.Async;
 @Slf4j
 public class AliyunSmsChannel implements MessageChannel {
 
+    private String signName;
+
+    public AliyunSmsChannel() {
+    }
+    public AliyunSmsChannel(String signName) {
+        this.signName = signName;
+    }
+
     @Override
     public String type() {
         return Cons.MESSAGE_CHANNEL.SMS.name();
@@ -47,11 +57,14 @@ public class AliyunSmsChannel implements MessageChannel {
     @Override
     @Async
     public void send(Message message) {
+        if (V.isEmpty(this.signName)) {
+            throw new InvalidUsageException("阿里云短信需指定签名：请配置signName短信签名！");
+        }
         log.debug("[开始发送短信]：短信内容：{}", JSON.stringify(message));
         Client client = ContextHolder.getBean(Client.class);
         // 构建短信请求体
         SendSmsRequest sendSmsRequest = new SendSmsRequest()
-                .setSignName(message.getSender()) // 短信签名
+                .setSignName(this.signName) // 短信签名
                 .setTemplateCode(message.getTemplateCode())
                 .setPhoneNumbers(message.getReceiver())
                 .setTemplateParam(message.getVariables());
