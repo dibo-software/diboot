@@ -32,7 +32,7 @@ defineExpose({
         <span>{{ model.senderName }}</span>
       </el-descriptions-item>
       <el-descriptions-item :label="$t('message.receiverName')">
-        {{ model.receiverName }}
+        {{ model.receiverName || model.receiver }}
       </el-descriptions-item>
       <el-descriptions-item :label="$t('message.channel')">
         <el-tag :color="model.channelLabel?.ext?.color" effect="dark" type="info">

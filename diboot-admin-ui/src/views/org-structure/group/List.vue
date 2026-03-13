@@ -264,7 +264,7 @@ router.currentRoute.value.meta.keepAlive ? onActivated(activated) : activated()
       @current-change="getList()"
     />
 
-    <el-dialog v-model="formVisible" width="50%" :title="formTitle" draggable @close="closeForm">
+    <el-dialog v-model="formVisible" width="600" :title="formTitle" draggable @close="closeForm">
       <Form
         ref="formRef"
         @submitting="(val: boolean) => (submitting = val)"
