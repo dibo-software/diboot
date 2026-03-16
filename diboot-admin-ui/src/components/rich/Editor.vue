@@ -185,7 +185,8 @@ const editorConfig: IEditorConfig = {
 
   .editor-content {
     flex: 1;
-    height: 0 !important;
+    min-height: 180px;
+    height: auto !important;
   }
 
   .editor-container {
