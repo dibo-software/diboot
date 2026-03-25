@@ -133,6 +133,8 @@ public class IamUserPositionServiceImpl extends BaseServiceImpl<IamUserPositionM
         }
         for (IamUserPosition userPosition : userPositionList) {
             userPosition.setId(null);
+            userPosition.setCreateTime(null);
+            userPosition.setUpdateTime(null);
             baseMapper.insert(userPosition);
         }
         return true;
