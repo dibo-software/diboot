@@ -43,6 +43,7 @@ public class DefaultTenantHandler implements TenantLineHandler {
         add("dbt_iam_tenant");
         add("dbt_iam_resource");
         add("dbt_iam_tenant_resource");
+        add("dbt_iam_user_position");
         add("dbt_iam_role_resource");
         add("dbt_iam_role");
         add("dbt_dictionary");
