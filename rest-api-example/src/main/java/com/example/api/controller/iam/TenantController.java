@@ -163,7 +163,7 @@ public class TenantController extends BaseCrudRestController<IamTenant> {
      */
     @Log(operation = "创建或更新管理员信息")
     @PostMapping("/admin/{tenantId}")
-    public JsonResult<?> createOrUpdateTenantAdmin(@Valid @RequestBody IamUserFormDTO iamUserFormDTO, @PathVariable("tenantId") String tenantId) throws Exception {
+    public JsonResult<?> createOrUpdateTenantAdmin(@RequestBody IamUserFormDTO iamUserFormDTO, @PathVariable("tenantId") String tenantId) throws Exception {
         iamUserFormDTO.setTenantId(tenantId);
         return new JsonResult<>(iamTenantService.createOrUpdateTenantAdminUser(iamUserFormDTO));
     }
