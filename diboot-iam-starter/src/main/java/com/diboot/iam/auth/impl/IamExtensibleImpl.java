@@ -34,6 +34,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * IAM扩展配置
@@ -54,21 +55,25 @@ public class IamExtensibleImpl implements IamExtensible {
             return null;
         }
         IamUserPositionService iamPositionService = ContextHolder.getBean(IamUserPositionService.class);
-        IamUserPositionVO userPosition = iamPositionService.getUserPrimaryPosition(userType, userId);
+        List<IamUserPositionVO> userPositionVOList = iamPositionService.getUserPositions(userType, userId);
+        if (V.isEmpty(userPositionVOList)) {
+            return null;
+        }
+        IamUserPositionVO userPosition = userPositionVOList.stream().filter(IamUserPosition::getIsPrimaryPosition).findFirst().orElse(null);
         if (userPosition == null) {
             return null;
         }
-        // 获取主岗信息
-        String orgId = userPosition.getOrgId();
-        IamPosition position = ContextHolder.getBean(IamPositionService.class).getEntity(userPosition.getPositionId());
         // 构建主岗数据范围
-        PositionDataScope positionDataScope = buildPrimaryPositionDataScope(userId, orgId, position, userPosition);
-        LabelValue primaryPositionLabelValue = new LabelValue(position.getName(), position.getCode()).setExt(positionDataScope);
+        PositionDataScope positionDataScope = buildPrimaryPositionDataScope(userId, userPosition.getOrgId(), userPosition);
+        LabelValue primaryPositionLabelValue = new LabelValue(userPosition.getPositionName(), userPosition.getPositionCode()).setExt(positionDataScope);
         // 处理兼职岗
-        List<IamUserPositionVO> partTimePositions = iamPositionService.getUserPartTimeJobPosition(userType, userId);
-        List<LabelValue> partTimePositionLabelValues = processPartTimePositions(partTimePositions, userId, orgId, positionDataScope, primaryPositionLabelValue);
+        List<IamUserPositionVO> partTimePositions = userPositionVOList.stream().filter(p->!p.getIsPrimaryPosition()).collect(Collectors.toList());
+        if(V.notEmpty(partTimePositions)){
+            List<LabelValue> partTimePositionLabelValues = processPartTimePositions(partTimePositions, userId, userPosition.getOrgId(), positionDataScope, primaryPositionLabelValue);
+            primaryPositionLabelValue.setChildren(partTimePositionLabelValues);
+        }
         // 返回主岗信息
-        return primaryPositionLabelValue.setChildren(partTimePositionLabelValues);
+        return primaryPositionLabelValue;
     }
 
     @Override
@@ -76,17 +81,16 @@ public class IamExtensibleImpl implements IamExtensible {
         return null;
     }
 
-
     /**
      * 构建主岗数据范围
      *
      * @param userId
      * @param orgId
-     * @param position
+     * @param userPosition
      * @return
      */
-    private PositionDataScope buildPrimaryPositionDataScope(String userId, String orgId, IamPosition position, IamUserPositionVO userPosition) {
-        PositionDataScope dataScope = new PositionDataScope(position.getId(), position.getDataPermissionType(), userId, orgId, userPosition.getOrgName());
+    private PositionDataScope buildPrimaryPositionDataScope(String userId, String orgId, IamUserPositionVO userPosition) {
+        PositionDataScope dataScope = new PositionDataScope(userPosition.getPositionId(), userPosition.getDataPermissionType(), userId, orgId, userPosition.getOrgName());
         // 本人及下属的用户ids
         Set<String> accessibleUserIds = new LinkedHashSet<>();
         accessibleUserIds.add(userId);
@@ -95,7 +99,6 @@ public class IamExtensibleImpl implements IamExtensible {
             accessibleUserIds.addAll(subordinateIds);
         }
         dataScope.setAccessibleUserIds(new ArrayList<>(accessibleUserIds));
-
         // 设置可访问组织ID（本部门及下属部门）
         Set<String> accessibleOrgIds = new LinkedHashSet<>();
         accessibleOrgIds.add(orgId);
@@ -126,19 +129,13 @@ public class IamExtensibleImpl implements IamExtensible {
         if (V.isEmpty(partTimePositions)) {
             return result;
         }
-        IamPositionService positionService = ContextHolder.getBean(IamPositionService.class);
         IamOrgService orgService = ContextHolder.getBean(IamOrgService.class);
-
         for (IamUserPositionVO partTimePosition : partTimePositions) {
             String partTimeOrgId = partTimePosition.getOrgId();
-            IamPosition position = positionService.getEntity(partTimePosition.getPositionId());
-
             PositionDataScope partTimeDataScope = new PositionDataScope(
-                    position.getId(), position.getDataPermissionType(), userId, partTimeOrgId, partTimePosition.getOrgName());
-
+                    partTimePosition.getPositionId(), partTimePosition.getDataPermissionType(), userId, partTimeOrgId, partTimePosition.getOrgName());
             // 设置可访问用户ID（复用主岗数据）
             partTimeDataScope.setAccessibleUserIds(primaryPositionDataScope.getAccessibleUserIds());
-
             // 设置可访问组织ID， 主岗兼职岗相等的情况下，复用主岗的组织范围；否则单独查询兼职岗位的组织范围
             if (primaryOrgId.equals(partTimeOrgId)) {
                 partTimeDataScope.setAccessibleOrgIds(primaryPositionDataScope.getAccessibleOrgIds());
@@ -151,8 +148,7 @@ public class IamExtensibleImpl implements IamExtensible {
                 }
                 partTimeDataScope.setAccessibleOrgIds(new ArrayList<>(orgIds));
             }
-
-            result.add(new LabelValue(position.getName(), position.getCode()).setExt(partTimeDataScope));
+            result.add(new LabelValue(partTimePosition.getPositionName(), partTimePosition.getPositionCode()).setExt(partTimeDataScope));
         }
 
         return result;
