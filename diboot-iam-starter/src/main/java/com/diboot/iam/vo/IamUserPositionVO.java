@@ -36,4 +36,7 @@ public class IamUserPositionVO extends IamUserPosition {
 
     @BindField(entity = IamPosition.class, field = "name", condition = "this.position_id = id")
     private String positionName;
+
+    private String positionCode;
+    private String dataPermissionType;
 }
