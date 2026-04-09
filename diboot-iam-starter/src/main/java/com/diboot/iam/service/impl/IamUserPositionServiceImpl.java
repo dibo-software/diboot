@@ -17,6 +17,7 @@ package com.diboot.iam.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.diboot.core.binding.RelationsBinder;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.service.impl.BaseServiceImpl;
@@ -75,6 +76,37 @@ public class IamUserPositionServiceImpl extends BaseServiceImpl<IamUserPositionM
     @Override
     public List<IamUserPositionVO> getUserPositions(String userType, String userId) {
         return iamUserPositionMapper.getUserPositions(userType, userId, BaseConfig.getActiveFlagValue());
+    }
+
+    @Deprecated
+    @Override
+    public IamUserPositionVO getUserPrimaryPosition(String userType, String userId) {
+        LambdaQueryWrapper<IamUserPosition> queryWrapper = Wrappers.<IamUserPosition>lambdaQuery()
+                .eq(IamUserPosition::getUserType, userType)
+                .eq(IamUserPosition::getUserId, userId)
+                .eq(IamUserPosition::getIsPrimaryPosition, true);
+        List<IamUserPosition> userPositionList = baseMapper.selectList(queryWrapper);
+        if(V.isEmpty(userPositionList)){
+            return null;
+        }
+        if(userPositionList.size() > 1){
+            log.warn("用户 {}:{} 主岗多于1个，当前以第一个为准", userType, userId);
+        }
+        return RelationsBinder.convertAndBind(userPositionList.get(0), IamUserPositionVO.class);
+    }
+
+    @Deprecated
+    @Override
+    public List<IamUserPositionVO> getUserPartTimeJobPosition(String userType, String userId) {
+        LambdaQueryWrapper<IamUserPosition> queryWrapper = Wrappers.<IamUserPosition>lambdaQuery()
+                .eq(IamUserPosition::getUserType, userType)
+                .eq(IamUserPosition::getUserId, userId)
+                .eq(IamUserPosition::getIsPrimaryPosition, false);
+        List<IamUserPosition> userPositionList = baseMapper.selectList(queryWrapper);
+        if (V.isEmpty(userPositionList)) {
+            return Collections.emptyList();
+        }
+        return RelationsBinder.convertAndBind(userPositionList, IamUserPositionVO.class);
     }
 
     @Transactional(rollbackFor = Exception.class)
