@@ -35,7 +35,7 @@ const formRef = ref<FormInstance>()
 
 const validate = (
   callback: FormValidateCallback = (valid: boolean) => {
-    if (!valid) ElMessage.error({ message: i18n.t('form.validationFailed'), grouping: true })
+    if (!valid) ElMessage.error({ message: i18n.t('rules.nonpass'), grouping: true })
   }
 ) =>
   Promise.all([formRef.value].map(e => e?.validate?.(callback)).filter(e => !!e))
