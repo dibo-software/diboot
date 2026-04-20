@@ -33,6 +33,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -66,7 +67,7 @@ public class TestBindingCompare {
         }
         int sqlCount = 13 * loopCount;
         long end = System.currentTimeMillis();
-        ExecutorService executorService = VirtualThreadExecutor.getVirtualThreadExecutor();
+        SimpleAsyncTaskExecutor executorService = VirtualThreadExecutor.getVirtualThreadExecutor();
         String message = executorService==null? "未":"";
         System.out.println(message + "开启虚拟线程，执行 "+ sqlCount +" 次查询绑定，共耗时: " + (end - start) + "ms");
     }
