@@ -3,7 +3,7 @@ import { Search } from '@element-plus/icons-vue'
 import type { Message } from './type'
 import Detail from '@/views/system/message/Detail.vue'
 
-const { queryParam, loading, dataList, pagination, getList, onSearch, resetFilter } = useList<Message>({
+const { queryParam, loading, dataList, pagination, getList, onSearch, resetFilter, dateRangeQuery } = useList<Message>({
   baseApi: '/message'
 })
 getList()
@@ -53,13 +53,12 @@ initRelatedData()
             :label="item.label"
           />
         </el-select>
-        <el-date-picker
-          v-model="queryParam.createTime"
-          :placeholder="$t('message.placeholder.createTime')"
-          clearable
-          type="date"
-          value-format="YYYY-MM-DD"
-          @change="onSearch"
+        <date-range
+            :start-placeholder="$t('message.placeholder.start')"
+            :end-placeholder="$t('message.placeholder.end')"
+            :model-value="dateRangeQuery.createTime as [string, string]"
+            @update:model-value="dateRangeQuery.createTime = $event as [string, string]"
+            @change="onSearch"
         />
         <el-button :icon="Search" type="primary" @click="onSearch">{{ $t('operation.search') }}</el-button>
         <el-button :title="$t('title.reset')" @click="resetFilter">{{ $t('operation.reset') }}</el-button>

@@ -57,26 +57,6 @@ public interface IamUserPositionService extends BaseService<IamUserPosition> {
     List<IamUserPositionVO> getUserPositions(String userType, String userId);
 
     /**
-     * 获取用户的第一主岗
-     * @see #getUserPositions
-     * @param userType
-     * @param userId
-     * @return
-     */
-    @Deprecated
-    IamUserPositionVO getUserPrimaryPosition(String userType, String userId);
-
-    /**
-     * 获取用户的兼职岗
-     * @see #getUserPositions
-     * @param userType
-     * @param userId
-     * @return
-     */
-    @Deprecated
-    List<IamUserPositionVO> getUserPartTimeJobPosition(String userType, String userId);
-
-    /**
      * 批量更新用户-岗位的关联关系
      *
      * @param userType

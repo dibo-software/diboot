@@ -19,6 +19,8 @@ import com.diboot.core.cache.BaseCacheManager;
 import com.diboot.core.cache.DictionaryCacheManager;
 import com.diboot.core.cache.DynamicMemoryCacheManager;
 import com.diboot.core.util.V;
+import com.diboot.iam.auth.IamExtensible;
+import com.diboot.iam.auth.impl.IamExtensibleImpl;
 import com.diboot.iam.cache.SystemConfigCacheManager;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.config.IamProperties;
@@ -274,6 +276,15 @@ public class IamAutoConfig {
         }};
         DynamicMemoryCacheManager memoryCacheManager = new DynamicMemoryCacheManager(cacheName2ExpireMap);
         return new SystemConfigCacheManager(memoryCacheManager);
+    }
+
+    /**
+     * Iam扩展配置
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public IamExtensible iamExtensible() {
+        return new IamExtensibleImpl();
     }
 
 }

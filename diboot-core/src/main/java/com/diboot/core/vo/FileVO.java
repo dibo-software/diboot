@@ -56,4 +56,9 @@ public class FileVO implements Serializable {
      * 缩略图url
      */
     private String thumbnailUrl;
+
+    /**
+     * 描述
+     */
+    private String description;
 }

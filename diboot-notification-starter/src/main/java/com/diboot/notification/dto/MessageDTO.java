@@ -23,6 +23,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.time.LocalDateTime;
+
 /**
  * 消息 DTO定义
  * @author : uu
@@ -37,6 +39,12 @@ public class MessageDTO extends Message {
 
     private static final long serialVersionUID = 9013608670040655788L;
 
+    @BindQuery(field= "createTime", comparison = Comparison.GE)
+    private LocalDateTime createTimeBegin;
+
+    @BindQuery(field= "createTime", comparison = Comparison.LT)
+    private LocalDateTime createTimeEnd;
+
     /**
      * 标题
      */
@@ -48,4 +56,9 @@ public class MessageDTO extends Message {
      */
     @BindQuery(comparison = Comparison.LIKE, entity = MessageTemplate.class, field = "title", condition = "this.template_id=id")
     private String messageTemplateTitle;
+
+    public MessageDTO setCreateTimeEnd(LocalDateTime createTimeEnd) {
+        this.createTimeEnd = createTimeEnd.plusDays(1);
+        return this;
+    }
 }

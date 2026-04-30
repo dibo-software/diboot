@@ -49,6 +49,8 @@ export default (setValue: (fileIds?: string) => void, getFileList: () => FileRec
   const onProgress = (evt: UploadProgressEvent, uploadFile: UploadFile, uploadFiles: UploadFiles) => {
     processPercents.value[uploadFile.uid] = evt.percent.toFixed(2)
   }
+  const onError = (error: Error) => ElMessage.error(error.message)
+
   return {
     action: `/file/upload`,
     httpRequest,
@@ -56,6 +58,7 @@ export default (setValue: (fileIds?: string) => void, getFileList: () => FileRec
     fileList: uploadFileList,
     onSuccess,
     onRemove,
-    onProgress
+    onProgress,
+    onError
   }
 }

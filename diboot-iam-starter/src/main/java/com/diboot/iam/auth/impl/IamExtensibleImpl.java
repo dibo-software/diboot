@@ -45,7 +45,6 @@ import java.util.stream.Collectors;
  * Copyright © diboot.com
  */
 @Slf4j
-@Service
 public class IamExtensibleImpl implements IamExtensible {
 
     @Override
