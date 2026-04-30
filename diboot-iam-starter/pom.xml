@@ -21,11 +21,6 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.20.0</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <version>${log4j-api.version}</version>
-        </dependency>
         <!-- 依赖core -->
         <dependency>
             <groupId>com.diboot</groupId>
@@ -128,6 +123,7 @@
             <groupId>org.apereo.cas.client</groupId>
             <artifactId>cas-client-core</artifactId>
             <version>4.0.4</version>
+            <scope>provided</scope>
         </dependency>
 
     </dependencies>
