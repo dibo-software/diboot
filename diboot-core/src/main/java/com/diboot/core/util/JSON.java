@@ -44,7 +44,7 @@ public class JSON {
      * 初始化ObjectMapper
      * @return
      */
-    private static JsonMapper getObjectMapper(){
+    public static JsonMapper getObjectMapper(){
         if(objectMapper != null){
             return objectMapper;
         }

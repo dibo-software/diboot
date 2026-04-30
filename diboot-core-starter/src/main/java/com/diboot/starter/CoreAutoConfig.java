@@ -132,6 +132,7 @@ public class CoreAutoConfig implements WebMvcConfigurer {
              );
             // 设置序列化包含策略
             builder.changeDefaultPropertyInclusion(incl -> incl.withValueInclusion(defaultPropertyInclusion));
+            builder.configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, false);
             builder.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             // 时间格式化
             builder.defaultTimeZone(TimeZone.getTimeZone(defaultTimeZone));
