@@ -187,7 +187,7 @@ public class IamUserServiceImpl extends BaseServiceImpl<IamUserMapper, IamUser> 
     @Override
     public boolean isUserNumExists(String id, String userNum) {
         if(V.isEmpty(userNum)){
-            return true;
+            return false;
         }
         LambdaQueryWrapper<IamUser> wrapper = Wrappers.<IamUser>lambdaQuery()
                 .select(IamUser::getUserNum)
