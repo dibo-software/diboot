@@ -51,6 +51,7 @@ import lombok.extern.slf4j.Slf4j;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.constraints.NotNull;
 
+import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.*;
@@ -348,7 +349,7 @@ public abstract class ReadExcelListener<T extends BaseExcelModel> implements Rea
             if (FileHelper.isLocalStorage()) {
                 errorDataFilePath = FileHelper.getFullPath(S.newUuid() + ".xlsx");
             } else {
-                errorDataFilePath = FileHelper.getSystemTempDir() + BaseConfig.getProperty("spring.application.name", "diboot")
+                errorDataFilePath = FileHelper.getSystemTempDir() + Cons.FILE_PATH_SEPARATOR + BaseConfig.getProperty("spring.application.name", "diboot")
                         + Cons.FILE_PATH_SEPARATOR + S.newUuid() + ".xlsx";
             }
             FileHelper.makeDirectory(errorDataFilePath);
