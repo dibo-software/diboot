@@ -168,7 +168,7 @@
         <dependency>
             <groupId>com.github.javaparser</groupId>
             <artifactId>javaparser-core</artifactId>
-            <version>3.27.1</version>
+            <version>3.28.2</version>
         </dependency>
         <!-- devtools 代码生成工具 及其相关依赖 end -->
 
