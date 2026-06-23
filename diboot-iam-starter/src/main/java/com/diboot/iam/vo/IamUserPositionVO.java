@@ -37,6 +37,9 @@ public class IamUserPositionVO extends IamUserPosition {
     @BindField(entity = IamPosition.class, field = "name", condition = "this.position_id = id")
     private String positionName;
 
+    @BindField(entity = IamPosition.class, field = "gradeValue", condition = "this.position_id = id")
+    private String positionGradeValue;
+
     private String positionCode;
     private String dataPermissionType;
 }

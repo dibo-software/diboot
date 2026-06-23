@@ -89,7 +89,13 @@ const buildRoleList = (roleList?: Role[]) => roleList?.map(e => e.name).join('ã€
       </el-space>
     </el-space>
 
-    <el-form v-show="searchState" label-width="80px" class="list-search" @submit.prevent>
+    <el-form
+      v-show="searchState"
+      label-width="80px"
+      class="list-search"
+      :style="{ height: searchState ? '60px' : '0' }"
+      @submit.prevent
+    >
       <el-row :gutter="18">
         <el-col :lg="8" :sm="12">
           <el-form-item :label="$t('user.userNum')">

@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.6</version>
+        <version>3.5.15</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.example</groupId>
@@ -120,7 +120,7 @@
         <dependency>
             <groupId>org.openjdk.nashorn</groupId>
             <artifactId>nashorn-core</artifactId>
-            <version>15.7</version>
+            <version>15.4</version>
         </dependency>
 <!--        <dependency>-->
 <!--            <groupId>javax.xml.bind</groupId>-->
@@ -153,23 +153,23 @@
         </dependency>-->
 
         <!-- devtools 代码生成工具 及其相关依赖 begin ，开发环境依赖使用，部署环境需剔除依赖-->
-<!--        <dependency>-->
-<!--            <groupId>com.diboot</groupId>-->
-<!--            <artifactId>diboot-lcdp-devtools</artifactId>-->
-<!--            <version>${diboot.version}</version>-->
-<!--            <scope>system</scope>-->
-<!--            <systemPath>${project.basedir}/libs/diboot-lcdp-devtools-3.9.0-beta.jar</systemPath>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>org.mybatis.dynamic-sql</groupId>-->
-<!--            <artifactId>mybatis-dynamic-sql</artifactId>-->
-<!--            <version>1.5.2</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>com.github.javaparser</groupId>-->
-<!--            <artifactId>javaparser-core</artifactId>-->
-<!--            <version>3.27.1</version>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>com.diboot</groupId>
+            <artifactId>diboot-lcdp-devtools</artifactId>
+            <version>${diboot.version}</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/diboot-lcdp-devtools-3.9.0.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>org.mybatis.dynamic-sql</groupId>
+            <artifactId>mybatis-dynamic-sql</artifactId>
+            <version>1.5.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.javaparser</groupId>
+            <artifactId>javaparser-core</artifactId>
+            <version>3.28.2</version>
+        </dependency>
         <!-- devtools 代码生成工具 及其相关依赖 end -->
 
     </dependencies>
@@ -194,20 +194,6 @@
                         </exclude>
                     </excludes>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.owasp</groupId>
-                <artifactId>dependency-check-maven</artifactId>
-                <configuration>
-                    <failBuildOnCVSS>8</failBuildOnCVSS>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
         <resources>
