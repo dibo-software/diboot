@@ -277,7 +277,10 @@ public class IamUserServiceImpl extends BaseServiceImpl<IamUserMapper, IamUser> 
         if (V.notEmpty(orgId)) {
             orgIds.add(orgId);
             // 获取所有下级部门列表
-            orgIds.addAll(iamOrgService.getChildOrgIds(orgId));
+            List<String> childOrgIds = iamOrgService.getChildOrgIds(orgId);
+            if (V.notEmpty(childOrgIds)) {
+                orgIds.addAll(childOrgIds);
+            }
             // 相应部门下岗位相关用户
             LambdaQueryWrapper<IamUserPosition> queryUserIds = Wrappers.<IamUserPosition>lambdaQuery()
                     .eq(IamUserPosition::getUserType, IamUser.class.getSimpleName())

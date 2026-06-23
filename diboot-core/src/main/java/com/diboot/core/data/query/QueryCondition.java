@@ -153,8 +153,14 @@ public class QueryCondition implements Serializable {
         return this;
     }
 
+    @Deprecated
     public QueryCondition between(String fieldName, Object value) {
         appendCriteria(fieldName, Comparison.BETWEEN, value);
+        return this;
+    }
+
+    public QueryCondition between(String fieldName, Object beginValue, Object endValue) {
+        appendCriteria(fieldName, Comparison.BETWEEN, Arrays.asList(beginValue, endValue));
         return this;
     }
 
