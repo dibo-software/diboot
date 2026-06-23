@@ -8,6 +8,10 @@ spring:
     multipart:
       max-file-size: 100MB
       max-request-size: 100MB
+#  threads:
+#    virtual:
+#      enabled: true
+
 server:
   shutdown: graceful
   compression:
