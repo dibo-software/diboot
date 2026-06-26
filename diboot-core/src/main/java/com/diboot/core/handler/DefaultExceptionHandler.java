@@ -58,10 +58,10 @@ public class DefaultExceptionHandler {
     @Autowired(required = false)
     private ApplicationEventPublisher applicationEventPublisher;
 
-    @Value("${spring.servlet.multipart.max-file-size:10MB}")
+    @Value("${spring.servlet.multipart.max-file-size:100MB}")
     private String maxFileSize;
 
-    @Value("${spring.servlet.multipart.max-request-size:10MB}")
+    @Value("${spring.servlet.multipart.max-request-size:100MB}")
     private String maxRequestSize;
 
     /**
