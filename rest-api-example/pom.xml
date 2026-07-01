@@ -29,7 +29,7 @@
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
-            <version>9.4.0</version>
+            <version>9.7.0</version>
         </dependency>
         <!-- sqlite 数据库驱动-->
 <!--        <dependency>-->
@@ -56,11 +56,12 @@
 <!--            <version>12.2.0.1</version>-->
 <!--        </dependency>-->
         <!-- 达梦 DM 数据库驱动-->
-        <dependency>
+        <!--<dependency>
             <groupId>com.dameng</groupId>
             <artifactId>DmJdbcDriver18</artifactId>
             <version>8.1.3.140</version>
-        </dependency>
+        </dependency>-->
+
         <!-- redis可选依赖-->
 <!--        <dependency>-->
 <!--            <groupId>org.springframework.boot</groupId>-->
