@@ -135,92 +135,94 @@ const TableColumn = defineComponent({
         <el-button :icon="Upload" type="primary" plain> {{ $t('operation.import') }} </el-button>
       </slot>
     </span>
-
-    <el-drawer v-model="visible" :size="width || '50%'">
-      <template #header>
-        <span>{{ $t('components.excel.dataUpload') }}</span>
-        <el-button
-          style="float: right; padding: 0 30px; zoom: 0.9"
-          link
-          type="primary"
-          :icon="downloadLoading ? Loading : Download"
-          @click="downloadExample"
-        >
-          {{ $t('components.excel.downloadExample') }}
-        </el-button>
-      </template>
-
-      <el-row :gutter="16">
-        <el-col :md="6">
-          <el-upload
-            :key="fileList.length && fileList[0].uid"
-            v-loading.fullscreen.lock="completeLoading"
-            action=""
-            :limti="1"
-            accept=".xlsx,.xls,.csv"
-            :auto-upload="false"
-            :file-list="fileList"
-            :on-remove="removeFile"
-            :on-change="fileListChange"
+    <Teleport to="body">
+      <el-drawer v-model="visible" :size="width || '50%'">
+        <template #header>
+          <span>{{ $t('components.excel.dataUpload') }}</span>
+          <el-button
+            style="float: right; padding: 0 30px; zoom: 0.9"
+            link
+            type="primary"
+            :icon="downloadLoading ? Loading : Download"
+            @click="downloadExample"
           >
-            <el-button :icon="Upload"> {{ $t('components.excel.chooseFile') }}</el-button>
-          </el-upload>
-        </el-col>
-        <el-col :md="8">
-          <el-input v-model="description" :placeholder="$t('components.excel.description')" />
-        </el-col>
-        <el-col :md="10">
-          <el-button type="primary" :disabled="previewDisabled" :icon="View" @click="handlePreview">{{
-            $t('components.excel.previewData')
-          }}</el-button>
-          <el-button :disabled="uploadDisabled" :icon="Upload" @click="handleUpload">{{
-            $t('components.excel.uploadData')
-          }}</el-button>
-        </el-col>
-      </el-row>
-      <el-alert
-        v-if="errMsg"
-        type="error"
-        :closable="false"
-        :title="$t('components.excel.checkError')"
-        :description="errMsg"
-      />
-      <div v-if="data">
-        <el-divider />
-        <el-alert type="success" :closable="false">
-          {{ $t('components.excel.excelParsePrefix') }} <strong>{{ data.totalCount }}</strong>
-          {{ $t('components.excel.data') }}
-          <span v-if="Number(data.errorCount ?? 0) > 0">
-            ；<strong>{{ Number(data.totalCount) - Number(data.errorCount) }}</strong> {{ $t('components.excel.data') }}
-          </span>
-          {{ $t('components.excel.canUpload') }}
-        </el-alert>
-        <el-collapse v-if="Number(data.errorCount ?? 0) > 0" model-value="1">
-          <el-collapse-item name="1">
-            <template #title>
-              <span style="color: red; zoom: 1.2">{{ $t('components.excel.errorMsg', [data.errorCount]) }}</span>
-              （{{ $t('components.excel.uploadDataTipPrefix') }}
-              <el-button
-                link
-                :type="data.errorUrl ? 'danger' : ''"
-                :icon="exportErrorLoading ? Loading : Download"
-                :class="data.errorUrl ? '' : 'shake'"
-                :disabled="!data.errorUrl"
-                @click.stop="exportErrorData(data?.errorUrl)"
-              >
-                {{ $t('components.excel.uploadDataTipSuffix') }}
-              </el-button>
-              ）
-            </template>
-            <div v-for="error in data.errorMsgs" :key="error" style="color: var(--el-color-danger)">{{ error }}</div>
-            <span v-if="Number(data.errorCount ?? 0) > 20">...</span>
-          </el-collapse-item>
-        </el-collapse>
-        <el-table v-if="data.dataList" style="width: 100%" :data="data.dataList" border>
-          <table-column v-for="(item, index) in data.tableHeads" :key="index" :column="item" />
-        </el-table>
-      </div>
-    </el-drawer>
+            {{ $t('components.excel.downloadExample') }}
+          </el-button>
+        </template>
+
+        <el-row :gutter="16">
+          <el-col :md="6">
+            <el-upload
+              :key="fileList.length && fileList[0].uid"
+              v-loading.fullscreen.lock="completeLoading"
+              action=""
+              :limti="1"
+              accept=".xlsx,.xls,.csv"
+              :auto-upload="false"
+              :file-list="fileList"
+              :on-remove="removeFile"
+              :on-change="fileListChange"
+            >
+              <el-button :icon="Upload"> {{ $t('components.excel.chooseFile') }}</el-button>
+            </el-upload>
+          </el-col>
+          <el-col :md="8">
+            <el-input v-model="description" :placeholder="$t('components.excel.description')" />
+          </el-col>
+          <el-col :md="10">
+            <el-button type="primary" :disabled="previewDisabled" :icon="View" @click="handlePreview">{{
+              $t('components.excel.previewData')
+            }}</el-button>
+            <el-button :disabled="uploadDisabled" :icon="Upload" @click="handleUpload">{{
+              $t('components.excel.uploadData')
+            }}</el-button>
+          </el-col>
+        </el-row>
+        <el-alert
+          v-if="errMsg"
+          type="error"
+          :closable="false"
+          :title="$t('components.excel.checkError')"
+          :description="errMsg"
+        />
+        <div v-if="data">
+          <el-divider />
+          <el-alert type="success" :closable="false">
+            {{ $t('components.excel.excelParsePrefix') }} <strong>{{ data.totalCount }}</strong>
+            {{ $t('components.excel.data') }}
+            <span v-if="Number(data.errorCount ?? 0) > 0">
+              ；<strong>{{ Number(data.totalCount) - Number(data.errorCount) }}</strong>
+              {{ $t('components.excel.data') }}
+            </span>
+            {{ $t('components.excel.canUpload') }}
+          </el-alert>
+          <el-collapse v-if="Number(data.errorCount ?? 0) > 0" model-value="1">
+            <el-collapse-item name="1">
+              <template #title>
+                <span style="color: red; zoom: 1.2">{{ $t('components.excel.errorMsg', [data.errorCount]) }}</span>
+                （{{ $t('components.excel.uploadDataTipPrefix') }}
+                <el-button
+                  link
+                  :type="data.errorUrl ? 'danger' : ''"
+                  :icon="exportErrorLoading ? Loading : Download"
+                  :class="data.errorUrl ? '' : 'shake'"
+                  :disabled="!data.errorUrl"
+                  @click.stop="exportErrorData(data?.errorUrl)"
+                >
+                  {{ $t('components.excel.uploadDataTipSuffix') }}
+                </el-button>
+                ）
+              </template>
+              <div v-for="error in data.errorMsgs" :key="error" style="color: var(--el-color-danger)">{{ error }}</div>
+              <span v-if="Number(data.errorCount ?? 0) > 20">...</span>
+            </el-collapse-item>
+          </el-collapse>
+          <el-table v-if="data.dataList" style="width: 100%" :data="data.dataList" border>
+            <table-column v-for="(item, index) in data.tableHeads" :key="index" :column="item" />
+          </el-table>
+        </div>
+      </el-drawer>
+    </Teleport>
   </span>
 </template>
 

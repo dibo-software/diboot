@@ -216,6 +216,31 @@ CREATE TABLE `mdl_pet_adopt` (
      PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='领养';
 
+CREATE TABLE `mdl_product` (
+    `id` varchar(32) NOT NULL COMMENT '唯一标识',
+    `category` varchar(20) DEFAULT NULL COMMENT '品类',
+    `remark` varchar(100) DEFAULT NULL COMMENT '备注',
+    `is_deleted` tinyint NOT NULL DEFAULT '0' COMMENT '是否删除',
+    `create_by` varchar(32) DEFAULT NULL COMMENT '创建人',
+    `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+    `update_by` varchar(32) DEFAULT NULL COMMENT '更新人',
+    `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='产品';
+
+CREATE TABLE `mdl_coach_category` (
+   `id` varchar(32) NOT NULL COMMENT '唯一标识',
+   `coach_id` bigint unsigned DEFAULT NULL COMMENT '教练',
+   `category` varchar(32) DEFAULT NULL COMMENT '品类',
+   `is_deleted` tinyint NOT NULL DEFAULT '0' COMMENT '是否删除',
+   `create_by` varchar(32) DEFAULT NULL COMMENT '创建人',
+   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+   `update_by` varchar(32) DEFAULT NULL COMMENT '更新人',
+   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+   PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='教练品类关系';
+
+
 INSERT INTO customer (id, realname, cellphone, extjsonarr)
 VALUES (10001, '张三', '13800001111', '["WEBSOCKET","EMAIL"]'), (10002, '李四', '13800002222', '["TEXT_MESSAGE"]');
 
@@ -297,3 +322,6 @@ UPDATE region SET `parent_ids_path` = '0,1,2' WHERE `parent_id` = '2';
 
 INSERT INTO mdl_pet (id, category, code, remark, is_deleted) VALUES ('1000001', 'CAT', '#1', '1号猫咪', 0), ('1000002', 'DOG', '#1', '1号狗狗', 0), ('1000003', 'CAT', '#2', '2号猫咪', 0), ('1000004', 'DOG', '#2', '2号狗狗', 0), ('1000005', 'DOG', '#3', '3号狗狗', 0);
 INSERT INTO mdl_pet_adopt (id, realname, pet_category, pet_code, remark, is_deleted) VALUES('122222221', '张三', 'CAT', '#1', '张三领养1号猫', 0), ('122222222', '张三', 'DOG', '#2', '张三领养2号狗', 0), ('122222223', '李四', 'CAT', '#2', '李四领养2号猫', 0);
+
+INSERT INTO mdl_product (id, category, remark) VALUES('1', '足球', '李宁训练足球'),('2', '篮球', 'Nike青年篮球'),('3', '足球', '安踏青少年足球鞋'),('4', '足球', '安踏护膝');
+INSERT INTO mdl_coach_category (id, coach_id, category) VALUES('1', 1001, '足球'),('2', 1002, '篮球'),('3', 1002, '足球');

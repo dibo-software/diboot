@@ -15,9 +15,9 @@
  */
 package com.diboot.file.excel.write;
 
-import com.alibaba.excel.metadata.Head;
-import com.alibaba.excel.write.handler.CellWriteHandler;
-import com.alibaba.excel.write.handler.context.CellWriteHandlerContext;
+import cn.idev.excel.metadata.Head;
+import cn.idev.excel.write.handler.CellWriteHandler;
+import cn.idev.excel.write.handler.context.CellWriteHandlerContext;
 import com.diboot.core.util.AnnotationUtils;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;

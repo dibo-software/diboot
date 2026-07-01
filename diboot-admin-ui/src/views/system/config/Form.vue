@@ -60,34 +60,12 @@ const enableI18n = import.meta.env.VITE_APP_ENABLE_I18N === 'true'
 </script>
 
 <template>
-  <el-dialog v-model="visible" :title="title" width="900" draggable>
+  <el-dialog v-model="visible" :title="title" width="700" draggable>
     <el-form ref="formRef" v-loading="loading" :model="model" :label-width="$i18n.locale === 'en' ? '130px' : '80px'">
       <el-row>
         <el-col :span="12">
           <el-form-item prop="category" :label="$t('config.category')">
             <el-input v-model="model.category" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item prop="dataType" :label="$t('config.dataType')">
-            <el-radio-group v-model="model.dataType">
-              <el-radio-button value="text">{{ $t('config.dataTypeOptions.text') }}</el-radio-button>
-              <el-radio-button value="textarea">{{ $t('config.dataTypeOptions.textarea') }}</el-radio-button>
-              <el-radio-button value="number">{{ $t('config.dataTypeOptions.number') }}</el-radio-button>
-              <el-radio-button value="boolean">{{ $t('config.dataTypeOptions.boolean') }}</el-radio-button>
-            </el-radio-group>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item
-            prop="propKey"
-            :label="$t('config.propKey')"
-            :rules="[
-              { required: true, message: i18n.t('rules.notnull'), whitespace: true },
-              { validator: checkPropKeyDuplicate, trigger: 'blur' }
-            ]"
-          >
-            <el-input v-model="model.propKey" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -103,7 +81,29 @@ const enableI18n = import.meta.env.VITE_APP_ENABLE_I18N === 'true'
             </el-input>
           </el-form-item>
         </el-col>
-        <el-col :span="24">
+        <el-col :span="12">
+          <el-form-item
+            prop="propKey"
+            :label="$t('config.propKey')"
+            :rules="[
+              { required: true, message: i18n.t('rules.notnull'), whitespace: true },
+              { validator: checkPropKeyDuplicate, trigger: 'blur' }
+            ]"
+          >
+            <el-input v-model="model.propKey" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item prop="dataType" :label="$t('config.dataType')">
+            <el-radio-group v-model="model.dataType">
+              <el-radio-button value="text">{{ $t('config.dataTypeOptions.text') }}</el-radio-button>
+              <el-radio-button value="textarea">{{ $t('config.dataTypeOptions.textarea') }}</el-radio-button>
+              <el-radio-button value="number">{{ $t('config.dataTypeOptions.number') }}</el-radio-button>
+              <el-radio-button value="boolean">{{ $t('config.dataTypeOptions.boolean') }}</el-radio-button>
+            </el-radio-group>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
           <el-form-item prop="propValue" :label="$t('config.propValue')">
             <el-input v-if="model.dataType === 'text'" v-model="model.propValue" />
             <el-input v-if="model.dataType === 'textarea'" v-model="model.propValue" type="textarea" />

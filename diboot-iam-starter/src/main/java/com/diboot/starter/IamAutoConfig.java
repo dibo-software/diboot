@@ -19,6 +19,8 @@ import com.diboot.core.cache.BaseCacheManager;
 import com.diboot.core.cache.DictionaryCacheManager;
 import com.diboot.core.cache.DynamicMemoryCacheManager;
 import com.diboot.core.util.V;
+import com.diboot.iam.auth.IamExtensible;
+import com.diboot.iam.auth.impl.IamExtensibleImpl;
 import com.diboot.iam.cache.SystemConfigCacheManager;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.config.IamProperties;
@@ -57,7 +59,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.*;
 import org.springframework.core.annotation.Order;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.core.task.TaskDecorator;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -251,12 +253,15 @@ public class IamAutoConfig {
         return new DynamicMemoryCacheManager(cacheName2ExpireMap);
     }
 
-    @Configuration
-    public class ThreadPoolTaskExecutorConfig {
-        public ThreadPoolTaskExecutorConfig(@Qualifier("applicationTaskExecutor") ObjectProvider<ThreadPoolTaskExecutor> taskExecutorObjectProvider) {
-            log.info("初始化: ThreadPoolTaskExecutor 指定子线程传递用户信息");
-            taskExecutorObjectProvider.ifAvailable(taskExecutor -> taskExecutor.setTaskDecorator(new ShiroContextTaskDecorator()));
-        }
+    /**
+     * 指定子线程传递用户信息
+     * @return
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public TaskDecorator shiroContextTaskDecorator() {
+        log.info("初始化 ShiroContextTaskDecorator");
+        return new ShiroContextTaskDecorator();
     }
 
     /**
@@ -271,6 +276,15 @@ public class IamAutoConfig {
         }};
         DynamicMemoryCacheManager memoryCacheManager = new DynamicMemoryCacheManager(cacheName2ExpireMap);
         return new SystemConfigCacheManager(memoryCacheManager);
+    }
+
+    /**
+     * Iam扩展配置
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public IamExtensible iamExtensible() {
+        return new IamExtensibleImpl();
     }
 
 }

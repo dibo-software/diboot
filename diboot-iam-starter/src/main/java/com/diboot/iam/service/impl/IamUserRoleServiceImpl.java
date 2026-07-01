@@ -75,26 +75,28 @@ public class IamUserRoleServiceImpl extends BaseServiceImpl<IamUserRoleMapper, I
 
     @Override
     public List<IamRole> getUserRoleList(String tenantId, String userType, String userId, String extensionObjId) {
+        List<IamRole> roles = new ArrayList<>();
         List<IamUserRole> userRoleList = getEntityList(Wrappers.<IamUserRole>lambdaQuery()
                 .select(IamUserRole::getRoleId)
                 .eq(IamUserRole::getUserType, userType)
                 .eq(IamUserRole::getUserId, userId)
                 .eq(IamUserRole::getTenantId, tenantId)
         );
-        if(V.isEmpty(userRoleList)){
-            return Collections.emptyList();
+        if(V.notEmpty(userRoleList)){
+            List<String> roleIds = BeanUtils.collectToList(userRoleList, IamUserRole::getRoleId);
+            // 查询当前角色
+            List<IamRole> roleList = iamRoleMapper.findByIds(roleIds, BaseConfig.getActiveFlagValue());
+            roles.addAll(roleList);
         }
-        List<String> roleIds = BeanUtils.collectToList(userRoleList, IamUserRole::getRoleId);
-        // 查询当前角色
-        List<IamRole> roles = iamRoleMapper.findByIds(roleIds, BaseConfig.getActiveFlagValue());
+        if (getIamExtensible() == null) {
+            return roles;
+        }
         // 加载扩展角色
-        if(getIamExtensible() != null){
-            List<IamRole> extRoles = getIamExtensible().getExtensionRoles(userType, userId, extensionObjId);
-            if(V.notEmpty(extRoles)){
-                roles.addAll(extRoles);
-                roles = BeanUtils.distinctByKey(roles, IamRole::getId);
-            }
+        List<IamRole> extRoles = getIamExtensible().getExtensionRoles(userType, userId, extensionObjId);
+        if(V.notEmpty(extRoles)){
+            roles.addAll(extRoles);
         }
+        roles = BeanUtils.distinctByKey(roles, IamRole::getId);
         return roles;
     }
 

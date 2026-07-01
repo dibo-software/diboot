@@ -41,6 +41,7 @@ import java.lang.reflect.Type;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 
 /**
@@ -188,7 +189,7 @@ public class ParserCache {
      * @return
      */
     public static <DTO> boolean hasJoinTable(DTO dto, Collection<String> fieldNameSet){
-        List<AnnoJoiner> annoList = getBindQueryAnnos(dto.getClass());
+        List<AnnoJoiner> annoList = getBindQueryAnnos(dto.getClass(), dto);
         if(V.notEmpty(annoList)){
             for(AnnoJoiner anno : annoList){
                 if(V.notEmpty(anno.getJoin()) && V.contains(fieldNameSet, anno.getFieldName())) {
@@ -204,12 +205,13 @@ public class ParserCache {
      * @param dtoClass
      * @return
      */
-    public static List<AnnoJoiner> getBindQueryAnnos(Class<?> dtoClass){
+    public static List<AnnoJoiner> getBindQueryAnnos(Class<?> dtoClass, Object dto){
         String dtoClassName = dtoClass.getName();
         if(dtoClassBindQueryCacheMap.containsKey(dtoClassName)){
             return dtoClassBindQueryCacheMap.get(dtoClassName);
         }
         // 初始化
+        AtomicReference<Boolean> hasParameter = new AtomicReference<>(false);
         List<AnnoJoiner> annos = new ArrayList<>();
         AtomicInteger index = new AtomicInteger(1);
         Map<String, String> joinOn2Alias = new HashMap<>(8);
@@ -227,6 +229,20 @@ public class ParserCache {
                     joinOn2Alias.put(key, alias);
                 } else {
                     annoJoiner.setAlias(alias);
+                }
+                if(S.contains(annoJoiner.getCondition(), "${")) {
+                    hasParameter.set(true);
+                    List<String> variables = S.extractVariables(annoJoiner.getCondition());
+                    if (dto == null) {
+                        throw new InvalidUsageException("DTO对象未指定，无法替换条件变量 {}！", variables);
+                    }
+                    for (String variable : variables) {
+                        Object value = BeanUtils.getProperty(dto, variable);
+                        if (value instanceof String) {
+                            value = "'" + value + "'";
+                        }
+                        annoJoiner.setCondition(S.replace(annoJoiner.getCondition(), "${" + variable + "}", S.valueOf(value)));
+                    }
                 }
                 annoJoiner.parse();
             }
@@ -246,7 +262,9 @@ public class ParserCache {
                 buildAnnoJoiner.accept(field, bindQuery);
             }
         }
-        dtoClassBindQueryCacheMap.put(dtoClassName, annos);
+        if (hasParameter.get() == false){
+            dtoClassBindQueryCacheMap.put(dtoClassName, annos);
+        }
         return annos;
     }
 
@@ -256,8 +274,8 @@ public class ParserCache {
      * @param fieldNames
      * @return
      */
-    public static List<AnnoJoiner> getAnnoJoiners(Class<?> dtoClass, Collection<String> fieldNames) {
-        List<AnnoJoiner> annoList = getBindQueryAnnos(dtoClass);
+    public static List<AnnoJoiner> getAnnoJoiners(Object dto, Class<?> dtoClass, Collection<String> fieldNames) {
+        List<AnnoJoiner> annoList = getBindQueryAnnos(dtoClass,  dto);
         // 不过滤  返回全部
         if(fieldNames == null){
             return annoList;

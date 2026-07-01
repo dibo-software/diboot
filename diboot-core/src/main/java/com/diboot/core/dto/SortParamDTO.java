@@ -59,4 +59,9 @@ public class SortParamDTO<ID extends Serializable> implements Serializable {
      */
     private ID newParentId;
 
+    /**
+     * 排序字段
+     */
+    private String sortField;
+
 }

@@ -26,7 +26,8 @@ import com.diboot.iam.util.IamSecurityUtils;
 import com.diboot.iam.util.TokenUtils;
 import com.diboot.iam.vo.IamUserOrgVO;
 import com.diboot.iam.vo.PositionDataScope;
-import com.pig4cloud.captcha.ArithmeticCaptcha;
+import com.wf.captcha.ArithmeticCaptcha;
+import com.wf.captcha.base.Captcha;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -89,7 +90,7 @@ public class AuthTokenController extends BaseController {
         response.setHeader("Cache-Control", "no-cache");
         response.setDateHeader("Expires", 0);
         // 算数验证码
-        ArithmeticCaptcha captcha = new ArithmeticCaptcha();
+        Captcha captcha = new ArithmeticCaptcha();
         // 验证码存入缓存
         baseCacheManager.putCacheObj(Cons.CACHE_CAPTCHA, traceId, captcha.text());
         // 输出图片流

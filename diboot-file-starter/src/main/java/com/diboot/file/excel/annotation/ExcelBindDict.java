@@ -34,4 +34,10 @@ public @interface ExcelBindDict {
      * @return
      */
     String type();
+
+    /**
+     * 构建下拉选项
+     * @return
+     */
+    boolean options() default true;
 }

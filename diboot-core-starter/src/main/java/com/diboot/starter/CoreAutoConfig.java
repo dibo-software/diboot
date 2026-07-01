@@ -49,8 +49,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
+import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.filter.OrderedRequestContextFilter;
 import org.springframework.context.annotation.Bean;
@@ -86,6 +88,7 @@ import java.util.*;
 @Order(902)
 @EnableAsync
 @Configuration
+@AutoConfigureBefore(JacksonAutoConfiguration.class)
 @AutoConfigureAfter(CoreRedisAutoConfig.class)
 @EnableConfigurationProperties({CoreProperties.class, GlobalProperties.class})
 @ComponentScan(basePackages = {"com.diboot.core"})

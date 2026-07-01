@@ -4,12 +4,17 @@
     <parent>
         <groupId>com.diboot</groupId>
         <artifactId>diboot-root</artifactId>
-        <version>3.8.0</version>
+        <version>3.9.0</version>
     </parent>
     <groupId>com.diboot</groupId>
     <artifactId>diboot-tenant-spring-boot-starter</artifactId>
     <name>diboot-tenant-starter</name>
     <dependencies>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.20.0</version>
+        </dependency>
         <!-- 依赖core -->
         <dependency>
             <groupId>com.diboot</groupId>
@@ -25,4 +30,16 @@
         </dependency>
 
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>17</source>
+                    <target>17</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

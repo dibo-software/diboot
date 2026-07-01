@@ -32,10 +32,17 @@ import java.util.List;
 public class DynamicJoinQueryWrapper<DTO,T> extends ExtQueryWrapper<T> {
     private static final long serialVersionUID = 5557355990471769264L;
 
-    public DynamicJoinQueryWrapper(Class<DTO> dtoClass, Collection<String> fields){
+    public DynamicJoinQueryWrapper(Object dto, Class<DTO> dtoClass, Collection<String> fields){
+        this.dto = dto;
         this.dtoClass = dtoClass;
         this.fields = fields;
     }
+
+    /**
+     * DTO
+     */
+    @Getter
+    private Object dto;
 
     /**
      * DTO类
@@ -51,7 +58,7 @@ public class DynamicJoinQueryWrapper<DTO,T> extends ExtQueryWrapper<T> {
      * dto字段和值
      */
     public List<AnnoJoiner> getAnnoJoiners(){
-        return ParserCache.getAnnoJoiners(this.dtoClass, fields);
+        return ParserCache.getAnnoJoiners(this.dto, this.dtoClass, fields);
     }
 
     /**

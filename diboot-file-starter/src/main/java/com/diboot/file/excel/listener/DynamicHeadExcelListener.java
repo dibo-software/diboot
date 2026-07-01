@@ -15,11 +15,11 @@
  */
 package com.diboot.file.excel.listener;
 
-import com.alibaba.excel.context.AnalysisContext;
-import com.alibaba.excel.event.AnalysisEventListener;
-import com.alibaba.excel.metadata.Head;
-import com.alibaba.excel.metadata.data.ReadCellData;
-import com.alibaba.excel.read.metadata.property.ExcelReadHeadProperty;
+import cn.idev.excel.context.AnalysisContext;
+import cn.idev.excel.event.AnalysisEventListener;
+import cn.idev.excel.metadata.Head;
+import cn.idev.excel.metadata.data.ReadCellData;
+import cn.idev.excel.read.metadata.property.ExcelReadHeadProperty;
 import com.diboot.file.excel.TableHead;
 import com.diboot.file.util.ExcelHelper;
 import lombok.Getter;

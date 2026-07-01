@@ -5,16 +5,21 @@
     <parent>
         <artifactId>diboot-root</artifactId>
         <groupId>com.diboot</groupId>
-        <version>3.8.0</version>
+        <version>3.9.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>diboot-notification-spring-boot-starter</artifactId>
-    <version>3.8.0</version>
+    <version>3.9.0</version>
     <packaging>jar</packaging>
     <description>diboot消息通知组件</description>
 
     <dependencies>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.20.0</version>
+        </dependency>
         <!-- 依赖core-starter -->
         <dependency>
             <groupId>com.diboot</groupId>
@@ -37,12 +42,16 @@
         <dependency>
             <groupId>com.aliyun</groupId>
             <artifactId>dysmsapi20170525</artifactId>
-            <version>4.2.0</version>
+            <version>4.3.1</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
                     <groupId>org.dom4j</groupId>
                     <artifactId>dom4j</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.squareup.okhttp3</groupId>
+                    <artifactId>okhttp</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -60,4 +69,17 @@
         </dependency>
 
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>17</source>
+                    <target>17</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

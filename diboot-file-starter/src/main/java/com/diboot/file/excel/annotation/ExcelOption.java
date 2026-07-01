@@ -22,12 +22,14 @@ import java.lang.annotation.*;
 
 /**
  * Excel 单元格验证 （单元格下拉选项）
+ * 已废弃，替代方案：@ExcelBindDict(..., options=true), @ExcelBindField(..., options=true)
  * <p>
  * 可自定义选项或关联字典
  *
  * @author wind
  * @version v2.3.0
  */
+@Deprecated
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited

@@ -20,9 +20,11 @@ import com.diboot.core.mapper.BaseCrudMapper;
 import com.diboot.iam.entity.IamUser;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
 * 系统用户Mapper
@@ -48,4 +50,9 @@ public interface IamUserMapper extends BaseCrudMapper<IamUser> {
             "mobile_phone = #{user.mobilePhone}, email = #{user.email}, status = #{user.status} ",
             "WHERE id = #{user.id} AND is_deleted = #{deleted}"})
     boolean updateTenantAdmin(@Param("user") IamUser user, @Param("deleted") Object deleted);
+
+    @InterceptorIgnore(tenantLine = "true")
+    @Select({"SELECT id FROM dbt_iam_user WHERE org_id IN (#{orgIds}) AND is_deleted = #{deleted}"})
+    List<String> getUserIdsByOrgIds(@Param("orgIds")List<String> orgIds, @Param("deleted") Object deleted);
+
 }

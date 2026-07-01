@@ -722,7 +722,11 @@ public class V {
         } else if (target instanceof Date && source instanceof String) {
             return D.getDateTime((Date) target).equals(source) || D.getDate((Date) target).equals(source);
         } else {
-            return S.valueOf(source).equals(S.valueOf(target));
+            if (source != null && target != null) {
+                return S.valueOf(source).equals(S.valueOf(target));
+            } else {
+                return false;
+            }
         }
     }
 

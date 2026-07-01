@@ -231,11 +231,11 @@ public class BaseController {
 		String entityClassName = relatedDataDTO.getTypeClassName();
 		Class<?> entityClass = BindingCacheManager.getEntityClassBySimpleName(entityClassName);
 		if (V.isEmpty(entityClass)) {
-			throw new BusinessException("exception.business.baseController.loadRelatedData.nullEntityClass");
+			throw new BusinessException("exception.business.baseController.loadRelatedData.nullEntityClass", entityClassName);
 		}
 		BaseService<?> baseService = ContextHolder.getBaseServiceByEntity(entityClass);
 		if (baseService == null) {
-			throw new BusinessException("exception.business.baseController.loadRelatedData.nullServiceClass");
+			throw new BusinessException("exception.business.baseController.loadRelatedData.nullServiceClass", entityClassName);
 		}
 		PropInfo propInfoCache = BindingCacheManager.getPropInfoByClass(entityClass);
 		Function<String, String> field2column = field -> {
@@ -244,7 +244,7 @@ public class BaseController {
 				if (V.notEmpty(column)) {
 					return column;
 				} else {
-					throw new BusinessException("exception.business.baseController.loadRelatedData.noField");
+					throw new BusinessException("exception.business.baseController.loadRelatedData.noField", entityClassName, field);
 				}
 			}
 			return null;

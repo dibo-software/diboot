@@ -17,6 +17,7 @@ package com.diboot.iam.vo;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.binding.annotation.BindDict;
+import com.diboot.core.binding.annotation.BindEntity;
 import com.diboot.core.binding.annotation.BindEntityList;
 import com.diboot.core.binding.annotation.BindField;
 import com.diboot.core.vo.LabelValue;
@@ -56,8 +57,16 @@ public class IamOrgVO extends IamOrg  {
     @BindEntityList(entity = IamOrg.class, condition = "this.id=parent_id")
     private List<IamOrgVO> children;
 
-    // 字段关联：this.parent_id=id
+    // 字段关联：this.manager_id=id
     @BindField(entity = IamUser.class, field = "realname", condition = "this.manager_id=id")
     private String managerName;
+
+    // 字段关联：this.manager_id=id
+    @BindField(entity = IamUser.class, field = "avatarUrl", condition = "this.manager_id=id")
+    private String managerAvatarUrl;
+
+    // 字段关联：this.manager_id=id
+    @BindField(entity = IamUser.class, field = "gender", condition = "this.manager_id=id")
+    private String managerGender;
 
 }

@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import type { TreeNodeData } from 'element-plus/es/components/tree/src/tree.type'
 import type { FormInstance, FormRules } from 'element-plus'
 import type { Role } from './type'
-import type { Resource } from '@/views/system/resource/type'
 import { checkValue } from '@/utils/validate-form'
 import { useI18n } from 'vue-i18n'
+import CommonTree from './CommonTree.vue'
 
 const i18n = useI18n()
 const baseApi = '/iam/role'
@@ -13,32 +12,20 @@ const { loadData, loading, model } = useDetail<Role & { permissionIdList?: strin
 
 const title = ref('')
 const visible = ref(false)
+const treeRef = ref()
+const activeName = ref('PC')
 
 // 新建完是否清空表单继续填写
 const isContinueAdd = ref(false)
 
-// 权限树相关
-const transformField = {
-  label: 'displayName'
-}
-const { treeRef, treeDataList, selectedIdList, getTree, checkNode, flatTreeNodeClass } = useTreeCrud<Resource>({
-  baseApi: '/iam/resource',
-  treeApi: '/tree',
-  transformField
-})
-const treeProps = {
-  label: 'displayName',
-  class: (data: TreeNodeData) => ({ ...flatTreeNodeClass(data), mobile: data.appModule === 'mobile' })
-}
-getTree()
-
 defineExpose({
   open: (id?: string) => {
     title.value = id ? i18n.t('title.update') : i18n.t('title.create')
+    activeName.value = 'PC'
     loadData(id).then(() => {
       // 设置选中权限
-      selectedIdList.value = (model.value.permissionList?.map(item => item.id) as string[]) ?? []
-      treeRef.value?.setCheckedKeys(selectedIdList.value)
+      model.value.permissionIdList = (model.value.permissionList?.map(item => item.id) as string[]) ?? []
+      treeRef.value?.setCheckedKeys(model.value.permissionIdList)
     })
     visible.value = true
   }
@@ -49,6 +36,12 @@ const formRef = ref<FormInstance>()
 
 watch(visible, value => {
   if (!value) formRef.value?.resetFields()
+})
+
+watch(activeName, () => {
+  setTimeout(() => {
+    treeRef.value?.setCheckedKeys(model.value.permissionIdList)
+  }, 0)
 })
 
 const emit = defineEmits<{
@@ -62,7 +55,6 @@ const { submitting, submit } = useForm({
     visible.value = isContinueAdd.value
     if (isContinueAdd.value) {
       formRef.value?.resetFields()
-      selectedIdList.value = []
       model.value.permissionIdList = []
       treeRef.value?.setCheckedKeys([])
     }
@@ -84,9 +76,9 @@ const rules: FormRules = {
     { validator: checkCodeDuplicate, trigger: 'blur' }
   ]
 }
-const handleCheckNode = (currentNode: Resource, data: { checkedKeys: string[] }) => {
-  checkNode(currentNode, data)
-  model.value.permissionIdList = selectedIdList.value
+
+const getSelectedIdList = (idList: string[]) => {
+  model.value.permissionIdList = idList
 }
 </script>
 
@@ -99,30 +91,38 @@ const handleCheckNode = (currentNode: Resource, data: { checkedKeys: string[] })
       :rules="rules"
       :label-width="$i18n.locale === 'en' ? '150px' : '80px'"
     >
-      <el-form-item prop="name" :label="$t('role.name')">
-        <el-input v-model="model.name" />
-      </el-form-item>
-      <el-form-item prop="code" :label="$t('role.code')">
-        <el-input v-model="model.code" />
-      </el-form-item>
+      <el-row :gutter="16">
+        <el-col :span="12">
+          <el-form-item prop="name" :label="$t('role.name')">
+            <el-input v-model="model.name" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item prop="code" :label="$t('role.code')">
+            <el-input v-model="model.code" />
+          </el-form-item>
+        </el-col>
+      </el-row>
       <el-form-item prop="description" :label="$t('role.description')">
-        <el-input v-model="model.description" type="textarea" />
+        <el-input v-model="model.description" type="textarea" :rows="1" />
       </el-form-item>
       <el-form-item prop="permissionList" :label="$t('role.permissionList')">
-        <el-scrollbar height="calc(80vh - 350px)">
-          <el-tree
-            ref="treeRef"
-            style="width: 100%"
-            :expand-on-click-node="false"
-            :props="treeProps"
-            :data="treeDataList"
-            show-checkbox
-            check-strictly
-            node-key="id"
-            default-expand-all
-            @check="handleCheckNode"
-          />
-        </el-scrollbar>
+        <el-radio-group v-model="activeName" style="margin-right: 20px" fill="#909399">
+          <el-radio-button :label="$t('resource.main')" value="PC" />
+          <el-radio-button :label="$t('resource.mobile.title')" value="Mobile" />
+        </el-radio-group>
+        <common-tree
+          v-if="activeName === 'PC'"
+          ref="treeRef"
+          :init-query-param="{ appModule: 'PC' }"
+          @get-selected-id-list="getSelectedIdList"
+        />
+        <common-tree
+          v-if="activeName === 'Mobile'"
+          ref="treeRef"
+          :init-query-param="{ appModule: 'MOBILE' }"
+          @get-selected-id-list="getSelectedIdList"
+        />
       </el-form-item>
     </el-form>
 

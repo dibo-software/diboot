@@ -58,4 +58,10 @@ public @interface ExcelBindField {
      */
     EmptyStrategy empty() default EmptyStrategy.WARN;
 
+    /**
+     * 构建下拉选项
+     * @return
+     */
+    boolean options() default false;
+
 }

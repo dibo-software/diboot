@@ -1,6 +1,7 @@
 package com.diboot.core.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,7 +30,7 @@ public class BaseTreeModel extends BaseTreeEntity<String> {
     /**
      * 创建人
      */
-    @TableField(fill = FieldFill.INSERT)
+    @TableField(fill = FieldFill.INSERT, insertStrategy = FieldStrategy.NOT_EMPTY)
     private String createBy;
 
     /**

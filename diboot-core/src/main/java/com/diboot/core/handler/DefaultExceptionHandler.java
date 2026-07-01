@@ -23,10 +23,12 @@ import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +37,8 @@ import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.util.HashMap;
 import java.util.List;
@@ -53,6 +57,25 @@ public class DefaultExceptionHandler {
 
     @Autowired(required = false)
     private ApplicationEventPublisher applicationEventPublisher;
+
+    @Value("${spring.servlet.multipart.max-file-size:100MB}")
+    private String maxFileSize;
+
+    @Value("${spring.servlet.multipart.max-request-size:100MB}")
+    private String maxRequestSize;
+
+    /**
+     * 文件上传超出限制特殊处理
+     *
+     * @param response
+     * @return
+     */
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    @ResponseBody
+    public Object handleMaxUploadSizeExceeded(HttpServletResponse response) {
+        response.setStatus(HttpStatus.PAYLOAD_TOO_LARGE.value());
+        return "文件大小超出限制，单个文件最大支持：" + maxFileSize + "; 单次请求限制：" + maxRequestSize;
+    }
 
     /**
      * 统一处理校验错误 BindResult

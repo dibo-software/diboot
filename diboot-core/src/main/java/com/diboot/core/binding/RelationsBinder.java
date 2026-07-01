@@ -28,13 +28,13 @@ import com.diboot.core.util.V;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.web.context.request.RequestContextHolder;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 /**
@@ -151,7 +151,7 @@ public class RelationsBinder {
         RequestContextHolder.setRequestAttributes(RequestContextHolder.getRequestAttributes(), true);
         LocaleContextHolder.setLocaleContext(LocaleContextHolder.getLocaleContext(),true);
         RelationsBindingManager bindingManager = getBindingManager();
-        ExecutorService bindingExecutor = VirtualThreadExecutor.getVirtualThreadExecutor();
+        SimpleAsyncTaskExecutor bindingExecutor = VirtualThreadExecutor.getVirtualThreadExecutor();
         List<Future<?>> binderFutures = bindingExecutor != null? new ArrayList<>() : null;
         // 绑定Field字段名
         Map<String, List<FieldAnnotation>> bindFieldGroupMap = bindAnnotationGroup.getBindFieldGroupMap();
@@ -285,7 +285,6 @@ public class RelationsBinder {
                     log.error("虚拟线程汇总执行绑定异常: ", e);
                 }
             }
-            bindingExecutor.shutdown();
             log.debug("虚拟线程执行关联绑定完成 <-=");
         }
         // 深度绑定

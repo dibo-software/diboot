@@ -176,12 +176,12 @@ public class QueryBuilder {
         // 是否有join联表查询
         boolean hasJoinTable = ParserCache.hasJoinTable(dto, fields);
         if (hasJoinTable) {
-            wrapper = new DynamicJoinQueryWrapper<>(dto.getClass(), fields);
+            wrapper = new DynamicJoinQueryWrapper<>(dto, dto.getClass(), fields);
         } else {
             wrapper = new ExtQueryWrapper<>();
         }
         // 构建 ColumnName
-        List<AnnoJoiner> annoJoinerList = ParserCache.getBindQueryAnnos(dto.getClass());
+        List<AnnoJoiner> annoJoinerList = ParserCache.getBindQueryAnnos(dto.getClass(), dto);
         BiFunction<BindQuery, Field, String> buildColumnName = (bindQuery, field) -> {
             if (bindQuery != null) {
                 String key = field.getName() + bindQuery;

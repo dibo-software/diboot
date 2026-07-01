@@ -12,9 +12,9 @@ const zhCN = {
     permissionsPlaceholder: '请选择接口权限'
   },
   config: {
-    propKey: '属性名',
-    propLabel: '属性标签',
-    propValue: '属性值',
+    propKey: '参数名',
+    propLabel: '参数说明',
+    propValue: '参数值',
     category: '类别',
     dataType: '填写类型',
     dataTypeOptions: {
@@ -121,7 +121,8 @@ const zhCN = {
       title: '消息标题',
       channel: '请选择发送通道',
       status: '请选择消息状态',
-      createTime: '发送日期'
+      start: '开始时间',
+      end: '结束时间'
     }
   },
   messageTemplate: {
@@ -136,7 +137,9 @@ const zhCN = {
       content: '发送日期'
     },
     selectableVariables: '可选变量',
-    addVariable: '添加此变量'
+    addVariable: '添加此变量',
+    selectVarFrom: '选择变量来源',
+    fromModel: '来自模型'
   },
   operationLog: {
     business: '业务操作日志',
@@ -173,7 +176,7 @@ const zhCN = {
     newButtonPermission: '新按钮权限',
     parentId: '上级目录',
     parentId0: '顶级目录',
-    displayType: '菜单分类',
+    displayType: '菜单类型',
     displayName: '菜单名称',
     routeMetaIcon: '菜单图标',
     routePath: '路由路径',
@@ -227,7 +230,7 @@ const zhCN = {
     componentNameChange: '组件名称变更，以免页面缓存不生效，请重新选择！',
     componentNonExist: '组件不存在，将无法加载菜单，请重新选择！',
     permissionSelect: {
-      title: '菜单分类 可配置权限接口',
+      title: '`菜单`类型的节点可配置权限接口',
       permissionApi: '配置权限接口',
       searchPlaceholder: '搜索需要设置的接口：支持标题、权限码、接口地址模糊搜索',
       tip: '选择 应用模块 后配置权限'
@@ -239,7 +242,9 @@ const zhCN = {
     userList: '角色人员',
     description: '备注',
     grantPermission: '授权权限',
-    permissionList: '角色授权'
+    permissionList: '角色授权',
+    expand: '展开',
+    putAway: '收起'
   },
   scheduleJob: {
     jobKey: '定时任务',

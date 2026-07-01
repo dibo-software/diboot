@@ -229,7 +229,7 @@ public class JoinsBinder {
                     orderType = fieldAndOrder[1];
                 }
                 // 获取列定义的AnnoJoiner 得到别名
-                List<AnnoJoiner> joinerList = ParserCache.getAnnoJoiners(queryWrapper.getDtoClass(), Collections.singletonList(fieldName));
+                List<AnnoJoiner> joinerList = ParserCache.getAnnoJoiners(queryWrapper.getDto(), queryWrapper.getDtoClass(), Collections.singletonList(fieldName));
                 if (joinerList.isEmpty()) {
                     fieldName = "self." + S.toSnakeCase(fieldName);
                     orderByList.add(V.isEmpty(orderType) ? fieldName : fieldName + ":" + orderType);

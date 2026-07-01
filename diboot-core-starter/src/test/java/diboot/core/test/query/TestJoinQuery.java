@@ -24,10 +24,7 @@ import com.diboot.core.binding.query.dynamic.ExtQueryWrapper;
 import com.diboot.core.config.Cons;
 import com.diboot.core.vo.Pagination;
 import diboot.core.test.StartupApplication;
-import diboot.core.test.binder.dto.DepartmentDTO;
-import diboot.core.test.binder.dto.PetDTO;
-import diboot.core.test.binder.dto.ProblemDTO;
-import diboot.core.test.binder.dto.UserDTO;
+import diboot.core.test.binder.dto.*;
 import diboot.core.test.binder.entity.*;
 import diboot.core.test.binder.service.*;
 import diboot.core.test.binder.vo.DepartmentVO;
@@ -68,7 +65,7 @@ public class TestJoinQuery {
     @Autowired
     PetService petService;
     @Autowired
-    PetAdoptService petAdoptService;
+    ProductService productService;
 
     @Test
     public void testDateCompaire(){
@@ -404,4 +401,15 @@ public class TestJoinQuery {
         long time = System.currentTimeMillis() - start;
         System.out.println(time + " 执行完成。"+count);
     }
+
+    @Test
+    public void testJoinWithNonColumnField(){
+        CoachProductDTO coachProductDTO = new CoachProductDTO();
+        coachProductDTO.setCoachId(1001l);
+        coachProductDTO.setCategory("足球");
+        QueryWrapper<Product> queryWrapper = QueryBuilder.toQueryWrapper(coachProductDTO);
+        List<Product> list = productService.getEntityList(queryWrapper);
+        Assert.assertTrue(list.size() == 3);
+    }
+
 }

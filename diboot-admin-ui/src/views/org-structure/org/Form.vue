@@ -173,19 +173,26 @@ defineExpose({ open })
           </el-form-item>
         </el-col>
         <el-col :md="12" :sm="24">
+          <el-form-item prop="area" :label="$t('org.area')">
+            <el-input v-model="model.area" />
+          </el-form-item>
+        </el-col>
+        <el-col :md="12" :sm="24">
           <el-form-item prop="sortId" :label="$t('org.sortId')">
             <el-input v-model="model.sortId" :min="1" type="number" />
           </el-form-item>
         </el-col>
+        <el-col :md="12" :sm="24">
+          <el-form-item prop="orgComment" :label="$t('org.orgComment')">
+            <el-input
+              v-model="model.orgComment"
+              :rows="1"
+              type="textarea"
+              :placeholder="`${$t('placeholder.input')} ${$t('org.orgComment')}`"
+            />
+          </el-form-item>
+        </el-col>
       </el-row>
-      <el-form-item prop="orgComment" :label="$t('org.orgComment')">
-        <el-input
-          v-model="model.orgComment"
-          :rows="2"
-          type="textarea"
-          :placeholder="`${$t('placeholder.input')} ${$t('org.orgComment')}`"
-        />
-      </el-form-item>
     </el-form>
 
     <template #footer>

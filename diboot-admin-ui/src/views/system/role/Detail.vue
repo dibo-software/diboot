@@ -67,25 +67,52 @@ const getIcon = (val: string) => {
         </div>
       </el-descriptions-item>
       <el-descriptions-item :label="$t('role.grantPermission')" :span="2">
-        <el-scrollbar height="calc(80vh - 300px)">
-          <el-tree
-            style="width: 100%"
-            :expand-on-click-node="false"
-            :props="treeProps"
-            :data="model.permissionVOList"
-            node-key="id"
-            default-expand-all
-          >
-            <template #default="{ node, data }">
-              <span style="display: flex; align-items: center">
-                <el-icon>
-                  <component :is="getIcon(data.displayType)" />
-                </el-icon>
-                <span>{{ node.label }} </span>
-              </span>
-            </template>
-          </el-tree>
-        </el-scrollbar>
+        <el-row :gutter="24">
+          <el-col :span="12">
+            <h3>{{ $t('resource.main') }}</h3>
+            <el-scrollbar height="calc(80vh - 300px)">
+              <el-tree
+                style="width: 100%"
+                :expand-on-click-node="false"
+                :props="treeProps"
+                :data="model.permissionVOList?.filter(item => item.appModule === 'PC')"
+                node-key="id"
+                default-expand-all
+              >
+                <template #default="{ node, data }">
+                  <span style="display: flex; align-items: center">
+                    <el-icon>
+                      <component :is="getIcon(data.displayType)" />
+                    </el-icon>
+                    <span style="padding-left: 5px">{{ node.label }} </span>
+                  </span>
+                </template>
+              </el-tree>
+            </el-scrollbar>
+          </el-col>
+          <el-col :span="12">
+            <h3>{{ $t('resource.mobile.title') }}</h3>
+            <el-scrollbar height="calc(80vh - 300px)">
+              <el-tree
+                style="width: 100%"
+                :expand-on-click-node="false"
+                :props="treeProps"
+                :data="model.permissionVOList?.filter(item => item.appModule === 'MOBILE')"
+                node-key="id"
+                default-expand-all
+              >
+                <template #default="{ node, data }">
+                  <span style="display: flex; align-items: center">
+                    <el-icon>
+                      <component :is="getIcon(data.displayType)" />
+                    </el-icon>
+                    <span style="padding-left: 5px">{{ node.label }} </span>
+                  </span>
+                </template>
+              </el-tree>
+            </el-scrollbar>
+          </el-col>
+        </el-row>
       </el-descriptions-item>
       <el-descriptions-item :label="$t('baseField.createTime')">
         {{ model.createTime }}

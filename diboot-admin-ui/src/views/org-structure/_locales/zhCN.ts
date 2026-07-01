@@ -9,6 +9,7 @@ const zhCN = {
     name: '名称',
     code: '编码',
     type: '类型',
+    area: '区域',
     managerName: '负责人',
     sortId: '排序号',
     parentId: '上级部门',

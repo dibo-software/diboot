@@ -18,6 +18,7 @@ package com.diboot.iam.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.binding.RelationsBinder;
+import com.diboot.core.config.BaseConfig;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.core.util.ContextHolder;
@@ -30,6 +31,7 @@ import com.diboot.iam.service.IamUserPositionService;
 import com.diboot.iam.service.IamUserService;
 import com.diboot.iam.vo.IamUserPositionVO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,6 +48,9 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class IamUserPositionServiceImpl extends BaseServiceImpl<IamUserPositionMapper, IamUserPosition> implements IamUserPositionService {
+
+    @Autowired
+    private IamUserPositionMapper iamUserPositionMapper;
 
     @Override
     public List<IamUserPosition> getUserPositionListByUser(String userType, String userId) {
@@ -69,14 +74,11 @@ public class IamUserPositionServiceImpl extends BaseServiceImpl<IamUserPositionM
     }
 
     @Override
-    public List<IamUserPosition> getUserPositions(String userType, String userId) {
-        LambdaQueryWrapper<IamUserPosition> queryWrapper = Wrappers.<IamUserPosition>lambdaQuery()
-                .eq(IamUserPosition::getUserType, userType)
-                .eq(IamUserPosition::getUserId, userId);
-        List<IamUserPosition> userPositionList = baseMapper.selectList(queryWrapper);
-        return userPositionList;
+    public List<IamUserPositionVO> getUserPositions(String userType, String userId) {
+        return iamUserPositionMapper.getUserPositions(userType, userId, BaseConfig.getActiveFlagValue());
     }
 
+    @Deprecated
     @Override
     public IamUserPositionVO getUserPrimaryPosition(String userType, String userId) {
         LambdaQueryWrapper<IamUserPosition> queryWrapper = Wrappers.<IamUserPosition>lambdaQuery()
@@ -93,6 +95,7 @@ public class IamUserPositionServiceImpl extends BaseServiceImpl<IamUserPositionM
         return RelationsBinder.convertAndBind(userPositionList.get(0), IamUserPositionVO.class);
     }
 
+    @Deprecated
     @Override
     public List<IamUserPositionVO> getUserPartTimeJobPosition(String userType, String userId) {
         LambdaQueryWrapper<IamUserPosition> queryWrapper = Wrappers.<IamUserPosition>lambdaQuery()
@@ -100,7 +103,7 @@ public class IamUserPositionServiceImpl extends BaseServiceImpl<IamUserPositionM
                 .eq(IamUserPosition::getUserId, userId)
                 .eq(IamUserPosition::getIsPrimaryPosition, false);
         List<IamUserPosition> userPositionList = baseMapper.selectList(queryWrapper);
-        if(V.isEmpty(userPositionList)){
+        if (V.isEmpty(userPositionList)) {
             return Collections.emptyList();
         }
         return RelationsBinder.convertAndBind(userPositionList, IamUserPositionVO.class);
@@ -133,6 +136,8 @@ public class IamUserPositionServiceImpl extends BaseServiceImpl<IamUserPositionM
         }
         for (IamUserPosition userPosition : userPositionList) {
             userPosition.setId(null);
+            userPosition.setCreateTime(null);
+            userPosition.setUpdateTime(null);
             baseMapper.insert(userPosition);
         }
         return true;

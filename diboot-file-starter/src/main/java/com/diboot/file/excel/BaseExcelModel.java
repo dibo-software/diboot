@@ -15,7 +15,7 @@
  */
 package com.diboot.file.excel;
 
-import com.alibaba.excel.annotation.ExcelIgnore;
+import cn.idev.excel.annotation.ExcelIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.io.Serializable;

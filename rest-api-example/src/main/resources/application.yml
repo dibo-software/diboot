@@ -6,8 +6,12 @@ spring:
     allow-bean-definition-overriding: true
   servlet:
     multipart:
-      max-file-size: 50MB
-      max-request-size: 50MB
+      max-file-size: 100MB
+      max-request-size: 100MB
+#  threads:
+#    virtual:
+#      enabled: true
+
 server:
   shutdown: graceful
   compression:

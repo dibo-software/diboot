@@ -2,6 +2,7 @@
 import type { OrgModel } from '@/views/org-structure/org/type'
 import { Search, Plus } from '@element-plus/icons-vue'
 import OrgForm from './Form.vue'
+import UserInfo from '@/components/display/UserInfo.vue'
 
 const props = defineProps<{ parentId?: string }>()
 
@@ -52,6 +53,7 @@ const onFormComplete = () => {
       <el-space>
         <el-input v-model="queryParam.name" clearable :placeholder="$t('org.name')" @change="onSearch" />
         <el-input v-model="queryParam.code" clearable :placeholder="$t('org.code')" @change="onSearch" />
+        <el-input v-model="queryParam.area" clearable :placeholder="$t('org.area')" @change="onSearch" />
         <el-button :icon="Search" type="primary" @click="onSearch">{{ $t('operation.search') }}</el-button>
         <el-button :title="$t('title.reset')" @click="resetFilter">{{ $t('operation.reset') }}</el-button>
       </el-space>
@@ -68,7 +70,19 @@ const onFormComplete = () => {
     >
       <el-table-column prop="name" :label="$t('org.name')" />
       <el-table-column prop="code" :label="$t('org.code')" />
-      <el-table-column prop="managerName" :label="$t('org.managerName')" />
+      <el-table-column prop="area" :label="$t('org.area')" />
+      <el-table-column prop="managerName" :label="$t('org.managerName')" width="150px">
+        <template #default="{ row }">
+          <user-info
+            v-if="row.managerId"
+            :id="row.managerId"
+            :name="row.managerName"
+            :avatar="row.managerAvatarUrl"
+            :gender="row.managerGender"
+          />
+        </template>
+      </el-table-column>
+
       <el-table-column prop="sortId" :label="$t('org.sortId')" />
       <el-table-column prop="updateTime" :label="$t('baseField.updateTime')" width="185" />
       <el-table-column :label="$t('operation.label')" width="160" fixed="right">

@@ -165,9 +165,18 @@ const enableI18n = import.meta.env.VITE_APP_ENABLE_I18N === 'true'
                   </template>
                 </el-input>
               </el-form-item>
-              <el-form-item :label="$t('resource.routeMetaIcon')">
-                <icon-select v-model="model.routeMeta.icon" />
-              </el-form-item>
+              <el-row>
+                <el-col :span="14">
+                  <el-form-item :label="$t('resource.routeMetaIcon')">
+                    <icon-select v-model="model.routeMeta.icon" />
+                  </el-form-item>
+                </el-col>
+                <el-col :span="10">
+                  <el-form-item :label="$t('org.sortId')" prop="sortId">
+                    <el-input v-model="model.sortId" type="number" :placeholder="$t('user.placeholder.sortId')" />
+                  </el-form-item>
+                </el-col>
+              </el-row>
               <el-form-item
                 :label="$t('resource.routePath')"
                 prop="routePath"

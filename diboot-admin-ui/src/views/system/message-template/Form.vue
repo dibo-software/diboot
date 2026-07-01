@@ -12,16 +12,19 @@ const title = ref('')
 
 const visible = ref(false)
 
-const templateVariableList = ref<Array<string>>()
+const templateVariableList = ref<Map<string, Array<string>>>()
 defineExpose({
   open: (id?: string) => {
     title.value = id ? i18n.t('title.update') : i18n.t('title.create')
     loadData(id)
     visible.value = true
     if (!templateVariableList.value)
-      api.get<Array<string>>(`${baseApi}/variable-list`).then(res => (templateVariableList.value = res.data))
+      api
+        .get<Map<string, Array<string>>>(`${baseApi}/variable-list`)
+        .then(res => (templateVariableList.value = res.data))
   }
 })
+const selectedCategory = ref<string>('')
 // 表单
 const formRef = ref<FormInstance>()
 
@@ -79,28 +82,39 @@ const appendVariable = (variable?: string) => {
       <el-form-item prop="appModule" :label="$t('messageTemplate.appModule')">
         <el-input v-model="model.appModule" :placeholder="$t('messageTemplate.placeholder.appModule')" />
       </el-form-item>
-      <el-space fill style="width: 100%">
-        <el-alert type="info" show-icon :closable="false">
-          {{ $t('messageTemplate.selectableVariables') }}：
-          <el-tag
-            v-for="(item, index) in templateVariableList"
-            :key="index"
-            :title="$t('messageTemplate.addVariable')"
-            class="variable-tag"
-            @click="appendVariable(item)"
-          >
-            {{ item }}
-          </el-tag>
-        </el-alert>
-        <el-form-item prop="content" :label="$t('messageTemplate.content')">
-          <el-input
-            v-model="model.content"
-            type="textarea"
-            :rows="5"
-            :placeholder="$t('messageTemplate.placeholder.content')"
-          />
-        </el-form-item>
-      </el-space>
+      <el-form-item :label="$t('messageTemplate.selectableVariables')">
+        <el-row style="width: 100%">
+          <el-col :span="6">
+            <el-select v-model="selectedCategory" :placeholder="$t('messageTemplate.selectVarFrom')" clearable>
+              <el-option
+                v-for="[category] in Object.entries(templateVariableList || {})"
+                :key="category"
+                :label="$t('messageTemplate.fromModel') + ': ' + category"
+                :value="category"
+              />
+            </el-select>
+          </el-col>
+          <el-col v-if="selectedCategory && templateVariableList?.[selectedCategory]" :span="18">
+            <el-tag
+              v-for="(item, index) in templateVariableList[selectedCategory]"
+              :key="index"
+              :title="$t('messageTemplate.addVariable')"
+              class="variable-tag"
+              @click="appendVariable(item)"
+            >
+              {{ item }}
+            </el-tag>
+          </el-col>
+        </el-row>
+      </el-form-item>
+      <el-form-item prop="content" :label="$t('messageTemplate.content')">
+        <el-input
+          v-model="model.content"
+          type="textarea"
+          :rows="5"
+          :placeholder="$t('messageTemplate.placeholder.content')"
+        />
+      </el-form-item>
     </el-form>
 
     <template #footer>
@@ -114,7 +128,7 @@ const appendVariable = (variable?: string) => {
 
 <style scoped lang="scss">
 .variable-tag {
-  margin: 0 5px 5px 0;
+  margin: 5px;
   cursor: pointer;
 }
 </style>

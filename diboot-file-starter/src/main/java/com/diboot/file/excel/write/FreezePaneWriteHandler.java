@@ -15,10 +15,10 @@
  */
 package com.diboot.file.excel.write;
 
-import com.alibaba.excel.metadata.Head;
-import com.alibaba.excel.write.handler.SheetWriteHandler;
-import com.alibaba.excel.write.handler.context.SheetWriteHandlerContext;
-import com.alibaba.excel.write.metadata.holder.WriteHolder;
+import cn.idev.excel.metadata.Head;
+import cn.idev.excel.write.handler.SheetWriteHandler;
+import cn.idev.excel.write.handler.context.SheetWriteHandlerContext;
+import cn.idev.excel.write.metadata.holder.WriteHolder;
 import org.apache.poi.ss.usermodel.Sheet;
 
 import java.util.Map;

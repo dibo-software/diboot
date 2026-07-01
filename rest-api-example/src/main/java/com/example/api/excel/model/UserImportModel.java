@@ -1,10 +1,10 @@
 package com.example.api.excel.model;
 
-import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
-import com.alibaba.excel.annotation.ExcelProperty;
-import com.alibaba.excel.annotation.write.style.HeadFontStyle;
-import com.alibaba.excel.annotation.write.style.HeadStyle;
-import com.alibaba.excel.enums.poi.FillPatternTypeEnum;
+import cn.idev.excel.annotation.ExcelIgnoreUnannotated;
+import cn.idev.excel.annotation.ExcelProperty;
+import cn.idev.excel.annotation.write.style.HeadFontStyle;
+import cn.idev.excel.annotation.write.style.HeadStyle;
+import cn.idev.excel.enums.poi.FillPatternTypeEnum;
 import com.diboot.file.excel.BaseExcelModel;
 import com.diboot.file.excel.annotation.ExcelBindDict;
 import com.diboot.file.excel.annotation.ExcelBindField;

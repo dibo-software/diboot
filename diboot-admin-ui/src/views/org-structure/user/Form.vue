@@ -85,6 +85,15 @@ watch(visible, value => {
   }
 })
 
+watch(
+  () => model.value.orgId,
+  newOrgId => {
+    if (newOrgId && model.value.primaryPosition) {
+      model.value.primaryPosition.orgId = newOrgId
+    }
+  }
+)
+
 const emit = defineEmits<{
   (e: 'complete', id?: string): void
 }>()

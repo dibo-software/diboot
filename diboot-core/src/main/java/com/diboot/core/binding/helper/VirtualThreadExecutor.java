@@ -15,10 +15,9 @@
  */
 package com.diboot.core.binding.helper;
 
+import com.diboot.core.util.ContextHolder;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 
 /**
  * 虚拟线程执行器（JDK21及以上版本自动启用）
@@ -32,7 +31,7 @@ public class VirtualThreadExecutor {
     private static Boolean isSupportVirtualThread = null;
 
     // 获取兼容的线程执行器
-    public static ExecutorService getVirtualThreadExecutor() {
+    public static SimpleAsyncTaskExecutor getVirtualThreadExecutor() {
         if (isSupportVirtualThread()) {
             return createVirtualThreadExecutor();
         }
@@ -60,12 +59,9 @@ public class VirtualThreadExecutor {
     /**
      * 创建虚拟线程执行器（JDK 21+）
      */
-    private static ExecutorService createVirtualThreadExecutor() {
+    private static SimpleAsyncTaskExecutor createVirtualThreadExecutor() {
         try {
-            ExecutorService executorService = (ExecutorService)
-                    Executors.class.getMethod("newVirtualThreadPerTaskExecutor").invoke(null);
-            log.debug("启用虚拟线程执行关联绑定 =->");
-            return executorService;
+            return ContextHolder.getBean(SimpleAsyncTaskExecutor.class);
         }
         catch (Exception e) {
             log.debug("当前环境JDK版本不支持虚拟线程");

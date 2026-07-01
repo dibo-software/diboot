@@ -38,7 +38,7 @@ watch(submitting, value => emit('submitting', value))
 const formRef = ref<FormInstance>()
 
 const validate = (
-  callback = (valid: boolean) => !valid && ElMessage.error({ message: i18n.t('form.validationFailed'), grouping: true })
+  callback = (valid: boolean) => !valid && ElMessage.error({ message: i18n.t('rules.nonpass'), grouping: true })
 ) =>
   Promise.all([formRef.value].map(e => e?.validate?.(callback as any as FormValidateCallback)).filter(e => !!e))
     .then((arr: (boolean | undefined)[]) => arr.every(e => e))
@@ -96,6 +96,34 @@ const checkNameDuplicate = checkValue(`${baseApi}/check-name-duplicate`, 'name',
             check-strictly
             :disabled="disabledProps?.includes('orgId')"
             clearable
+          />
+        </el-form-item>
+      </el-col>
+      <el-col v-if="!invisibleProps?.includes('managerId')" :span="24">
+        <el-form-item prop="managerId" :label="$t('org.managerName')">
+          <di-selector
+            v-model="model.managerId"
+            data-type="IamUser"
+            data-label="realname"
+            :tree="{ type: 'IamOrg', label: 'name', parent: 'parentId', parentPath: 'parentIdsPath' }"
+            :list="{
+              baseApi: '/iam/user',
+              relatedKey: 'orgId',
+              searchArea: {
+                propList: [
+                  { prop: 'realname', label: $t('user.realname'), type: 'input' },
+                  { prop: 'userNum', label: $t('user.userNum'), type: 'input' },
+                  { prop: 'gender', label: $t('user.gender'), type: 'select', loader: 'GENDER' } as Select
+                ]
+              },
+              columns: [
+                { prop: 'userNum', label: $t('user.userNum') },
+                { prop: 'realname', label: $t('user.realname') },
+                { prop: 'genderLabel', label: $t('user.gender') },
+                { prop: 'mobilePhone', label: $t('user.mobilePhone') },
+                { prop: 'sortId', label: $t('user.sortId') }
+              ]
+            }"
           />
         </el-form-item>
       </el-col>

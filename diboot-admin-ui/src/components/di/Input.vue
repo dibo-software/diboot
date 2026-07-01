@@ -108,7 +108,7 @@ const getDateFormtDef = (type: string) => DEFAULT_DATE_FORMAT[type]
 
 const formItemRef = ref()
 
-const { action, httpRequest, fileList, onSuccess, onRemove } = useUploadFile(
+const { action, httpRequest, fileList, processPercents, onProgress, onSuccess, onRemove, onError } = useUploadFile(
   fileIds => {
     value.value = fileIds
     nextTick(formItemRef.value?.validate)
@@ -379,6 +379,8 @@ defineExpose({ getFiles: () => _.cloneDeep(unref(fileList)) })
       :multiple="(config.limit ?? 2) > 1"
       :before-upload="beforeUpload"
       :on-preview="previewFile"
+      :on-progress="onProgress"
+      :on-error="onError"
       :disabled="config.disabled || disabled"
       :class="{
         'upload-plus-hide': fileList.length >= (config.limit ?? Number.MAX_VALUE),

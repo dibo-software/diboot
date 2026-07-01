@@ -122,7 +122,8 @@ const en: Locale = {
       title: 'Message Title',
       channel: 'Please choose the send channel',
       status: 'Please choose the message status',
-      createTime: 'Send Date'
+      start: 'Start Time',
+      end: 'End Time'
     }
   },
   messageTemplate: {
@@ -137,7 +138,9 @@ const en: Locale = {
       content: 'Send Date'
     },
     selectableVariables: 'Selectable Variables',
-    addVariable: 'Add This Variable'
+    addVariable: 'Add This Variable',
+    selectVarFrom: 'Select variables from..',
+    fromModel: 'From model'
   },
   operationLog: {
     business: 'Business operation logs',
@@ -240,7 +243,9 @@ const en: Locale = {
     userList: 'Role Users',
     description: 'Note',
     grantPermission: 'Authorize Permissions',
-    permissionList: 'Role Authorization'
+    permissionList: 'Role Authorization',
+    expand: 'Expand',
+    putAway: 'Put Away'
   },
   scheduleJob: {
     jobKey: 'Scheduled Task',

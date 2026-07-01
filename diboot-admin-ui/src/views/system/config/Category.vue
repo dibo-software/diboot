@@ -40,7 +40,7 @@ const save = () => {
           :model-value="Number(config.propValue)"
           @update:model-value="config.propValue = `${$event}`"
         />
-        <el-switch v-if="config.dataType === 'boolean'" v-model="config.propValue" />
+        <el-switch v-if="config.dataType === 'boolean'" v-model="config.propValue" active-value="true" />
       </el-form-item>
     </el-form>
     <div v-if="editable" style="margin-left: 150px">

@@ -82,7 +82,7 @@ public class IamPosition extends BaseEntity<String> {
      * 是否虚拟岗
      */
     @TableField()
-    private Boolean isVirtual = false;
+    private Boolean isVirtual;
 
     /**
      * 职级

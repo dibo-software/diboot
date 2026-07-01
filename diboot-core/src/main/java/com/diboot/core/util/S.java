@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -507,6 +508,24 @@ public class S extends StringUtils{
 			authToken = S.substring(authToken, Cons.TOKEN_PREFIX_BEARER.length()).trim();
 		}
 		return authToken;
+	}
+
+	/**
+	 * 提取 ${...} 格式的变量
+	 * @param input
+	 * @return
+	 */
+	public static List<String> extractVariables(String input) {
+		if (V.isEmpty(input) ||  !input.contains("${")) {
+			return Collections.emptyList();
+		}
+		List<String> variables = new ArrayList<>();
+		Pattern pattern = Pattern.compile("\\$\\{([^}]+)\\}");
+		Matcher matcher = pattern.matcher(input);
+		while (matcher.find()) {
+			variables.add(matcher.group(1));
+		}
+		return variables;
 	}
 
 	/**

@@ -1,4 +1,5 @@
-import type { UploadRequestOptions, UploadUserFile } from 'element-plus'
+import type { UploadFile, UploadFiles, UploadProgressEvent, UploadRequestOptions, UploadUserFile } from 'element-plus'
+
 import type { ApiData } from '@/utils/request'
 import { imageBindSrc } from '@/utils/file'
 
@@ -44,12 +45,20 @@ export default (setValue: (fileIds?: string) => void, getFileList: () => FileRec
       .then(res => options.onSuccess(res))
       .catch(err => options.onError(err))
   }
+  const processPercents = ref<Record<number, number>>({})
+  const onProgress = (evt: UploadProgressEvent, uploadFile: UploadFile, uploadFiles: UploadFiles) => {
+    processPercents.value[uploadFile.uid] = evt.percent.toFixed(2)
+  }
+  const onError = (error: Error) => ElMessage.error(error.message)
 
   return {
     action: `/file/upload`,
     httpRequest,
+    processPercents,
     fileList: uploadFileList,
     onSuccess,
-    onRemove
+    onRemove,
+    onProgress,
+    onError
   }
 }

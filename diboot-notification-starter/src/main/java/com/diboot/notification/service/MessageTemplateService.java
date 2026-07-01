@@ -19,6 +19,7 @@ import com.diboot.core.service.BaseService;
 import com.diboot.notification.entity.MessageTemplate;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 消息模版相关Service
@@ -36,6 +37,14 @@ public interface MessageTemplateService extends BaseService<MessageTemplate> {
      * @return
      * @throws Exception
      */
+    @Deprecated
     List<String> getTemplateVariableList() ;
+
+    /**
+     * 获取所有模版变量
+     * @return
+     * @throws Exception
+     */
+    Map<String, List<String>> getAllTemplateVariables();
 
 }

@@ -63,7 +63,6 @@ public class LabelValue implements Serializable {
      * 父级ID
      * (用于构建tree结构)
      */
-    @JsonIgnore
     private Object parentId;
 
     /**

@@ -34,6 +34,7 @@ import com.diboot.iam.service.IamOrgService;
 import com.diboot.iam.service.IamUserService;
 import com.diboot.iam.vo.IamOrgVO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -48,6 +49,9 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class IamOrgServiceImpl extends BaseServiceImpl<IamOrgMapper, IamOrg> implements IamOrgService {
+
+    @Autowired
+    private IamOrgMapper iamOrgMapper;
 
     @Override
     public boolean createEntity(IamOrg iamOrg){
@@ -99,7 +103,7 @@ public class IamOrgServiceImpl extends BaseServiceImpl<IamOrgMapper, IamOrg> imp
         // 由 部门 改为 公司
         if(Cons.DICTCODE_ORG_TYPE.COMP.name().equals(entity.getType())) {
             IamOrg oldOrg = getEntity(entity.getId());
-            if (Cons.DICTCODE_ORG_TYPE.DEPT.name().equals(oldOrg.getType())) {
+            if (oldOrg != null && Cons.DICTCODE_ORG_TYPE.DEPT.name().equals(oldOrg.getType())) {
                 // 更新其下属部门节点rootOrgId
                 List<String> childOrgIds = getChildOrgIds(entity.getId());
                 LambdaUpdateWrapper<IamOrg> updateWrapper = Wrappers.lambdaUpdate();
@@ -115,8 +119,7 @@ public class IamOrgServiceImpl extends BaseServiceImpl<IamOrgMapper, IamOrg> imp
         if(rootOrgId == null){
             return Collections.emptyList();
         }
-        IamOrg parentOrg = getEntity(rootOrgId);
-        LambdaQueryWrapper<IamOrg> select = Wrappers.lambdaQuery();
+        IamOrg parentOrg = iamOrgMapper.getOrgById(rootOrgId, BaseConfig.getActiveFlagValue());
         if (parentOrg != null) {
             String parentIds;
             if(parentOrg.getParentIdsPath() == null) {
@@ -130,10 +133,11 @@ public class IamOrgServiceImpl extends BaseServiceImpl<IamOrgMapper, IamOrg> imp
                     parentIds = parentOrg.getParentIdsPath() + Cons.SEPARATOR_COMMA + rootOrgId;
                 }
             }
-            select.likeRight(IamOrg::getParentIdsPath, parentIds);
+            return iamOrgMapper.getOrgIdsByPath(parentIds + "%", BaseConfig.getActiveFlagValue());
         }
-        select.orderByAsc(IamOrg::getSortId);
-        return getValuesOfField(select, IamOrg::getId);
+        else {
+            return iamOrgMapper.getOrgIdsByParentId(rootOrgId, BaseConfig.getActiveFlagValue());
+        }
     }
 
     @Override
@@ -178,9 +182,7 @@ public class IamOrgServiceImpl extends BaseServiceImpl<IamOrgMapper, IamOrg> imp
 
     @Override
     public List<String> getOrgIdsByManagerId(String managerId) {
-        LambdaQueryWrapper<IamOrg> queryWrapper = Wrappers.<IamOrg>lambdaQuery()
-                .eq(IamOrg::getManagerId, managerId).orderByAsc(IamOrg::getSortId);
-        return getValuesOfField(queryWrapper, IamOrg::getId);
+        return iamOrgMapper.getOrgIdsByManagerId(managerId, BaseConfig.getActiveFlagValue());
     }
 
     @Override
