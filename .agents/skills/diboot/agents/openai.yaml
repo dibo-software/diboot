@@ -1,0 +1,4 @@
+interface:
+  display_name: "Diboot"
+  short_description: "Diboot 项目代码生成与规范示例"
+  default_prompt: "使用 $diboot 按 Diboot 项目规范修改或生成代码。"
