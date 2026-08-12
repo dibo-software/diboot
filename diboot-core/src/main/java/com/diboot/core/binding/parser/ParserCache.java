@@ -113,7 +113,7 @@ public class ParserCache {
                                 // 反射获取的类型参数是 WildcardType 而非 Class
                                 setterObjClazz = (Class<?>) wildcardType.getUpperBounds()[0];
                             } else {
-                                setterObjClazz = (Class<?>)pt.getActualTypeArguments()[0];
+                                setterObjClazz = (Class<?>) typeArg;
                             }
                         }
                     }
