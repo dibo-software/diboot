@@ -85,10 +85,7 @@ public class FileController {
     @PostMapping(value = "/batch-upload")
     public JsonResult<?> batchUploadFile(@RequestParam("files") MultipartFile[] files,
                                          @RequestParam(value = "businessType", required = false) String businessType) {
-        if (V.isEmpty(businessType)) {
-            return JsonResult.FAIL_VALIDATION("businessType不能为空，请指定业务类型");
-        }
-        IamSecurityUtils.getSubject().checkPermission(businessType + ":" + OperationCons.CODE_WRITE);
+        fileRecordService.checkFileWritePermission(businessType);
         List<String> errFiles = new ArrayList<>();
         List<FileRecord> fileRecords = new ArrayList<>();
         for (MultipartFile file : files) {
