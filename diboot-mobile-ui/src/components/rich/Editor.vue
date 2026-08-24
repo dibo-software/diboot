@@ -16,11 +16,14 @@ interface PropsType {
   placeholder?: string
   // 标题
   title?: string
+  // 上传文件的业务类型
+  businessType?: string
 }
 
 const props = withDefaults(defineProps<PropsType>(), {
   modelValue: '',
-  title: ''
+  title: '',
+  businessType: ''
 })
 
 // 编辑器实例，必须用 shallowRef
@@ -63,8 +66,13 @@ const handleChangeTitle = () => {
 // 自定义上传
 function customUpload<InsertFn>(uploadInsert: (file: FileRecord, insertFn: InsertFn) => void) {
   return async (file: File, insertFn: InsertFn) => {
+    if (!props.businessType?.trim()) {
+      showFailToast('请先配置文件业务类型')
+      return
+    }
     const formData = new FormData()
     formData.append('file', file)
+    formData.append('businessType', props.businessType.trim())
     api
       .upload<FileRecord>('/file/upload', formData)
       .then(({ data }) => {

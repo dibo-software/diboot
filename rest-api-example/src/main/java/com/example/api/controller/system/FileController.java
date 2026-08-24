@@ -1,14 +1,20 @@
 package com.example.api.controller.system;
 
+import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.S;
+import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.Status;
 import com.diboot.file.entity.FileRecord;
+import com.diboot.file.service.FileAccessAuthorizer;
 import com.diboot.file.service.FileRecordService;
 import com.diboot.file.service.FileStorageService;
 import com.diboot.file.util.FileHelper;
 import com.diboot.file.util.ImageHelper;
 import com.diboot.iam.annotation.BindPermission;
+import com.diboot.iam.annotation.OperationCons;
+import com.diboot.iam.exception.PermissionException;
+import com.diboot.iam.util.IamSecurityUtils;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -33,6 +40,7 @@ import java.util.List;
 @RequestMapping("/file")
 @BindPermission(name = "文件", code = "File")
 public class FileController {
+
     @Autowired
     private FileRecordService fileRecordService;
 
@@ -52,7 +60,8 @@ public class FileController {
      * @throws Exception
      */
     @PostMapping("/upload")
-    public JsonResult<FileRecord> upload(@RequestParam("file") MultipartFile file) throws Exception {
+    public JsonResult<FileRecord> upload(@RequestParam("file") MultipartFile file,
+                                         @RequestParam(value = "businessType", required = false) String businessType) throws Exception {
         if (file == null || file.getOriginalFilename() == null) {
             return JsonResult.FAIL_VALIDATION("文件上传异常：无有效文件！");
         }
@@ -60,7 +69,9 @@ public class FileController {
             log.warn("非法的文件上传:{} 文件类型不允许！", file.getOriginalFilename());
             return JsonResult.FAIL_VALIDATION("非法的文件上传：文件类型不允许！");
         }
+        fileRecordService.checkFileWritePermission(businessType);
         FileRecord fileRecord = fileStorageService.save(file);
+        fileRecord.setBusinessType(businessType);
         fileRecordService.createEntity(fileRecord);
         return JsonResult.OK(fileRecord);
     }
@@ -72,12 +83,18 @@ public class FileController {
      * @return 结果集
      */
     @PostMapping(value = "/batch-upload")
-    public JsonResult<?> batchUploadFile(@RequestParam("files") MultipartFile[] files) {
+    public JsonResult<?> batchUploadFile(@RequestParam("files") MultipartFile[] files,
+                                         @RequestParam(value = "businessType", required = false) String businessType) {
+        if (V.isEmpty(businessType)) {
+            return JsonResult.FAIL_VALIDATION("businessType不能为空，请指定业务类型");
+        }
+        IamSecurityUtils.getSubject().checkPermission(businessType + ":" + OperationCons.CODE_WRITE);
         List<String> errFiles = new ArrayList<>();
         List<FileRecord> fileRecords = new ArrayList<>();
         for (MultipartFile file : files) {
             try {
                 FileRecord fileRecord = fileStorageService.save(file);
+                fileRecord.setBusinessType(businessType);
                 fileRecords.add(fileRecord);
             } catch (Exception e) {
                 String filename = file.getOriginalFilename();
@@ -112,6 +129,7 @@ public class FileController {
             log.warn("文件不存在:{}", fileId);
             return new JsonResult<>(Status.FAIL_VALIDATION, "文件不存在");
         }
+        fileRecordService.checkFileReadPermission(fileRecord);
         fileStorageService.download(fileRecord, response);
         return null;
     }
@@ -138,6 +156,7 @@ public class FileController {
             log.warn("非图片文件:{}", fileId);
             return JsonResult.FAIL_VALIDATION("非图片文件");
         }
+        fileRecordService.checkFileReadPermission(fileRecord);
         fileStorageService.download(fileRecord, response);
         return null;
     }
