@@ -3,6 +3,8 @@ create table dbt_file_record
 (
     id            varchar(32)  not null comment 'ID' primary key,
     tenant_id     varchar(32)  default '0' not null comment '租户ID',
+    business_type varchar(50)  default 'UNKNOWN' not null comment '业务类型',
+    business_id   varchar(64)  null comment '业务对象ID',
     app_module    varchar(50)  null comment '应用模块',
     md5           varchar(32)  null comment 'MD5标识',
     file_name     varchar(200) not null comment '文件名称',
@@ -18,3 +20,4 @@ create table dbt_file_record
 ) comment '文件存储' charset = utf8mb4;
 -- 索引
 create index idx_dbt_file_record_md5 on dbt_file_record (md5);
+create index idx_dbt_file_record_business on dbt_file_record (business_type, business_id);

@@ -3,7 +3,11 @@ import type { UploadFile, UploadFiles, UploadProgressEvent, UploadRequestOptions
 import type { ApiData } from '@/utils/request'
 import { imageBindSrc } from '@/utils/file'
 
-export default (setValue: (fileIds?: string) => void, getFileList: () => FileRecord[] | undefined) => {
+export default (
+  setValue: (fileIds?: string) => void,
+  getFileList: () => FileRecord[] | undefined,
+  businessType?: string
+) => {
   const uploadFileList = ref<UploadUserFile[]>([])
 
   watch(getFileList, value => {
@@ -38,8 +42,13 @@ export default (setValue: (fileIds?: string) => void, getFileList: () => FileRec
   }
 
   const httpRequest = async (options: UploadRequestOptions) => {
+    if (!businessType?.trim()) {
+      options.onError(new Error('请先配置文件业务类型'))
+      return
+    }
     const formData = new FormData()
     formData.set('file', options.file)
+    formData.set('businessType', businessType.trim())
     api
       .upload<FileRecord>(options.action, formData)
       .then(res => options.onSuccess(res))

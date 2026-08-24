@@ -157,6 +157,8 @@ export interface RichText extends Input {
   height?: string
   // 编辑器模式
   mode?: 'default' | 'simple'
+  // 上传图片、视频的业务类型
+  businessType?: string
 }
 
 export interface InputNumber extends Input {
@@ -213,6 +215,7 @@ export interface Time extends Input {
 
 export interface Upload extends Input {
   type: 'upload'
+  businessType: string
   listType?: 'text' | 'picture' | 'picture-card'
   limit?: number
   accept?: string

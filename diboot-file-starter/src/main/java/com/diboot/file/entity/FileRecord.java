@@ -60,6 +60,16 @@ public class FileRecord extends BaseEntity<String> {
     private String tenantId;
 
     /**
+     * 业务类型
+     */
+    private String businessType = "UNKNOWN";
+
+    /**
+     * 业务对象ID
+     */
+    private String businessId;
+
+    /**
      * 应用模块
      */
     private String appModule;

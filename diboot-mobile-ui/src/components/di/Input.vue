@@ -170,7 +170,8 @@ const onConfirmTimePicker = ({ selectedValues }: SelectedValue) => {
 
 const { fileList, uploadFileHandle, onRemove } = useUploadFile(
   fileIds => (value.value = fileIds),
-  () => props.fileList
+  () => props.fileList,
+  (props.config as Upload).businessType
 )
 
 const onOversize = () => showFailToast(i18n.global.t('di.input.fileLarge', [(props.config as Upload).size]))
@@ -218,6 +219,7 @@ const checkFileHandle = (file: File | File[]) => {
       v-model="value"
       :placeholder="config.placeholder"
       :mode="config.mode"
+      :business-type="config.businessType"
       :style="{ height: config.height }"
     />
   </template>

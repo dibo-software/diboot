@@ -113,7 +113,8 @@ const { action, httpRequest, fileList, processPercents, onProgress, onSuccess, o
     value.value = fileIds
     nextTick(formItemRef.value?.validate)
   },
-  () => props.fileList
+  () => props.fileList,
+  (props.config as Upload).businessType
 )
 
 const previewFile = (file: UploadFile) =>
@@ -125,6 +126,10 @@ const previewFile = (file: UploadFile) =>
 
 const beforeUpload = (rawFile: UploadRawFile) => {
   const fileConfig: Upload = props.config as any
+  if (!fileConfig.businessType?.trim()) {
+    ElMessage.error('请先配置文件业务类型')
+    return false
+  }
   const accept = convert2accept(fileConfig?.accept)
   if (accept && !accept.split(',').includes(rawFile.name.substring(rawFile.name.lastIndexOf('.')))) {
     ElMessage.error(i18n.t('components.di.input.uploadFormatError', [accept.replace(/,/g, '/')]))
@@ -194,6 +199,7 @@ defineExpose({ getFiles: () => _.cloneDeep(unref(fileList)) })
         :model-value="value as string"
         :placeholder="config.placeholder"
         :mode="config.mode"
+        :business-type="config.businessType"
         :style="{ height: config.height }"
         @update:model-value="value = $event"
       />

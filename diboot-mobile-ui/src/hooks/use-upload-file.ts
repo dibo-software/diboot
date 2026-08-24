@@ -3,7 +3,11 @@ import { imageBindSrc } from '@/utils/file'
 
 export type UploaderFileItem = UploaderFileListItem & { id?: string; accessUrl?: string }
 
-export default (setValue: (fileIds?: string) => void, getFileList: () => FileRecord[] | undefined) => {
+export default (
+  setValue: (fileIds?: string) => void,
+  getFileList: () => FileRecord[] | undefined,
+  businessType?: string
+) => {
   const fileList = ref<UploaderFileItem[]>([])
 
   watch(
@@ -36,10 +40,15 @@ export default (setValue: (fileIds?: string) => void, getFileList: () => FileRec
 
   const uploadFileHandle = (file: UploaderFileItem | UploaderFileItem[]) => {
     if (Array.isArray(file)) return // 多文件上传待扩展
+    if (!businessType?.trim()) {
+      showFailToast('请先配置文件业务类型')
+      return
+    }
     file.status = 'uploading'
     file.message = '上传中...'
     const formData = new FormData()
     formData.set('file', file.file as File)
+    formData.set('businessType', businessType.trim())
     api
       .upload('/file/upload', formData)
       .then(res => {

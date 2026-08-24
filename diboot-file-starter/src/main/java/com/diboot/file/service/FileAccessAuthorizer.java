@@ -15,37 +15,29 @@
  */
 package com.diboot.file.service;
 
-import com.diboot.core.service.BaseService;
 import com.diboot.file.entity.FileRecord;
 
-import java.util.Collection;
-
+/**
+ * 文件业务行级访问授权扩展。
+ *
+ * @author diboot
+ */
 /**
  * 文件记录 Service
  *
- * @author wind
- * @version v3.0.0
- * @date 2022-05-30
+ * @author uu
+ * @version v3.9.1
+ * @date 2026-08-21
  */
-public interface FileRecordService extends BaseService<FileRecord> {
+public interface FileAccessAuthorizer {
 
     /**
-     * 同步业务对象关联的文件记录。
-     *
-     * @param businessId 业务对象ID
-     * @param fileIds 文件ID集合 如果业务对象中有多个字段是文件/图片类型，则fileIds参数为多个字段的ID集合
+     * 支持的业务类型。
      */
-    void updateBusinessId(String businessId, Collection<String> fileIds);
+    String getBusinessType();
 
     /**
-     * 检查文件写权限
-     * @param businessType
+     * 当前请求是否可以读取文件关联的业务对象。
      */
-    void checkFileWritePermission(String businessType);
-
-    /**
-     * 检查文件读权限
-     * @param fileRecord
-     */
-    void checkFileReadPermission(FileRecord fileRecord);
+    boolean canRead(FileRecord fileRecord);
 }
