@@ -61,6 +61,7 @@ public class PositionController extends BaseCrudRestController<IamPosition> {
      * @param ids
      * @return
      */
+    @BindPermission(name = OperationCons.LABEL_LIST, code = OperationCons.CODE_READ)
     @PostMapping("/ids")
     public JsonResult getObjectListByIds(@RequestBody List<String> ids) {
         return JsonResult.OK(iamPositionService.getEntityListByIds(ids));

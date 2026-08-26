@@ -151,6 +151,7 @@ public class UserController extends BaseCrudRestController<IamUser> {
      * @return
      * @throws Exception
      */
+    @BindPermission(name = "账号信息", code = OperationCons.CODE_READ)
     @GetMapping("/account/{id}")
     public JsonResult getUsername(@PathVariable("id") String id) throws Exception {
         IamAccount account = iamAccountService.getSingleEntity(
@@ -168,6 +169,7 @@ public class UserController extends BaseCrudRestController<IamUser> {
      * @return
      * @throws Exception
      */
+    @BindPermission(name = OperationCons.LABEL_LIST, code = OperationCons.CODE_READ)
     @GetMapping("/user-list/{orgId}")
     public JsonResult getUserList(@PathVariable("orgId") String orgId, IamUser iamUser, Pagination pagination) throws Exception {
         QueryWrapper<IamUser> wrapper = super.buildQueryWrapperByDTO(iamUser);

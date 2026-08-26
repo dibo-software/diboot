@@ -64,6 +64,7 @@ public class ResourceController extends BaseCrudRestController<IamResource> {
      *
      * @return
      */
+    @BindPermission(name = "菜单树", code = OperationCons.CODE_READ)
     @GetMapping("/menu-tree")
     public JsonResult getMenuTreeList() {
         LambdaQueryWrapper<IamResource> queryWrapper = Wrappers.lambdaQuery();
@@ -73,6 +74,7 @@ public class ResourceController extends BaseCrudRestController<IamResource> {
         return JsonResult.OK(BeanUtils.buildTree(list, Cons.TREE_ROOT_ID));
     }
 
+    @BindPermission(name = "资源树", code = OperationCons.CODE_READ)
     @GetMapping("/tree")
     public JsonResult getTreeList(IamResourceDTO entity) throws Exception {
         String appModule = entity.getAppModule();
@@ -163,6 +165,7 @@ public class ResourceController extends BaseCrudRestController<IamResource> {
      * @return
      * @throws Exception
      */
+    @BindPermission(name = "API权限列表", code = OperationCons.CODE_READ)
     @GetMapping("/api-list")
     public JsonResult apiList(boolean openApi) throws Exception {
         return JsonResult.OK(IamPermissionCacheManager.getApiPermissionVoList(openApi));
