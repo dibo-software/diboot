@@ -15,7 +15,7 @@
     <description>Rest API example project for Diboot</description>
 
     <properties>
-        <diboot.version>3.9.0</diboot.version>
+        <diboot.version>3.9.1</diboot.version>
     </properties>
 
     <dependencies>
