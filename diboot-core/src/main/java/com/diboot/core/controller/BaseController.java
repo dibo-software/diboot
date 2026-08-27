@@ -240,6 +240,9 @@ public class BaseController {
 		PropInfo propInfoCache = BindingCacheManager.getPropInfoByClass(entityClass);
 		Function<String, String> field2column = field -> {
 			if (V.notEmpty(field)) {
+                if (propInfoCache.isIgnoreField(field)) {
+                    throw new BusinessException("exception.business.baseController.loadRelatedData.noField", entityClassName, field);
+                }
 				String column = propInfoCache.getColumnByField(field);
 				if (V.notEmpty(column)) {
 					return column;
