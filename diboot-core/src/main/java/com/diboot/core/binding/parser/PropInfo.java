@@ -10,6 +10,8 @@ import com.diboot.core.entity.BaseModel;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.LinkedCaseInsensitiveMap;
@@ -66,6 +68,11 @@ public class PropInfo implements Serializable {
     private final List<String> fillUpdateFieldList = new ArrayList<>();
 
     /**
+     * JsonIgnore注解不返回给前端的字段，用于敏感调用安全检查
+     */
+    private final List<String> jsonIgnoreFields = new ArrayList<>();
+
+    /**
      * 初始化
      * @param beanClass
      */
@@ -83,6 +90,17 @@ public class PropInfo implements Serializable {
         if(V.notEmpty(fields)){
             for(Field fld : fields){
                 String fldName = fld.getName();
+                // 提取JsonIgnore前端忽略字段
+                JsonIgnore ignore = fld.getAnnotation(JsonIgnore.class);
+                if (ignore != null) {
+                    jsonIgnoreFields.add(fldName);
+                }
+                else if (fld.getAnnotation(JsonProperty.class) != null) {
+                    JsonProperty prop = fld.getAnnotation(JsonProperty.class);
+                    if (prop.access() == JsonProperty.Access.READ_ONLY) {
+                        jsonIgnoreFields.add(fldName);
+                    }
+                }
                 String columnName = null;
                 TableField tableField = fld.getAnnotation(TableField.class);
                 if(tableField != null){
@@ -216,6 +234,10 @@ public class PropInfo implements Serializable {
             return null;
         }
         return this.columnToFieldTypeMap.get(columnName);
+    }
+
+    public boolean isIgnoreField(String field) {
+        return jsonIgnoreFields.contains(field);
     }
 
 }

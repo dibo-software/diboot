@@ -2,17 +2,23 @@ package com.example.api.controller;
 
 import com.diboot.core.controller.BaseController;
 import com.diboot.core.dto.RelatedDataDTO;
+import com.diboot.core.exception.BusinessException;
 import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.S;
 import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.LabelValue;
+import com.diboot.core.vo.Status;
+import com.diboot.iam.annotation.Log;
 import com.diboot.iam.config.Cons;
+import com.diboot.iam.entity.IamAccount;
+import com.diboot.iam.entity.IamClient;
 import com.diboot.iam.util.IamSecurityUtils;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +35,10 @@ import java.util.Map;
 @RestController
 @RequestMapping("/common")
 public class CommonController extends BaseController {
+
+    private final List<String> invalidEntityTypes = Arrays.asList(
+          IamAccount.class.getSimpleName(), IamClient.class.getSimpleName()
+    );
 
     /**
      * 字典service
@@ -55,6 +65,7 @@ public class CommonController extends BaseController {
      * @param map
      * @return
      */
+    @Log(operation = "加载关联数据")
     @PostMapping("/batch-load-related-data")
     public JsonResult<Map<String, List<LabelValue>>> bindData(@RequestBody @Valid Map<String, RelatedDataDTO> map) {
         Map<String, List<LabelValue>> resultMap = new HashMap<>(map.size());
@@ -69,6 +80,7 @@ public class CommonController extends BaseController {
      * @param parentId
      * @return
      */
+    @Log(operation = "加载关联数据")
     @PostMapping({"/load-related-data", "/load-related-data/{parentId}"})
     public JsonResult<List<LabelValue>> bindDataFilter(@Valid @RequestBody RelatedDataDTO relatedDataDTO,
                                                        @RequestParam(required = false) String keyword,
@@ -84,18 +96,20 @@ public class CommonController extends BaseController {
      */
     @Override
     protected boolean relatedDataSecurityCheck(RelatedDataDTO relatedDataDTO) {
+        if (invalidEntityTypes.contains(relatedDataDTO.getType())) {
+            throw new BusinessException(Status.FAIL_VALIDATION, "不支持该类型！");
+        }
         // 超级管理员
         if (IamSecurityUtils.getSubject().hasRole(Cons.ROLE_SUPER_ADMIN)) {
             return true;
         }
         // 普通用户，是否检查选项数据的读权限，默认不限制
-        /*
         try {
             IamSecurityUtils.getSubject().checkPermission(relatedDataDTO.getType() + ":read");
         } catch (Exception e) {
             log.warn("无权获取 relatedData: {}", relatedDataDTO.getType());
-            return false;
-        }*/
+            throw new BusinessException(Status.FAIL_NO_PERMISSION, "无权获取 relatedData！");
+        }
         return true;
     }
 
