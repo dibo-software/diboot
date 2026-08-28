@@ -23,6 +23,7 @@ import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
+import com.diboot.iam.util.IamSecurityUtils;
 import com.diboot.iam.auth.IamCustomize;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.dto.IamUserFormDTO;
@@ -99,6 +100,7 @@ public class IamTenantServiceImpl extends BaseServiceImpl<IamTenantMapper, IamTe
 
     @Override
     public TenantAdminUserVO getTenantAdminUserVO(String tenantId) throws Exception {
+        checkTenantAccess(tenantId);
         // 获取当前租户管理员的角色id
         List<IamRole> iamRoles = iamRoleMapper.findByCode(Cons.ROLE_TENANT_ADMIN, BaseConfig.getActiveFlagValue());
         if (V.isEmpty(iamRoles)) {
@@ -128,9 +130,12 @@ public class IamTenantServiceImpl extends BaseServiceImpl<IamTenantMapper, IamTe
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public boolean createOrUpdateTenantAdminUser(IamUserFormDTO iamUserFormDTO) throws Exception {
+        checkTenantAccess(iamUserFormDTO.getTenantId());
         IamAccount iamAccount = new IamAccount();
-        if (V.notEmpty(iamUserFormDTO.getPassword())) {
-            iamAccount.setAuthSecret(iamUserFormDTO.getPassword());
+        String password = iamUserFormDTO.getPassword();
+        iamUserFormDTO.setPassword(null);
+        if (V.notEmpty(password)) {
+            iamAccount.setAuthSecret(password);
             iamCustomize.encryptPwd(iamAccount);
         }
         iamAccount.setTenantId(iamUserFormDTO.getTenantId())
@@ -159,6 +164,7 @@ public class IamTenantServiceImpl extends BaseServiceImpl<IamTenantMapper, IamTe
 
     @Override
     public List<String> getResourceIds(String tenantId) {
+        checkTenantAccess(tenantId);
         LambdaQueryWrapper<IamTenantResource> queryWrapper = Wrappers.lambdaQuery();
         queryWrapper.eq(IamTenantResource::getTenantId, tenantId);
         return iamTenantResourceService.getValuesOfField(queryWrapper, IamTenantResource::getResourceId);
@@ -179,6 +185,20 @@ public class IamTenantServiceImpl extends BaseServiceImpl<IamTenantMapper, IamTe
                 .setTenantId(iamUserFormDTO.getTenantId())
                 .setUserType(IamUser.class.getSimpleName());
         iamUserRoleMapper.insert(iamUserRole);
+    }
+
+    /**
+     * 校验当前用户是否有权操作目标租户
+     * 超管可操作任意租户，非超管仅可操作自身所属租户
+     */
+    private void checkTenantAccess(String tenantId) {
+        if (IamSecurityUtils.isSuperAdmin()) {
+            return;
+        }
+        String currentTenantId = IamSecurityUtils.getCurrentTenantId();
+        if (V.notEmpty(currentTenantId) && !currentTenantId.equals(tenantId)) {
+            throw new BusinessException(Status.FAIL_NO_PERMISSION, "无权操作非本租户数据");
+        }
     }
 
     /**
