@@ -13,28 +13,33 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.file.service;
+package com.diboot.file.interceptor;
 
-import com.diboot.core.service.BaseService;
 import com.diboot.file.entity.FileRecord;
 
-import java.util.Collection;
-
 /**
- * 文件记录 Service
+ * 文件访问拦截器：统一处理文件读/写的权限检查。
+ * <p>
+ * 默认实现为 {@link DefaultFileAccessInterceptor}，业务方可自定义 Bean 整体替换，
+ * 或继承默认实现覆写局部检查逻辑。
  *
- * @author wind
- * @version v3.0.0
- * @date 2022-05-30
+ * @author diboot
+ * @version v3.9.1
  */
-public interface FileRecordService extends BaseService<FileRecord> {
+public interface FileAccessInterceptor {
 
     /**
-     * 同步业务对象关联的文件记录。
+     * 文件读取（下载）前的权限检查，不通过时抛出权限异常。
      *
-     * @param businessId 业务对象ID
-     * @param fileIds 文件ID集合 如果业务对象中有多个字段是文件/图片类型，则fileIds参数为多个字段的ID集合
+     * @param fileRecord 文件记录
      */
-    void updateBusinessId(String businessId, Collection<String> fileIds);
+    void checkRead(FileRecord fileRecord);
+
+    /**
+     * 文件写入（上传）前的权限检查，不通过时抛出权限异常。
+     *
+     * @param businessType 业务类型
+     */
+    void checkWrite(String businessType);
 
 }
