@@ -21,13 +21,7 @@ import com.diboot.file.entity.FileRecord;
  * 文件业务行级访问授权扩展。
  *
  * @author diboot
- */
-/**
- * 文件记录 Service
- *
- * @author uu
  * @version v3.9.1
- * @date 2026-08-21
  */
 public interface FileAccessAuthorizer {
 

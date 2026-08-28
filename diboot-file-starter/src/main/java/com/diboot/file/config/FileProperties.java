@@ -32,7 +32,31 @@ public class FileProperties {
      */
     private String storageDirectory;
 
+    /**
+     * 文件访问控制配置
+     */
+    private Access access = new Access();
+
     private OSS oss;
+
+    @Getter
+    @Setter
+    public static class Access {
+
+        /**
+         * 遗留数据（无业务类型或标记为UNKNOWN）的访问策略，默认仅上传者与超管可访问
+         */
+        private LegacyPolicy legacyPolicy = LegacyPolicy.OWNER_ONLY;
+
+        public enum LegacyPolicy {
+            /** 允许所有已登录用户访问 */
+            ALLOW,
+            /** 仅上传者本人（及超管）可访问 */
+            OWNER_ONLY,
+            /** 禁止访问 */
+            DENY
+        }
+    }
 
     @Getter
     @Setter

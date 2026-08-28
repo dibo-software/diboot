@@ -1,20 +1,15 @@
 package com.example.api.controller.system;
 
-import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.S;
-import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.Status;
 import com.diboot.file.entity.FileRecord;
-import com.diboot.file.service.FileAccessAuthorizer;
+import com.diboot.file.interceptor.FileAccessInterceptor;
 import com.diboot.file.service.FileRecordService;
 import com.diboot.file.service.FileStorageService;
 import com.diboot.file.util.FileHelper;
 import com.diboot.file.util.ImageHelper;
 import com.diboot.iam.annotation.BindPermission;
-import com.diboot.iam.annotation.OperationCons;
-import com.diboot.iam.exception.PermissionException;
-import com.diboot.iam.util.IamSecurityUtils;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -47,6 +41,9 @@ public class FileController {
     @Autowired
     private FileStorageService fileStorageService;
 
+    @Autowired
+    private FileAccessInterceptor fileAccessInterceptor;
+
     /**
      * 附加允许的文件后缀列表
      */
@@ -69,7 +66,7 @@ public class FileController {
             log.warn("非法的文件上传:{} 文件类型不允许！", file.getOriginalFilename());
             return JsonResult.FAIL_VALIDATION("非法的文件上传：文件类型不允许！");
         }
-        fileRecordService.checkFileWritePermission(businessType);
+        fileAccessInterceptor.checkWrite(businessType);
         FileRecord fileRecord = fileStorageService.save(file);
         fileRecord.setBusinessType(businessType);
         fileRecordService.createEntity(fileRecord);
@@ -85,7 +82,7 @@ public class FileController {
     @PostMapping(value = "/batch-upload")
     public JsonResult<?> batchUploadFile(@RequestParam("files") MultipartFile[] files,
                                          @RequestParam(value = "businessType", required = false) String businessType) {
-        fileRecordService.checkFileWritePermission(businessType);
+        fileAccessInterceptor.checkWrite(businessType);
         List<String> errFiles = new ArrayList<>();
         List<FileRecord> fileRecords = new ArrayList<>();
         for (MultipartFile file : files) {
@@ -126,7 +123,7 @@ public class FileController {
             log.warn("文件不存在:{}", fileId);
             return new JsonResult<>(Status.FAIL_VALIDATION, "文件不存在");
         }
-        fileRecordService.checkFileReadPermission(fileRecord);
+        fileAccessInterceptor.checkRead(fileRecord);
         fileStorageService.download(fileRecord, response);
         return null;
     }
@@ -153,7 +150,7 @@ public class FileController {
             log.warn("非图片文件:{}", fileId);
             return JsonResult.FAIL_VALIDATION("非图片文件");
         }
-        fileRecordService.checkFileReadPermission(fileRecord);
+        fileAccessInterceptor.checkRead(fileRecord);
         fileStorageService.download(fileRecord, response);
         return null;
     }

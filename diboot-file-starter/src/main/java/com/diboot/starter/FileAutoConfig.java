@@ -16,10 +16,14 @@
 package com.diboot.starter;
 
 import com.diboot.file.config.FileProperties;
+import com.diboot.file.interceptor.DefaultFileAccessInterceptor;
+import com.diboot.file.interceptor.FileAccessInterceptor;
+import com.diboot.file.service.FileAccessAuthorizer;
 import com.diboot.file.service.FileStorageService;
 import com.diboot.file.service.impl.LocalFileStorageServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -54,6 +58,16 @@ public class FileAutoConfig {
     @ConditionalOnMissingBean
     public FileStorageService fileStorageService() {
         return new LocalFileStorageServiceImpl();
+    }
+
+    /**
+     * 文件访问拦截器默认实现，业务方可自定义Bean替换
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public FileAccessInterceptor fileAccessInterceptor(FileProperties fileProperties,
+                                                       ObjectProvider<FileAccessAuthorizer> fileAccessAuthorizers) {
+        return new DefaultFileAccessInterceptor(fileProperties, fileAccessAuthorizers.orderedStream().toList());
     }
 
 }
