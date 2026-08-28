@@ -2,10 +2,12 @@ package com.example.api.controller.iam;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.controller.BaseCrudRestController;
+import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.Pagination;
+import com.diboot.core.vo.Status;
 import com.diboot.iam.annotation.BindPermission;
 import com.diboot.iam.annotation.Log;
 import com.diboot.iam.annotation.OperationCons;
@@ -16,6 +18,7 @@ import com.diboot.iam.entity.IamUser;
 import com.diboot.iam.service.IamAccountService;
 import com.diboot.iam.service.IamOrgService;
 import com.diboot.iam.service.IamResourceService;
+import com.diboot.iam.util.IamSecurityUtils;
 import com.diboot.iam.vo.IamResourceListVO;
 import com.diboot.tenant.entity.IamTenant;
 import com.diboot.tenant.entity.IamTenantResource;
@@ -139,6 +142,8 @@ public class TenantController extends BaseCrudRestController<IamTenant> {
      * @return
      * @throws Exception
      */
+    @Log(operation = "获取管理员信息")
+    @BindPermission(name = "管理员信息", code = OperationCons.CODE_READ)
     @GetMapping("/admin/{tenantId}")
     public JsonResult<TenantAdminUserVO> getTenantAdminUser(@PathVariable("tenantId") String tenantId) throws Exception {
         return JsonResult.OK(iamTenantService.getTenantAdminUserVO(tenantId));
@@ -150,6 +155,7 @@ public class TenantController extends BaseCrudRestController<IamTenant> {
      * @return
      * @throws Exception
      */
+    @BindPermission(name = "租户组织", code = OperationCons.CODE_READ)
     @GetMapping("/org/{tenantId}")
     public JsonResult<String> getTenantOrg(@PathVariable("tenantId") String tenantId) throws Exception {
         return JsonResult.OK(iamOrgService.getTenantRootOrgId(tenantId));
@@ -162,6 +168,7 @@ public class TenantController extends BaseCrudRestController<IamTenant> {
      * @throws Exception
      */
     @Log(operation = "创建或更新管理员信息")
+    @BindPermission(name = "创建或更新管理员", code = OperationCons.CODE_WRITE)
     @PostMapping("/admin/{tenantId}")
     public JsonResult<?> createOrUpdateTenantAdmin(@RequestBody IamUserFormDTO iamUserFormDTO, @PathVariable("tenantId") String tenantId) throws Exception {
         iamUserFormDTO.setTenantId(tenantId);
@@ -176,6 +183,7 @@ public class TenantController extends BaseCrudRestController<IamTenant> {
      * @param userId
      * @return
      */
+    @BindPermission(name = "校验管理员账号重复", code = OperationCons.CODE_READ)
     @GetMapping("/admin/check-username-duplicate")
     public JsonResult<?> checkUsernameDuplicate(@RequestParam String tenantId, @RequestParam String username, @RequestParam(required = false) String userId) {
         if (V.isEmpty(username)) {
@@ -189,6 +197,7 @@ public class TenantController extends BaseCrudRestController<IamTenant> {
      *
      * @return 租户可分配权限
      */
+    @BindPermission(name = "资源权限树", code = OperationCons.CODE_READ)
     @GetMapping("/resource")
     public JsonResult<List<IamResourceListVO>> getResourceTree() throws Exception {
         List<IamResourceListVO> voList = iamResourceService.getViewObjectList(
@@ -207,6 +216,7 @@ public class TenantController extends BaseCrudRestController<IamTenant> {
      * @throws Exception
      */
     @Log(operation = "获取租户权限配置")
+    @BindPermission(name = "租户权限配置", code = OperationCons.CODE_READ)
     @GetMapping("/resource/{tenantId}")
     public JsonResult<List<String>> getTenantResourceVO(@PathVariable("tenantId") String tenantId) {
         return JsonResult.OK(iamTenantService.getResourceIds(tenantId));
@@ -219,8 +229,15 @@ public class TenantController extends BaseCrudRestController<IamTenant> {
      * @throws Exception
      */
     @Log(operation = "更新租户权限配置")
+    @BindPermission(name = "更新租户权限配置", code = OperationCons.CODE_WRITE)
     @PostMapping("/resource/{tenantId}")
-    public JsonResult<?> createOrUpdateTenantResources(@PathVariable("tenantId") String tenantId, @RequestBody List<String> ids) {
+    public JsonResult<?> createOrUpdateTenantResources(@PathVariable("tenantId") String tenantId, @RequestBody List<String> ids) throws Exception {
+        if (!IamSecurityUtils.isSuperAdmin()) {
+            String currentTenantId = IamSecurityUtils.getCurrentTenantId();
+            if (V.notEmpty(currentTenantId) && !currentTenantId.equals(tenantId)) {
+                throw new BusinessException(Status.FAIL_NO_PERMISSION, "无权操作非本租户数据");
+            }
+        }
         return new JsonResult<>(iamTenantService.createOrUpdateN2NRelations(IamTenantResource::getTenantId, tenantId,
                 IamTenantResource::getResourceId, ids));
     }
@@ -231,6 +248,7 @@ public class TenantController extends BaseCrudRestController<IamTenant> {
      * @return
      * @throws Exception
      */
+    @BindPermission(name = "校验租户编码重复", code = OperationCons.CODE_READ)
     @GetMapping("/check-code-duplicate")
     public JsonResult<?> checkCodeDuplicate(@RequestParam(required = false) String id, @RequestParam String code) {
         return JsonResult.OK(!iamTenantService.exists(Wrappers.<IamTenant>lambdaQuery().eq(IamTenant::getCode, code)
