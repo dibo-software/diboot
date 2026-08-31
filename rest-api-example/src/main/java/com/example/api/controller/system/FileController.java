@@ -10,6 +10,7 @@ import com.diboot.file.service.FileStorageService;
 import com.diboot.file.util.FileHelper;
 import com.diboot.file.util.ImageHelper;
 import com.diboot.iam.annotation.BindPermission;
+import com.diboot.iam.annotation.Log;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +57,7 @@ public class FileController {
      * @return 文件记录
      * @throws Exception
      */
+    @Log(operation = "上传文件")
     @PostMapping("/upload")
     public JsonResult<FileRecord> upload(@RequestParam("file") MultipartFile file,
                                          @RequestParam(value = "businessType", required = false) String businessType) throws Exception {
@@ -79,6 +81,7 @@ public class FileController {
      * @param files 文件列表
      * @return 结果集
      */
+    @Log(operation = "批量上传文件")
     @PostMapping(value = "/batch-upload")
     public JsonResult<?> batchUploadFile(@RequestParam("files") MultipartFile[] files,
                                          @RequestParam(value = "businessType", required = false) String businessType) {
@@ -113,6 +116,7 @@ public class FileController {
      * @return
      * @throws Exception
      */
+    @Log(operation = "查看/下载文件")
     @GetMapping("/{fileId}")
     public JsonResult<?> read(@PathVariable String fileId, HttpServletResponse response) throws Exception {
         if (S.contains(fileId, ".")) {
@@ -136,6 +140,7 @@ public class FileController {
      * @return
      * @throws Exception
      */
+    @Log(operation = "查看/下载图片")
     @GetMapping("/{fileId}/image")
     public JsonResult<?> readImage(@PathVariable String fileId, HttpServletResponse response) throws Exception {
         if (S.contains(fileId, ".")) {

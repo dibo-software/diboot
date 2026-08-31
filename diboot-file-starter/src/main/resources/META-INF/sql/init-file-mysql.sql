@@ -3,7 +3,7 @@ create table dbt_file_record
 (
     id            varchar(32)  not null comment 'ID' primary key,
     tenant_id     varchar(32)  default '0' not null comment '租户ID',
-    business_type varchar(50)  default 'UNKNOWN' not null comment '业务类型',
+    business_type varchar(100)  default 'UNKNOWN' not null comment '业务类型',
     business_id   varchar(64)  null comment '业务对象ID',
     app_module    varchar(50)  null comment '应用模块',
     md5           varchar(32)  null comment 'MD5标识',

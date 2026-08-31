@@ -127,7 +127,7 @@ const previewFile = (file: UploadFile) =>
 const beforeUpload = (rawFile: UploadRawFile) => {
   const fileConfig: Upload = props.config as any
   if (!fileConfig.businessType?.trim()) {
-    ElMessage.error('请先配置文件业务类型')
+    ElMessage.error('请设置上传文件字段对应的业务类型: businessType')
     return false
   }
   const accept = convert2accept(fileConfig?.accept)

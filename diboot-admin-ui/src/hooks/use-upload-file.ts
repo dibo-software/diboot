@@ -43,7 +43,7 @@ export default (
 
   const httpRequest = async (options: UploadRequestOptions) => {
     if (!businessType?.trim()) {
-      options.onError(new Error('请先配置文件业务类型'))
+      options.onError(new Error('请设置上传文件字段对应的业务类型: businessType'))
       return
     }
     const formData = new FormData()
