@@ -41,7 +41,7 @@ export default (
   const uploadFileHandle = (file: UploaderFileItem | UploaderFileItem[]) => {
     if (Array.isArray(file)) return // 多文件上传待扩展
     if (!businessType?.trim()) {
-      showFailToast('请先配置文件业务类型')
+      showFailToast('请设置上传文件字段对应的业务类型: businessType')
       return
     }
     file.status = 'uploading'

@@ -67,7 +67,7 @@ const handleChangeTitle = () => {
 function customUpload<InsertFn>(uploadInsert: (file: FileRecord, insertFn: InsertFn) => void) {
   return async (file: File, insertFn: InsertFn) => {
     if (!props.businessType?.trim()) {
-      showFailToast('请先配置文件业务类型')
+      showFailToast('请设置上传文件字段对应的业务类型: businessType')
       return
     }
     const formData = new FormData()
